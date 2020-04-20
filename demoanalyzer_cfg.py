@@ -16,7 +16,7 @@ process.options = cms.untracked.PSet(wantSummary=cms.untracked.bool(True))
 #    according to need and wish                                        *
 #    default is preset to 10000 events                                 *
 # **********************************************************************
-process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(10000))
+process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(1000))
 
 # set the number of events to be skipped (if any) at end of file below
 
@@ -37,7 +37,7 @@ import FWCore.Utilities.FileUtils as FileUtils
 # *** MonteCarlo data set ***
 mcfilelist = []
 # files2011data = FileUtils.loadListFromFile ('datasets/CMS_Run2011A_DoubleMu_AOD_12Oct2013-v1_10000_file_index.txt')
-datasets = FileUtils.os.walk(r"./datasets")
+datasets = FileUtils.os.walk(r"./data")
 for path, dir_list, file_list in datasets:
     for indexfile in file_list:
         mcfilelist.extend(FileUtils.loadListFromFile(FileUtils.os.path.join(path, indexfile)))
