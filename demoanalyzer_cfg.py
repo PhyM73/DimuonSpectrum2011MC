@@ -58,7 +58,7 @@ process.source = cms.Source("PoolSource", fileNames=cms.untracked.vstring(*mcfil
 # *************************************************
 process.source.skipEvents = cms.untracked.uint32(0)
 
-process.demo = cms.EDAnalyzer('DimuonSpectrum2011')
+process.demo = cms.EDAnalyzer('DimuonSpectrum2011MC')
 # ***********************************************************
 # output file name                                          *
 # default is DoubleMu.root                                        *
