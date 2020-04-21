@@ -40,6 +40,7 @@ mcfilelist = []
 datasets = FileUtils.os.walk(r"./data")
 for path, dir_list, file_list in datasets:
     for indexfile in file_list:
+        print(indexfile)
         mcfilelist.extend(FileUtils.loadListFromFile(FileUtils.os.path.join(path, indexfile)))
 process.source = cms.Source("PoolSource", fileNames=cms.untracked.vstring(*mcfilelist))
 
