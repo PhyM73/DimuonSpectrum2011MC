@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
-// Package:    DimuonSpectrum2011
-// Class:      DimuonSpectrum2011
+// Original Package:    DimuonSpectrum2011
+// Original Class:      DimuonSpectrum2011
 //
 /**\class DimuonSpectrum2011 DimuonSpectrum2011.cc Demo/DimuonSpectrum2011/src/DimuonSpectrum2011.cc
 
