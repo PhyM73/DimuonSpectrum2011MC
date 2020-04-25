@@ -74,7 +74,7 @@ private:
         virtual void analyze(const edm::Event&, const edm::EventSetup&);
         virtual void endJob();
         bool providesGoodLumisection(const edm::Event& iEvent);
-        bool eta21pt1510(double eta1, double eta2, double pt1, double pt2);
+        bool eta21pt1510(double eta1, double eta2, double pt1, double pt2, double px1, double py1, double px2, double py2, double m);
 
         // ----------member data ---------------------------
 
@@ -408,7 +408,7 @@ using namespace std;
 //      from MUO-10-004
           h100->Fill(log10(s), w); // MUO-10-004 with MuonCollection
            
-           if (eta21pt1510(it->eta(),i->eta(),it->pt(),i->pt())){
+           if (eta21pt1510(it->eta(),i->eta(),it->pt(),i->pt(),it->px(),it->py(),i->px(),i->py(),s)){
              h66->Fill(s);
            }
 
@@ -427,10 +427,12 @@ void DimuonSpectrum2011MC::beginJob() {
 void DimuonSpectrum2011MC::endJob() {
 }
 
-bool DimuonSpectrum2011MC::eta21pt1510 (double eta1, double eta2, double pt1, double pt2){
+bool DimuonSpectrum2011MC::eta21pt1510 (double eta1, double eta2, double pt1, double pt2,double px1, double py1, double px2, double py2, double m){
+  double pt = sqrt((px1+px2)*(px1+px2)+(py1+py2)*(py1+py2));
   if ((fabs(eta1) < 2.1 && fabs(eta2) < 2.1)
       && (pt1 > 10 && pt2 > 10)
-      && (pt1 > 15 || pt2 > 15)){
+      && (pt1 > 15 || pt2 > 15)
+      && (pt < m)){
     return true;
   }
   return false;
