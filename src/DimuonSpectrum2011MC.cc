@@ -431,7 +431,9 @@ bool DimuonSpectrum2011::eta21pt1510 (double eta1, double eta2, double pt1, doub
     }
   }
   else
-    return false;
+  {
+  return false;
+  }
 }
 
 //define this as a plug-in
