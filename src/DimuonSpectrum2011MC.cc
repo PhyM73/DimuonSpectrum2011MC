@@ -383,8 +383,7 @@ using namespace std;
 // and cut on quality of 2nd global muon candidate
             && ValidHits1 >= 12
             && PixelHits1 >= 2
-            && i->normalizedChi2() < 4.0
-            && eta21pt1510(it->eta(),i->eta(),it->pt(),i->pt())) {
+            && i->normalizedChi2() < 4.0) {
 
 //----------Calculate invariant mass-----------------//
 // WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
@@ -408,6 +407,10 @@ using namespace std;
 // WHY: Reproduce the "Invariant mass spectrum of dimuons in events"-plot
 //      from MUO-10-004
           h100->Fill(log10(s), w); // MUO-10-004 with MuonCollection
+           
+           if (eta21pt1510(it->eta(),i->eta(),it->pt(),i->pt())){
+             h66->Fill(s);
+           }
 
         } // end of unlike charge if
       }   //end of for(;i!=gmuons....)
@@ -428,7 +431,6 @@ bool DimuonSpectrum2011MC::eta21pt1510 (double eta1, double eta2, double pt1, do
   if ((fabs(eta1) < 2.1 && fabs(eta2) < 2.1)
       && (pt1 > 10 && pt2 > 10)
       && (pt1 > 15 || pt2 > 15)){
-    
     return true;
   }
   return false;
