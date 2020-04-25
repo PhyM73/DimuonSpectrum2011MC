@@ -74,7 +74,7 @@ private:
         virtual void analyze(const edm::Event&, const edm::EventSetup&);
         virtual void endJob();
         bool providesGoodLumisection(const edm::Event& iEvent);
-        bool eta21pt1510();
+        bool eta21pt1510(double eta1, double eta2, double pt1, double pt2);
 
         // ----------member data ---------------------------
 
