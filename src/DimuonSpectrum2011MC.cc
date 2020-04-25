@@ -425,15 +425,13 @@ void DimuonSpectrum2011::endJob() {
 }
 
 bool DimuonSpectrum2011::eta21pt1510 (double eta1, double eta2, double pt1, double pt2){
-  if (fabs(eta1) < 2.1 && fabs(eta2) < 2.1){
-    if ((pt1 > 10 && pt2 > 10) && (pt1 > 15 || pt2 > 15)){
-      return true;
-    }
+  if ((fabs(eta1) < 2.1 && fabs(eta2) < 2.1)
+      && (pt1 > 10 && pt2 > 10)
+      && (pt1 > 15 || pt2 > 15)){
+    
+    return true;
   }
-  else
-  {
   return false;
-  }
 }
 
 //define this as a plug-in
