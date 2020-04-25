@@ -74,6 +74,7 @@ private:
         virtual void analyze(const edm::Event&, const edm::EventSetup&);
         virtual void endJob();
         bool providesGoodLumisection(const edm::Event& iEvent);
+        bool eta21pt1510();
 
         // ----------member data ---------------------------
 
@@ -86,6 +87,7 @@ TH1D *h4;
 
 TH1D *h5;
 TH1D *h6;
+TH1D *h66;
 
 TH1D *h10;
 
@@ -198,6 +200,11 @@ h61->GetYaxis()->SetTitle("Number of Events");
 h100 = fs->make<TH1D>("GM_mass_log", "GM mass log", 644, -.52, 2.7);
 h100->GetXaxis()->SetTitle("Invariant Log10(Mass) for Nmuon>=2 (in log10(m/GeV/c^2))");
 h100->GetYaxis()->SetTitle("Number of Events/GeV");
+
+// dimuon mass spectrum up to 120 GeV after impose bound
+h66 = fs->make<TH1D>("GM_mass_cut", "GM mass Cut", 240, 0, 120.);
+h66->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
+h66->GetYaxis()->SetTitle("Number of Events");
 
 }
 
@@ -376,7 +383,8 @@ using namespace std;
 // and cut on quality of 2nd global muon candidate
             && ValidHits1 >= 12
             && PixelHits1 >= 2
-            && i->normalizedChi2() < 4.0) {
+            && i->normalizedChi2() < 4.0
+            && eta21pt1510(it->eta(),i->eta(),it->pt(),i->pt())) {
 
 //----------Calculate invariant mass-----------------//
 // WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
@@ -410,11 +418,20 @@ using namespace std;
 
 // ------------ method called once each job just before starting event loop  ------------
 void DimuonSpectrum2011::beginJob() {
-
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
 void DimuonSpectrum2011::endJob() {
+}
+
+bool DimuonSpectrum2011::eta21pt1510 (double eta1, double eta2, double pt1, double pt2){
+  if (fabs(eta1) < 2.1 && fabs(eta2) < 2.1){
+    if ((pt1 > 10 && pt2 > 10) && (pt1 > 15 || pt2 > 15)){
+      return true
+    }
+  }
+  else
+    return false
 }
 
 //define this as a plug-in
