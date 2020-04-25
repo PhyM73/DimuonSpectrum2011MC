@@ -64,10 +64,10 @@
 // class declaration
 //
 
-class DimuonSpectrum2011: public edm::EDAnalyzer {
+class DimuonSpectrum2011MC: public edm::EDAnalyzer {
 public:
-        explicit DimuonSpectrum2011(const edm::ParameterSet&);
-        ~DimuonSpectrum2011();
+        explicit DimuonSpectrum2011MC(const edm::ParameterSet&);
+        ~DimuonSpectrum2011MC();
 
 private:
         virtual void beginJob();
@@ -114,7 +114,7 @@ TH1D *h100;
 // constructors and destructor
 //
 
-DimuonSpectrum2011::DimuonSpectrum2011(const edm::ParameterSet& iConfig) {
+DimuonSpectrum2011MC::DimuonSpectrum2011MC(const edm::ParameterSet& iConfig) {
 
 // *****************************************************************
 // This is the main analysis routine
@@ -209,7 +209,7 @@ h66->GetYaxis()->SetTitle("Number of Events");
 }
 
 
-DimuonSpectrum2011::~DimuonSpectrum2011() {
+DimuonSpectrum2011MC::~DimuonSpectrum2011MC() {
         // do anything here that needs to be done at destruction time
         // (e.g. close files, deallocate resources etc.)
 }
@@ -221,7 +221,7 @@ DimuonSpectrum2011::~DimuonSpectrum2011() {
 //
 
 // ------------ method called for each event  ------------
-void DimuonSpectrum2011::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
+void DimuonSpectrum2011MC::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
 // **********************************************
 // here each relevant event will get analyzed
@@ -413,18 +413,18 @@ using namespace std;
       }   //end of for(;i!=gmuons....)
     }   //end of if(gmuons->size >=2 .....)
   }   //end of reco ::TrackCollection loop
-} //DimuonSpectrum2011: analyze ends
+} //DimuonSpectrum2011MC: analyze ends
 
 
 // ------------ method called once each job just before starting event loop  ------------
-void DimuonSpectrum2011::beginJob() {
+void DimuonSpectrum2011MC::beginJob() {
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
-void DimuonSpectrum2011::endJob() {
+void DimuonSpectrum2011MC::endJob() {
 }
 
-bool DimuonSpectrum2011::eta21pt1510 (double eta1, double eta2, double pt1, double pt2){
+bool DimuonSpectrum2011MC::eta21pt1510 (double eta1, double eta2, double pt1, double pt2){
   if ((fabs(eta1) < 2.1 && fabs(eta2) < 2.1)
       && (pt1 > 10 && pt2 > 10)
       && (pt1 > 15 || pt2 > 15)){
@@ -435,4 +435,4 @@ bool DimuonSpectrum2011::eta21pt1510 (double eta1, double eta2, double pt1, doub
 }
 
 //define this as a plug-in
-DEFINE_FWK_MODULE(DimuonSpectrum2011);                                                                            
+DEFINE_FWK_MODULE(DimuonSpectrum2011MC);                                                                            
