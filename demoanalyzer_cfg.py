@@ -37,10 +37,10 @@ import FWCore.Utilities.FileUtils as FileUtils
 # *** MonteCarlo data set ***
 mcfilelist = []
 # files2011data = FileUtils.loadListFromFile ('datasets/CMS_Run2011A_DoubleMu_AOD_12Oct2013-v1_10000_file_index.txt')
-datasets = FileUtils.os.walk(r"./datasets")
+datasets = FileUtils.os.walk(r"./data")
 for path, dir_list, file_list in datasets:
     for indexfile in file_list:
-#         print(indexfile)
+        print(indexfile)
         mcfilelist.extend(FileUtils.loadListFromFile(FileUtils.os.path.join(path, indexfile)))
 process.source = cms.Source("PoolSource", fileNames=cms.untracked.vstring(*mcfilelist))
 
