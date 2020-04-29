@@ -164,7 +164,7 @@ h5->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h5->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 120 GeV (high mass range: upsilon, Z)
-h6 = fs->make<TH1D>("GMmass_extended" , "GMmass" , 240, 0. , 120. );
+h6 = fs->make<TH1D>("GMmass_extended" , "GMmass" , 150, 0. , 150. );
 h6->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h6->GetYaxis()->SetTitle("Number of Events");
 
@@ -202,7 +202,7 @@ h100->GetXaxis()->SetTitle("Invariant Log10(Mass) for Nmuon>=2 (in log10(m/GeV/c
 h100->GetYaxis()->SetTitle("Number of Events/GeV");
 
 // dimuon mass spectrum up to 120 GeV after impose bound
-h66 = fs->make<TH1D>("GM_mass_cut", "GM mass Cut", 240, 0, 120.);
+h66 = fs->make<TH1D>("GM_mass_cut", "GM mass Cut", 140, 10., 150.);
 h66->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h66->GetYaxis()->SetTitle("Number of Events");
 
