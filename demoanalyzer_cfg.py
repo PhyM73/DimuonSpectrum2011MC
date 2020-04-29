@@ -16,7 +16,7 @@ process.options = cms.untracked.PSet(wantSummary=cms.untracked.bool(True))
 #    according to need and wish                                        *
 #    default is preset to 10000 events                                 *
 # **********************************************************************
-process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(10000))
+process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(-1))
 
 # set the number of events to be skipped (if any) at end of file below
 
@@ -40,7 +40,7 @@ mcfilelist = []
 datasets = FileUtils.os.walk(r"./data")
 for path, dir_list, file_list in datasets:
     for indexfile in file_list:
-        print(indexfile)
+#         print(indexfile)
         mcfilelist.extend(FileUtils.loadListFromFile(FileUtils.os.path.join(path, indexfile)))
 process.source = cms.Source("PoolSource", fileNames=cms.untracked.vstring(*mcfilelist))
 
