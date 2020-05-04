@@ -3,7 +3,7 @@
 // Original Package:    DimuonSpectrum2011
 // Original Class:      DimuonSpectrum2011
 //
-/**\class DimuonSpectrum2011 DimuonSpectrum2011.cc Demo/DimuonSpectrum2011/src/DimuonSpectrum2011.cc
+/**\class DimuonSpectrum2011MC DimuonSpectrum2011MC.cc Demo/DimuonSpectrum2011/src/DimuonSpectrum2011MC.cc
 
  Description: [one line class summary]
 
@@ -202,7 +202,7 @@ h100->GetXaxis()->SetTitle("Invariant Log10(Mass) for Nmuon>=2 (in log10(m/GeV/c
 h100->GetYaxis()->SetTitle("Number of Events/GeV");
 
 // dimuon mass spectrum up to 120 GeV after impose bound
-h66 = fs->make<TH1D>("GM_mass_cut", "GM mass Cut", 240, 0, 120.);
+h66 = fs->make<TH1D>("GM_mass_cut", "GM mass Cut", 120, 0, 120.);
 h66->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h66->GetYaxis()->SetTitle("Number of Events");
 
@@ -410,7 +410,7 @@ using namespace std;
            
            if (eta21pt1510(it->eta(),i->eta(),it->pt(),i->pt(),it->px(),it->py(),i->px(),i->py(),s)){
              h66->Fill(s);
-           }
+           } // import bounds in 10.1103/PhysRevD.100.015021
 
         } // end of unlike charge if
       }   //end of for(;i!=gmuons....)
@@ -434,7 +434,7 @@ bool DimuonSpectrum2011MC::eta21pt1510 (double eta1, double eta2, double pt1, do
       && (pt1 > 15 || pt2 > 15)
       && (pt < m)){
     return true;
-  }
+  } // bounds and selections in 10.1103/PhysRevD.100.015021
   return false;
 }
 
