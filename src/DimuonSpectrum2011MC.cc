@@ -197,7 +197,7 @@ h61->GetYaxis()->SetTitle("Number of Events");
 
 // unlike sign dimuon invariant mass from global muon selection,
 // binning chosen to correspond to log(0.3) - log(500), 200 bins/log10 unit
-h100 = fs->make<TH1D>("GM_mass_log", "GM mass log", 644, -.52, 2.7);
+h100 = fs->make<TH1D>("GM_mass_log", "GM_mass_log", 644, -.52, 2.7);
 h100->GetXaxis()->SetTitle("Invariant Log10(Mass) for Nmuon>=2 (in log10(m/GeV/c^2))");
 h100->GetYaxis()->SetTitle("Number of Events/GeV");
 
