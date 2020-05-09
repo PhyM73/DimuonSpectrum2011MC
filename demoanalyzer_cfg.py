@@ -39,18 +39,16 @@ import FWCore.Utilities.FileUtils as FileUtils
 # dmfilelist = FileUtils.loadListFromFile ('datasets/double/CMS_Run2011A_DoubleMu_AOD_12Oct2013-v1_10000_file_index.txt')
 
 # *** MonteCarlo data sets ***
-mcfilelist = FileUtils.loadListFromFile(
-    'datasets/mc/CMS_MonteCarlo2011_Summer11LegDR_DYJetsToLL_M-10To50_TuneZ2_7TeV-pythia6_AODSIM_PU_S13_START53_LV6-v1_00000_file_index.txt'
-)
+# mcfilelist = FileUtils.loadListFromFile('datasets/mc/CMS_MonteCarlo2011_Summer11LegDR_DYJetsToLL_M-10To50_TuneZ2_7TeV-pythia6_AODSIM_PU_S13_START53_LV6-v1_00000_file_index.txt')
 
 # read the index files automatically
-# mcfilelist = []
-# datasets = FileUtils.os.walk(r"./datasets/mc")
-# for path, dir_list, file_list in datasets:
-#     for indexfile in file_list:
-#         mcfilelist.extend(FileUtils.loadListFromFile(FileUtils.os.path.join(path, indexfile)))
+datafilelist = []
+datasets = FileUtils.os.walk(r"./data")
+for path, dir_list, file_list in datasets:
+    for indexfile in file_list:
+        datafilelist.extend(FileUtils.loadListFromFile(FileUtils.os.path.join(path, indexfile)))
 
-process.source = cms.Source("PoolSource", fileNames=cms.untracked.vstring(*mcfilelist))
+process.source = cms.Source("PoolSource", fileNames=cms.untracked.vstring(*datafilelist))
 
 # define JSON file for 2011 (replace by 2012 version for 2012 data)
 # apply JSON file (only for data)
@@ -72,6 +70,6 @@ process.demo = cms.EDAnalyzer('DimuonSpectrum2011MC')
 # default is DoubleMuMC.root                                *
 # change this according to your wish                        *
 # ***********************************************************
-process.TFileService = cms.Service("TFileService", fileName=cms.string('DoubleMuMC.root'))
+process.TFileService = cms.Service("TFileService", fileName=cms.string('DoubleMu2011.root'))
 
 process.p = cms.Path(process.demo)
