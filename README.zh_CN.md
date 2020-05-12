@@ -2,7 +2,7 @@
 
 本项目是一个使用 CMS Open Data 计算双μ子不变质量谱的简单分析样例。
 
-本项目的分析代码基于 CERN Open Data 门户网站上的 [Example code to produce the di-muon spectrum](http://opendata.web.cern.ch/record/5001) from [a CMS 2011 or 2012 primary dataset](http://opendata.web.cern.ch/record/14).  同时，本项目还参考了另一个 GitHub 项目 [DimuonSpectrum2011](https://github.com/cms-opendata-analyses/DimuonSpectrum2011). 并加入了对蒙特卡洛样本的比较分析。分析流程参照 [Searching in CMS Open Data for Dimuon Resonances with Substantial Transverse Momentum](https://arxiv.org/abs/1902.04222) 一文，以下称为例文。
+本项目的分析代码基于 CERN Open Data 门户网站上的 [Example code to produce the di-muon spectrum](http://opendata.web.cern.ch/record/5001),  参考了另一个 GitHub 项目 [DimuonSpectrum2011](https://github.com/cms-opendata-analyses/DimuonSpectrum2011). 并加入了对蒙特卡洛样本的比较分析。分析流程参照 [Searching in CMS Open Data for Dimuon Resonances with Substantial Transverse Momentum](https://arxiv.org/abs/1902.04222) 一文，以下称为例文。
 
 对原始代码的修改如下：
 
@@ -75,4 +75,18 @@ cmsRun demoanalyzer_cfg.py
 - `mccondor` 用于高通量计算平台，默认分析单个2011年蒙特卡洛样本文件全部事例。可配合多次提交以分析全部蒙特卡洛样本文件。
 
 
+
+## 文件说明
+
+`datasets` 目录下分别包含如下文件
+
+- `datasets/double`  [DoubleMu primary dataset in AOD format from RunA of 2011](http://opendata.cern.ch/record/17)
+
+- `datasets/single`  [SingleMu primary dataset in AOD format from RunA of 2011](http://opendata.cern.ch/record/32)
+- `datasets/mc` 
+   - [Simulated dataset DYJetsToLL_M-10To50_TuneZ2_7TeV-pythia6 in AODSIM format for 2011 collision data](http://opendata.cern.ch/record/1393) 
+   - [Simulated dataset DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola in AODSIM format for 2011 collision data](http://opendata.cern.ch/record/1395)
+- [CMS list of validated runs for primary datasets of 2011 data taking](http://opendata.cern.ch/record/1001)
+
+如有需要，可以从 [CMS luminosity information for 2011 CMS open data](http://opendata.cern.ch/record/1051) 中获取对撞数据的亮度信息；可以从 [McM](https://cms-pdmv.cern.ch/mcm/requests?prepid=BTV-Summer11Leg-00013&page=0&shown=2097279) 上获取蒙特卡洛数据的反应截面。
 
