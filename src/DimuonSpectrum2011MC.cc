@@ -88,6 +88,7 @@ TH1D *h4;
 TH1D *h5;
 TH1D *h6;
 TH1D *h66;
+TH1D *h661;
 
 TH1D *h10;
 TH1D *h11;
@@ -207,8 +208,13 @@ h66 = fs->make<TH1D>("GM_mass_cut", "GM mass Cut", 70, 10., 150.);
 h66->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h66->GetYaxis()->SetTitle("Number of Events");
 
+// dimuon mass spectrum up to 120 GeV after impose bound, single pair for an event
+h66 = fs->make<TH1D>("GM_mass_cut_singlepair", "GM mass Cut singlepair", 70, 10., 150.);
+h66->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
+h66->GetYaxis()->SetTitle("Number of Events");
+
 // global muon multiplicity after cut
-h11 = fs->make<TH1D>("GMmultiplicty Cut", "GMmultiplicity Cut", 8, 0, 8);
+h11 = fs->make<TH1D>("GMmultiplicty_Cut", "GMmultiplicity Cut", 8, 0, 8);
 h11->GetXaxis()->SetTitle("Number of Global Muons after Cut");
 h11->GetYaxis()->SetTitle("Number of Events");
 
@@ -284,6 +290,7 @@ using namespace std;
 //       in the current Event.
 // WHY:  for monitoring purposes
   h10->Fill(gmuons->size());
+  double maxs=0.0
 
 // WHAT: Loop over all the Global Muons of current Event
 // WHY:  to select good candidates to be used in invariant mass calculation
@@ -355,7 +362,6 @@ using namespace std;
         && ValidHits >= 12
         && PixelHits >= 2
         && it->normalizedChi2() < 4.0) {
-
 // NTS: Stores iterator for current globalMuon-Track and advances it by one.
 //      In other words, the needed preparation to be able to compare all the
 //      other globalMuon-Tracks after
@@ -415,14 +421,17 @@ using namespace std;
           h100->Fill(log10(s), w); // MUO-10-004 with MuonCollection
            
            if (eta21pt1510(it->eta(),i->eta(),it->pt(),i->pt(),it->px(),it->py(),i->px(),i->py(),s)){
-             h66->Fill(s);
-             h11->Fill(gmuons->size());
+            if (s > maxs) { maxs = s}
+            h66->Fill(s);
+            h11->Fill(gmuons->size());
 
            } // import bounds in 10.1103/PhysRevD.100.015021
 
         } // end of unlike charge if
       }   //end of for(;i!=gmuons....)
     }   //end of if(gmuons->size >=2 .....)
+
+  h661->Fill(maxs);
   }   //end of reco ::TrackCollection loop
 } //DimuonSpectrum2011MC: analyze ends
 
