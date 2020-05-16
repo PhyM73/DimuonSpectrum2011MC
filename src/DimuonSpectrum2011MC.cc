@@ -421,7 +421,7 @@ using namespace std;
           h100->Fill(log10(s), w); // MUO-10-004 with MuonCollection
            
            if (eta21pt1510(it->eta(),i->eta(),it->pt(),i->pt(),it->px(),it->py(),i->px(),i->py(),s)){
-            if (s > maxs) { maxs = s}
+              if (s > maxs) { maxs = s;}
             h66->Fill(s);
             h11->Fill(gmuons->size());
 
