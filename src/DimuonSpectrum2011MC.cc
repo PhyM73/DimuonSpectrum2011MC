@@ -290,7 +290,7 @@ using namespace std;
 //       in the current Event.
 // WHY:  for monitoring purposes
   h10->Fill(gmuons->size());
-  double maxs=0.0
+  double maxs=0.0;
 
 // WHAT: Loop over all the Global Muons of current Event
 // WHY:  to select good candidates to be used in invariant mass calculation
