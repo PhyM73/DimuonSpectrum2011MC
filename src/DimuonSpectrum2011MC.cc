@@ -209,9 +209,9 @@ h66->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h66->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 120 GeV after impose bound, single pair for an event
-h66 = fs->make<TH1D>("GM_mass_cut_singlepair", "GM mass Cut singlepair", 70, 10., 150.);
-h66->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
-h66->GetYaxis()->SetTitle("Number of Events");
+h661 = fs->make<TH1D>("GM_mass_cut_singlepair", "GM mass Cut singlepair", 70, 10., 150.);
+h661->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
+h661->GetYaxis()->SetTitle("Number of Events");
 
 // global muon multiplicity after cut
 h11 = fs->make<TH1D>("GMmultiplicty_Cut", "GMmultiplicity Cut", 8, 0, 8);
@@ -430,9 +430,8 @@ using namespace std;
         } // end of unlike charge if
       }   //end of for(;i!=gmuons....)
     }   //end of if(gmuons->size >=2 .....)
-
-  h661->Fill(maxs);
   }   //end of reco ::TrackCollection loop
+  if (maxs > 0.0) { h661->Fill(maxs);}
 } //DimuonSpectrum2011MC: analyze ends
 
 
