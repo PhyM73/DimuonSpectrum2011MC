@@ -90,6 +90,7 @@ TH1D *h6;
 TH1D *h66;
 
 TH1D *h10;
+TH1D *h11;
 
 TH1D *h53;
 TH1D *h54;
@@ -205,6 +206,11 @@ h100->GetYaxis()->SetTitle("Number of Events/GeV");
 h66 = fs->make<TH1D>("GM_mass_cut", "GM mass Cut", 70, 10., 150.);
 h66->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h66->GetYaxis()->SetTitle("Number of Events");
+
+// global muon multiplicity after cut
+h11 = fs->make<TH1D>("GMmultiplicty Cut", "GMmultiplicity Cut", 8, 0, 8);
+h11->GetXaxis()->SetTitle("Number of Global Muons after Cut");
+h11->GetYaxis()->SetTitle("Number of Events");
 
 }
 
@@ -410,6 +416,8 @@ using namespace std;
            
            if (eta21pt1510(it->eta(),i->eta(),it->pt(),i->pt(),it->px(),it->py(),i->px(),i->py(),s)){
              h66->Fill(s);
+             h11->Fill(gmuons->size());
+
            } // import bounds in 10.1103/PhysRevD.100.015021
 
         } // end of unlike charge if
@@ -434,7 +442,7 @@ bool DimuonSpectrum2011MC::eta21pt1510 (double eta1, double eta2, double pt1, do
       && (pt1 > 15 || pt2 > 15)
       && (pt < m)){
     return true;
-  } // bounds and selections in 10.1103/PhysRevD.100.015021
+  } // import bounds and selections in 10.1103/PhysRevD.100.015021
   return false;
 }
 
