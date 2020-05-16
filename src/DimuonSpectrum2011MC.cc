@@ -92,6 +92,7 @@ TH1D *h661;
 
 TH1D *h10;
 TH1D *h11;
+TH1D *h12;
 
 TH1D *h53;
 TH1D *h54;
@@ -213,10 +214,15 @@ h661 = fs->make<TH1D>("GM_mass_cut_singlepair", "GM mass Cut singlepair", 70, 10
 h661->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h661->GetYaxis()->SetTitle("Number of Events");
 
-// global muon multiplicity after cut
+// global muon multiplicity after cut, abundant
 h11 = fs->make<TH1D>("GMmultiplicty_Cut", "GMmultiplicity Cut", 8, 0, 8);
 h11->GetXaxis()->SetTitle("Number of Global Muons after Cut");
 h11->GetYaxis()->SetTitle("Number of Events");
+
+// global muon multiplicity after cut
+h12 = fs->make<TH1D>("GMmultiplicty_Cut", "GMmultiplicity Cut", 8, 0, 8);
+h12->GetXaxis()->SetTitle("Number of Global Muons after Cut");
+h12->GetYaxis()->SetTitle("Number of Events");
 
 }
 
@@ -431,7 +437,7 @@ using namespace std;
       }   //end of for(;i!=gmuons....)
     }   //end of if(gmuons->size >=2 .....)
   }   //end of reco ::TrackCollection loop
-  if (maxs > 0.0) { h661->Fill(maxs);}
+  if (maxs > 0.0) { h661->Fill(maxs); h12->Fill(gmuons->size());}
 } //DimuonSpectrum2011MC: analyze ends
 
 
