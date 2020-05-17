@@ -215,7 +215,7 @@ h661->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h661->GetYaxis()->SetTitle("Number of Events");
 
 // global muon multiplicity after cut, abundant
-h11 = fs->make<TH1D>("GMmultiplicty_Cut", "GMmultiplicity Cut", 8, 0, 8);
+h11 = fs->make<TH1D>("GMmultiplicty_Cut_ab", "GMmultiplicity Cut ab", 8, 0, 8);
 h11->GetXaxis()->SetTitle("Number of Global Muons after Cut");
 h11->GetYaxis()->SetTitle("Number of Events");
 
