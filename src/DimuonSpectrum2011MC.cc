@@ -207,14 +207,14 @@ h100->GetYaxis()->SetTitle("Number of Events/GeV");
 
 // unlike sign dimuon invariant mass from global muon selection,
 // binning chosen to correspond to log(0.3) - log(500), 200 bins/log10 unit
-Int_t nbins = 644
+Int_t nbins = 644;
 Double_t *xbins  = new Double_t[nbins+1];
-Double_t xlogmin = TMath::Log10(0.3);
-Double_t xlogmax = TMath::Log10(500);
+Double_t xlogmin = log10(0.3);
+Double_t xlogmax = log10(500);
 Double_t dlogx   = (xlogmax-xlogmin)/((Double_t)nbins);
-for (i=0;i<=nbins;i++) { 
+for (int i=0;i<=nbins;i++) { 
   Double_t xlog = xlogmin+ i*dlogx;
-  xbins[i] = TMath::Exp( TMath::Log(10) * xlog ); 
+  xbins[i] = exp( log(10) * xlog ); 
 }
 
 h101 = fs->make<TH1D>("GM_mass_log_axis", "GM_mass_log", nbins, xbins);
