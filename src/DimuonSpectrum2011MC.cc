@@ -102,6 +102,7 @@ TH1D *h60;
 TH1D *h61;
 
 TH1D *h100;
+TH1D *h101;
 
 };
 
@@ -203,6 +204,22 @@ h61->GetYaxis()->SetTitle("Number of Events");
 h100 = fs->make<TH1D>("GM_mass_log", "GM_mass_log", 644, -.52, 2.7);
 h100->GetXaxis()->SetTitle("Invariant Log10(Mass) for Nmuon>=2 (in log10(m/GeV/c^2))");
 h100->GetYaxis()->SetTitle("Number of Events/GeV");
+
+// unlike sign dimuon invariant mass from global muon selection,
+// binning chosen to correspond to log(0.3) - log(500), 200 bins/log10 unit
+Int_t nbins = 644
+Double_t *xbins  = new Double_t[nbins+1];
+Double_t xlogmin = TMath::Log10(0.3);
+Double_t xlogmax = TMath::Log10(500);
+Double_t dlogx   = (xlogmax-xlogmin)/((Double_t)nbins);
+for (i=0;i<=nbins;i++) { 
+  Double_t xlog = xlogmin+ i*dlogx;
+  xbins[i] = TMath::Exp( TMath::Log(10) * xlog ); 
+}
+
+h101 = fs->make<TH1D>("GM_mass_log_axis", "GM_mass_log", nbins, xbins);
+h101->GetXaxis()->SetTitle("Invariant Log10(Mass) for Nmuon>=2 (in GeV/c^2)");
+h101->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 120 GeV after impose bound
 h66 = fs->make<TH1D>("GM_mass_cut", "GM mass Cut", 70, 10., 150.);
@@ -425,6 +442,7 @@ using namespace std;
 // WHY: Reproduce the "Invariant mass spectrum of dimuons in events"-plot
 //      from MUO-10-004
           h100->Fill(log10(s), w); // MUO-10-004 with MuonCollection
+          h101->Fill(log10(s), w); // MUO-10-004 with MuonCollection
            
            if (eta21pt1510(it->eta(),i->eta(),it->pt(),i->pt(),it->px(),it->py(),i->px(),i->py(),s)){
               if (s > maxs) { maxs = s;}
