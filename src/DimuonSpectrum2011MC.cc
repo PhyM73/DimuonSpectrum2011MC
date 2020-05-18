@@ -163,7 +163,7 @@ h4->GetXaxis()->SetTitle("Phi");
 h4->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 4 GeV (low mass range, rho/omega, phi, psi)
-h5 = fs->make<TH1D>("GMmass" , "GMmass" , 400, 0. , 4. );
+h5 = fs->make<TH1D>("GMmass" , "GMmass" , 40, 8. , 12. );
 h5->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h5->GetYaxis()->SetTitle("Number of Events");
 
@@ -431,7 +431,8 @@ using namespace std;
 // WHAT: Store the invariant mass of two muons with unlike sign charges in
 //       linear scale
 // WHY:  in order to see the various mass peaks on linear scale
-          h5->Fill(s);
+          if (fbs(it->eta()) < 2.4 && fbs(i->eta()) < 2.4){
+            h5->Fill(s);}
           h6->Fill(s);
 
 // WHAT: apply weight 200/(ln10*m/GeV) according to histogram binning
@@ -442,7 +443,7 @@ using namespace std;
 // WHY: Reproduce the "Invariant mass spectrum of dimuons in events"-plot
 //      from MUO-10-004
           h100->Fill(log10(s), w); // MUO-10-004 with MuonCollection
-          h101->Fill(log10(s), w); // MUO-10-004 with MuonCollection
+          h101->Fill(s, w); // MUO-10-004 with MuonCollection
            
            if (eta21pt1510(it->eta(),i->eta(),it->pt(),i->pt(),it->px(),it->py(),i->px(),i->py(),s)){
               if (s > maxs) { maxs = s;}
