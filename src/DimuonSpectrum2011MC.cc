@@ -431,7 +431,7 @@ using namespace std;
 // WHAT: Store the invariant mass of two muons with unlike sign charges in
 //       linear scale
 // WHY:  in order to see the various mass peaks on linear scale
-          if (fbs(it->eta()) < 2.4 && fbs(i->eta()) < 2.4){
+          if (fabs(it->eta()) < 2.4 && fabs(i->eta()) < 2.4){
             h5->Fill(s);}
           h6->Fill(s);
 
