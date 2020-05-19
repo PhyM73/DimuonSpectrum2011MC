@@ -75,8 +75,9 @@ private:
         virtual void endJob();
         bool providesGoodLumisection(const edm::Event& iEvent);
         bool eta21pt1510(double eta1, double eta2, double pt1, double pt2, double px1, double py1, double px2, double py2, double m);
+        bool iprequire(double r, double z);
 
-        // ----------member data ---------------------------
+// ----------member data ---------------------------
 
 // declare Root histograms
 // for a description of their content see below
@@ -227,7 +228,7 @@ h66->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h66->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 120 GeV after impose bound, single pair for an event
-h661 = fs->make<TH1D>("GM_mass_cut_singlepair", "GM mass Cut singlepair", 70, 10., 150.);
+h661 = fs->make<TH1D>("GM_mass_cut_IP", "GM mass Cut IP", 70, 10., 150.);
 h661->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h661->GetYaxis()->SetTitle("Number of Events");
 
@@ -245,8 +246,8 @@ h12->GetYaxis()->SetTitle("Number of Events");
 
 
 DimuonSpectrum2011MC::~DimuonSpectrum2011MC() {
-        // do anything here that needs to be done at destruction time
-        // (e.g. close files, deallocate resources etc.)
+  // do anything here that needs to be done at destruction time
+  // (e.g. close files, deallocate resources etc.)
 }
 
 
@@ -313,7 +314,6 @@ using namespace std;
 //       in the current Event.
 // WHY:  for monitoring purposes
   h10->Fill(gmuons->size());
-  double maxs=0.0;
 
 // WHAT: Loop over all the Global Muons of current Event
 // WHY:  to select good candidates to be used in invariant mass calculation
@@ -338,8 +338,8 @@ using namespace std;
     h55->Fill(it->normalizedChi2());
 
 // the following can be uncommented if more log information is wished
-//   LogInfo("Demo")  <<"global  muon track pointer "<<it;
-//   LogInfo("Demo")<<"global muon track p"<<it->p()<<"  global muon track pos"<<it->referencePoint()<<" global muon track vertex"<<it->vertex();
+  LogInfo("Demo")<<"global  muon track pointer "<<it;
+  LogInfo("Demo")<<"global muon track p"<<it->p()<<"  global muon track pos"<<it->referencePoint()<<" global muon track vertex"<<it->vertex();
 
 //-----------------prepare variables to determine quality cuts---------------//
 // WHAT: 1) Find out the number of Hits in the current globalMuon-Track
@@ -446,17 +446,17 @@ using namespace std;
           h101->Fill(s, w); // MUO-10-004 with MuonCollection
            
            if (eta21pt1510(it->eta(),i->eta(),it->pt(),i->pt(),it->px(),it->py(),i->px(),i->py(),s)){
-              if (s > maxs) { maxs = s;}
             h66->Fill(s);
             h11->Fill(gmuons->size());
-
+              if (iprequire(it->vertex().Rho(),it->vertex().Z())){
+                h661->Fill(s);
+              }
            } // import bounds in 10.1103/PhysRevD.100.015021
 
         } // end of unlike charge if
       }   //end of for(;i!=gmuons....)
     }   //end of if(gmuons->size >=2 .....)
   }   //end of reco ::TrackCollection loop
-  if (maxs > 0.0) { h661->Fill(maxs); h12->Fill(gmuons->size());}
 } //DimuonSpectrum2011MC: analyze ends
 
 
@@ -479,5 +479,14 @@ bool DimuonSpectrum2011MC::eta21pt1510 (double eta1, double eta2, double pt1, do
   return false;
 }
 
+bool DimuonSpectrum2011MC::eta21pt1510 (double r, double z){
+  if (r < 2 && fabs(z) < 10){
+    return true;
+  } 
+  // IP requirement, the reconstructed muon tracks must intersect the primary vertex
+  // within d < 2mm in the x–y plane and z < 10mm in the z direction.
+  return false;
+}
+
 //define this as a plug-in
-DEFINE_FWK_MODULE(DimuonSpectrum2011MC);                                                                            
+DEFINE_FWK_MODULE(DimuonSpectrum2011MC);                    
