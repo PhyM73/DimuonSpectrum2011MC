@@ -479,7 +479,7 @@ bool DimuonSpectrum2011MC::eta21pt1510 (double eta1, double eta2, double pt1, do
   return false;
 }
 
-bool DimuonSpectrum2011MC::eta21pt1510 (double r, double z){
+bool DimuonSpectrum2011MC::iprequire (double r, double z){
   if (r < 2 && fabs(z) < 10){
     return true;
   } 
