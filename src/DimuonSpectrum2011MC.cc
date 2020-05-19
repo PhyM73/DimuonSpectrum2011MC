@@ -338,8 +338,8 @@ using namespace std;
     h55->Fill(it->normalizedChi2());
 
 // the following can be uncommented if more log information is wished
-  LogInfo("Demo")<<"global  muon track pointer "<<it;
-  LogInfo("Demo")<<"global muon track p"<<it->p()<<"  global muon track pos"<<it->referencePoint()<<" global muon track vertex"<<it->vertex();
+  // LogInfo("Demo")<<"global  muon track pointer "<<it;
+  // LogInfo("Demo")<<"global muon track p"<<it->p()<<"  global muon track pos"<<it->referencePoint()<<" global muon track vertex"<<it->vertex();
 
 //-----------------prepare variables to determine quality cuts---------------//
 // WHAT: 1) Find out the number of Hits in the current globalMuon-Track
