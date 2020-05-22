@@ -341,9 +341,9 @@ using namespace std;
     h2->Fill(it->pt());
     h3->Fill(it->eta());
     h4->Fill(it->phi());
-    h53->Fill(it->chi2());
-    h54->Fill(it->ndof());
-    h55->Fill(it->normalizedChi2());
+    h53->Fill(it->globalTrack()->chi2());
+    h54->Fill(it->globalTrack()->ndof());
+    h55->Fill(it->globalTrack()->normalizedChi2());
 
 // the following can be uncommented if more log information is wished
   // LogInfo("Demo")<<" muon track pointer "<<it;
@@ -360,7 +360,7 @@ using namespace std;
 
 // WHAT: Get HitPattern-object for Track of current Muon
 // WHY:  in order to count the number of hits on the track
-    const reco::HitPattern& p = it->hitPattern();
+    const reco::HitPattern& p = it->globalTrack()->hitPattern();
 
 // WHAT: Loop over all the Hits in the HitPattern of current Track.
 // WHY:  Check if a Hit is Valid and/or whether it is a PixelHit
@@ -392,7 +392,7 @@ using namespace std;
     if (muons->size() >= 2
         && ValidHits >= 12
         && PixelHits >= 2
-        && it->normalizedChi2() < 4.0) {
+        && it->globalTrack()->normalizedChi2() < 4.0) {
 // NTS: Stores iterator for current globalMuon-Track and advances it by one.
 //      In other words, the needed preparation to be able to compare all the
 //      other globalMuon-Tracks after
@@ -405,7 +405,7 @@ using namespace std;
 
 // initialize hit counters for 2nd muon candidate
         int ValidHits1 = 0, PixelHits1 = 0;
-        const reco::HitPattern& p1 = i->hitPattern();
+        const reco::HitPattern& p1 = i->globalTrack()->hitPattern();
 
 // loop over the hits of the track
         for (int n = 0; n < p1.numberOfHits(); n++) {
