@@ -303,9 +303,9 @@ using namespace std;
 // https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideRecoDataTable
 
 
-// INFO: globalMuons
-// NB: note that when using keyword "globalMuons" getByLabel-function returns
-//     reco::TrackCollection
+// INFO: Muons
+// NB: note that when using keyword "Muons" getByLabel-function returns
+//     reco::MuonCollection
   Handle<reco::MuonCollection> muons;
   iEvent.getByLabel("muons", muons);
 
@@ -318,7 +318,7 @@ using namespace std;
 // WHY:  needed in later calculations
   sqm1 = (0.105658) * (0.105658);
 
-// WHAT: Fill histogram of the number of globalMuon-Tracks
+// WHAT: Fill histogram of the number of Muon-Tracks
 //       in the current Event.
 // WHY:  for monitoring purposes
   h10->Fill(muons->size());
@@ -327,9 +327,9 @@ using namespace std;
 // WHY:  to select good candidates to be used in invariant mass calculation
   for (reco::MuonCollection::const_iterator it = muons->begin();
     it != muons->end(); it++) {
-
+  if((it->globalTrack()).isNonnull()){
 // WHAT: Fill histograms for the following attributes from the current
-//       globalMuon-Track:
+//       Muon-Track:
 // - p (momentum vector magnitude)
 // - pt (track transverse momentum)
 // - eta (pseudorapidity of momentum vector)
@@ -402,6 +402,7 @@ using namespace std;
 
 // loop over 2nd muon candidate
       for (; i != muons->end(); i++) {
+        if ((i->globalTrack()).isNonnull()){
 
 // initialize hit counters for 2nd muon candidate
         int ValidHits1 = 0, PixelHits1 = 0;
@@ -462,9 +463,11 @@ using namespace std;
            } // import bounds in 10.1103/PhysRevD.100.015021
 
         } // end of unlike charge if
+        } // end of if(i->globalTrack().isNonnull())
       }   //end of for(;i!=muons....)
     }   //end of if(muons->size >=2 .....)
-  }   //end of reco ::TrackCollection loop
+  }// end of if(it->globalTrack().isNonnull())
+  }   //end of reco ::MuonCollection loop
 } //DimuonSpectrum2011MC: analyze ends
 
 
