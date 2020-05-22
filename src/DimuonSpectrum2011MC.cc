@@ -61,6 +61,12 @@
 #include "DataFormats/TrackReco/interface/TrackFwd.h"
 #include "DataFormats/TrackReco/interface/HitPattern.h"
 
+// for Moun information
+#include "DataFormats/MuonReco/interface/Muon.h"
+#include "DataFormats/MuonReco/interface/MuonFwd.h"
+#include "DataFormats/MuonReco/interface/MuonSelectors.h"
+#include "DataFormats/MuonReco/interface/MuonMETCorrectionData.h"
+#include "DataFormats/MuonReco/interface/MuonTimeExtra.h"
 // class declaration
 //
 
@@ -105,6 +111,8 @@ TH1D *h61;
 TH1D *h100;
 TH1D *h101;
 
+TH1D *h81;
+
 };
 
 //
@@ -135,78 +143,78 @@ edm::Service<TFileService> fs;
 // (called once for initialization)
 // ************************************
 
-// monitoring histograms for global muons,
+// monitoring histograms for muons,
 // intended for muons from Mu sample
 
-// global muon multiplicity
-h10 = fs->make<TH1D>("GMmultiplicty", "GMmultiplicity", 8, 0, 8);
-h10->GetXaxis()->SetTitle("Number of Global Muons");
+// muon multiplicity
+h10 = fs->make<TH1D>("Mmultiplicty", "Mmultiplicity", 8, 0, 8);
+h10->GetXaxis()->SetTitle("Number of Muons");
 h10->GetYaxis()->SetTitle("Number of Events");
 
-// global muon momentum
-h1 = fs->make<TH1D>("GMmomentum", "GM_Momentum", 240, 0., 120.);
-h1->GetXaxis()->SetTitle("Global Muon Momentum (in GeV/c)");
+// muon momentum
+h1 = fs->make<TH1D>("Mmomentum", "M_Momentum", 240, 0., 120.);
+h1->GetXaxis()->SetTitle("Muon Momentum (in GeV/c)");
 h1->GetYaxis()->SetTitle("Number of Events");
 
-// global muon Transverse_momentum
-h2 = fs->make<TH1D>("GM_Transverse_momentum", "TransverseMomentum", 240, 0., 120.);
-h2->GetXaxis()->SetTitle("Transverse Momentum of global muons (in GeV/c)");
+// muon Transverse_momentum
+h2 = fs->make<TH1D>("M_Transverse_momentum", "TransverseMomentum", 240, 0., 120.);
+h2->GetXaxis()->SetTitle("Transverse Momentum of muons (in GeV/c)");
 h2->GetYaxis()->SetTitle("Number of Events");
 
-// global muon pseudorapity
-h3 = fs->make<TH1D>("GM_eta", "GM_Eta", 140, -3.5, 3.5);
-h3->GetXaxis()->SetTitle("Eta of global muons (in radians)");
+// muon pseudorapity
+h3 = fs->make<TH1D>("M_eta", "M_Eta", 140, -3.5, 3.5);
+h3->GetXaxis()->SetTitle("Eta of muons (in radians)");
 h3->GetYaxis()->SetTitle("Number of Events");
 
-// global muon azimuth angle
-h4 = fs->make<TH1D>("GM_phi", "GM_phi", 314, -3.15, 3.15);
+// muon azimuth angle
+h4 = fs->make<TH1D>("M_phi", "M_phi", 314, -3.15, 3.15);
 h4->GetXaxis()->SetTitle("Phi");
 h4->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 4 GeV (low mass range, rho/omega, phi, psi)
-h5 = fs->make<TH1D>("GMmass" , "GMmass" , 40, 8. , 12. );
+h5 = fs->make<TH1D>("Mmass" , "Mmass" , 40, 8. , 12. );
 h5->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h5->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 120 GeV (high mass range: upsilon, Z)
-h6 = fs->make<TH1D>("GMmass_extended" , "GMmass" , 150, 0. , 150. );
+h6 = fs->make<TH1D>("Mmass_extended" , "Mmass" , 150, 0. , 150. );
 h6->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h6->GetYaxis()->SetTitle("Number of Events");
 
-// global muon track chi2
-h53 = fs->make<TH1D>("GM_chi2", "GM_Chi2", 300, 0, 150);
+// muon track chi2
+h53 = fs->make<TH1D>("M_chi2", "M_Chi2", 300, 0, 150);
 h53->GetXaxis()->SetTitle("Chi2 values");
 h53->GetYaxis()->SetTitle("Number of Events");
 
-// global muon track number of degrees of freedom
-h54 = fs->make<TH1D>("GM_ndof", "GM_ndof", 100, 0, 100);
+// muon track number of degrees of freedom
+h54 = fs->make<TH1D>("M_ndof", "M_ndof", 100, 0, 100);
 h54->GetXaxis()->SetTitle("Ndof values");
 h54->GetYaxis()->SetTitle("Number of Events");
 
-// global muon track chi2 normalized to number of degrees of freedom
-h55 = fs->make<TH1D>("GM_normalizedchi2", "GM_normalizedChi2", 200, 0, 20);
+// muon track chi2 normalized to number of degrees of freedom
+h55 = fs->make<TH1D>("M_normalizedchi2", "M_normalizedChi2", 200, 0, 20);
 h55->GetXaxis()->SetTitle("NormalizedChi2 values");
 h55->GetYaxis()->SetTitle("Number of Events");
 
-// global muon track, number of valid hits
-h60 = fs->make<TH1D>("GM_validhits", "GM_ValidHits", 100, 0., 100);
+// muon track, number of valid hits
+h60 = fs->make<TH1D>("M_validhits", "M_ValidHits", 100, 0., 100);
 h60->GetXaxis()->SetTitle("Number of valid hits");
 h60->GetYaxis()->SetTitle("Number of Events");
 
-// global muon track, number of pixel hits
-h61 = fs->make<TH1D>("GM_pixelhits", "GM_pixelhits", 14, 0., 14);
+// muon track, number of pixel hits
+h61 = fs->make<TH1D>("M_pixelhits", "M_pixelhits", 14, 0., 14);
 h61->GetXaxis()->SetTitle("Munber of pixel hits");
 h61->GetYaxis()->SetTitle("Number of Events");
 
 // main histogram for MUO-10-004
 
-// unlike sign dimuon invariant mass from global muon selection,
+// unlike sign dimuon invariant mass from muon selection,
 // binning chosen to correspond to log(0.3) - log(500), 200 bins/log10 unit
-h100 = fs->make<TH1D>("GM_mass_log", "GM_mass_log", 644, -.52, 2.7);
+h100 = fs->make<TH1D>("M_mass_log", "M_mass_log", 644, -.52, 2.7);
 h100->GetXaxis()->SetTitle("Invariant Log10(Mass) for Nmuon>=2 (in log10(m/GeV/c^2))");
 h100->GetYaxis()->SetTitle("Number of Events/GeV");
 
-// unlike sign dimuon invariant mass from global muon selection,
+// unlike sign dimuon invariant mass from muon selection,
 // binning chosen to correspond to log(0.3) - log(500), 200 bins/log10 unit
 Int_t nbins = 644;
 Double_t *xbins  = new Double_t[nbins+1];
@@ -218,28 +226,28 @@ for (int i=0;i<=nbins;i++) {
   xbins[i] = exp( log(10) * xlog ); 
 }
 
-h101 = fs->make<TH1D>("GM_mass_log_axis", "GM_mass_log", nbins, xbins);
+h101 = fs->make<TH1D>("M_mass_log_axis", "M_mass_log", nbins, xbins);
 h101->GetXaxis()->SetTitle("Invariant Log10(Mass) for Nmuon>=2 (in GeV/c^2)");
 h101->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 120 GeV after impose bound
-h66 = fs->make<TH1D>("GM_mass_cut", "GM mass Cut", 70, 10., 150.);
+h66 = fs->make<TH1D>("M_mass_cut", "M mass Cut", 70, 10., 150.);
 h66->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h66->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 120 GeV after impose bound, single pair for an event
-h661 = fs->make<TH1D>("GM_mass_cut_IP", "GM mass Cut IP", 70, 10., 150.);
+h661 = fs->make<TH1D>("M_mass_cut_IP", "M mass Cut IP", 70, 10., 150.);
 h661->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h661->GetYaxis()->SetTitle("Number of Events");
 
-// global muon multiplicity after cut, abundant
-h11 = fs->make<TH1D>("GMmultiplicty_Cut_ab", "GMmultiplicity Cut ab", 8, 0, 8);
-h11->GetXaxis()->SetTitle("Number of Global Muons after Cut");
+// muon multiplicity after cut, abundant
+h11 = fs->make<TH1D>("Mmultiplicty_Cut_ab", "Mmultiplicity Cut ab", 8, 0, 8);
+h11->GetXaxis()->SetTitle("Number of Muons after Cut");
 h11->GetYaxis()->SetTitle("Number of Events");
 
-// global muon multiplicity after cut
-h12 = fs->make<TH1D>("GMmultiplicty_Cut", "GMmultiplicity Cut", 8, 0, 8);
-h12->GetXaxis()->SetTitle("Number of Global Muons after Cut");
+// muon multiplicity after cut
+h12 = fs->make<TH1D>("Mmultiplicty_Cut", "Mmultiplicity Cut", 8, 0, 8);
+h12->GetXaxis()->SetTitle("Number of Muons after Cut");
 h12->GetYaxis()->SetTitle("Number of Events");
 
 }
@@ -298,10 +306,10 @@ using namespace std;
 // INFO: globalMuons
 // NB: note that when using keyword "globalMuons" getByLabel-function returns
 //     reco::TrackCollection
-  Handle<reco::TrackCollection> gmuons;
-  iEvent.getByLabel("globalMuons", gmuons);
+  Handle<reco::MuonCollection> muons;
+  iEvent.getByLabel("muons", muons);
 
-//------------------analysing Global Muons (gmuons-TrackCollection)----------//
+//------------------analysing Muons (muons-TrackCollection)----------//
 
 // WHAT: declare variables used later
   double sqm1, s1, s2, s, w;
@@ -313,12 +321,12 @@ using namespace std;
 // WHAT: Fill histogram of the number of globalMuon-Tracks
 //       in the current Event.
 // WHY:  for monitoring purposes
-  h10->Fill(gmuons->size());
+  h10->Fill(muons->size());
 
-// WHAT: Loop over all the Global Muons of current Event
+// WHAT: Loop over all the Muons of current Event
 // WHY:  to select good candidates to be used in invariant mass calculation
-  for (reco::TrackCollection::const_iterator it = gmuons->begin();
-    it != gmuons->end(); it++) {
+  for (reco::MuonCollection::const_iterator it = muons->begin();
+    it != muons->end(); it++) {
 
 // WHAT: Fill histograms for the following attributes from the current
 //       globalMuon-Track:
@@ -338,8 +346,8 @@ using namespace std;
     h55->Fill(it->normalizedChi2());
 
 // the following can be uncommented if more log information is wished
-  // LogInfo("Demo")<<"global  muon track pointer "<<it;
-  // LogInfo("Demo")<<"global muon track p"<<it->p()<<"  global muon track pos"<<it->referencePoint()<<" global muon track vertex"<<it->vertex();
+  // LogInfo("Demo")<<" muon track pointer "<<it;
+  // LogInfo("Demo")<<"muon track p"<<it->p()<<"  muon track pos"<<it->referencePoint()<<" muon track vertex"<<it->vertex();
 
 //-----------------prepare variables to determine quality cuts---------------//
 // WHAT: 1) Find out the number of Hits in the current globalMuon-Track
@@ -350,7 +358,7 @@ using namespace std;
 //       candidates
     int ValidHits = 0, PixelHits = 0;
 
-// WHAT: Get HitPattern-object for Track of current Global Muon
+// WHAT: Get HitPattern-object for Track of current Muon
 // WHY:  in order to count the number of hits on the track
     const reco::HitPattern& p = it->hitPattern();
 
@@ -379,9 +387,9 @@ using namespace std;
 
 // WHAT: If current globalMuon-Track satisfies quality-cut-criteria, it is
 //       compared to other globalMuon-Tracks that come after this current one.
-//       (succeeding globalMuon-Tracks that are in the gmuons-TrackCollection)
+//       (succeeding globalMuon-Tracks that are in the muons-TrackCollection)
 //       need at least two candidates to calculate dimuon mass
-    if (gmuons->size() >= 2
+    if (muons->size() >= 2
         && ValidHits >= 12
         && PixelHits >= 2
         && it->normalizedChi2() < 4.0) {
@@ -389,11 +397,11 @@ using namespace std;
 //      In other words, the needed preparation to be able to compare all the
 //      other globalMuon-Tracks after
 //      the current one to the current globalMuon-Track with iterator it.
-      reco::TrackCollection::const_iterator i = it;
+      reco::MuonCollection::const_iterator i = it;
       i++;
 
-// loop over 2nd global muon candidate
-      for (; i != gmuons->end(); i++) {
+// loop over 2nd muon candidate
+      for (; i != muons->end(); i++) {
 
 // initialize hit counters for 2nd muon candidate
         int ValidHits1 = 0, PixelHits1 = 0;
@@ -415,7 +423,7 @@ using namespace std;
 //      are like or unlike charge, since the decaying parents are neutral
 
         if (it->charge() == -(i->charge()) // unlike charges
-// and cut on quality of 2nd global muon candidate
+// and cut on quality of 2nd muon candidate
             && ValidHits1 >= 12
             && PixelHits1 >= 2
             && i->normalizedChi2() < 4.0) {
@@ -447,15 +455,15 @@ using namespace std;
            
            if (eta21pt1510(it->eta(),i->eta(),it->pt(),i->pt(),it->px(),it->py(),i->px(),i->py(),s)){
             h66->Fill(s);
-            h11->Fill(gmuons->size());
+            h11->Fill(muons->size());
               if (iprequire(it->vertex().Rho(),it->vertex().Z())){
                 h661->Fill(s);
               }
            } // import bounds in 10.1103/PhysRevD.100.015021
 
         } // end of unlike charge if
-      }   //end of for(;i!=gmuons....)
-    }   //end of if(gmuons->size >=2 .....)
+      }   //end of for(;i!=muons....)
+    }   //end of if(muons->size >=2 .....)
   }   //end of reco ::TrackCollection loop
 } //DimuonSpectrum2011MC: analyze ends
 
