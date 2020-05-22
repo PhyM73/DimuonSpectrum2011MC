@@ -426,7 +426,7 @@ using namespace std;
 // and cut on quality of 2nd muon candidate
             && ValidHits1 >= 12
             && PixelHits1 >= 2
-            && i->normalizedChi2() < 4.0) {
+            && i->globalTrack()->normalizedChi2() < 4.0) {
 
 //----------Calculate invariant mass-----------------//
 // WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
