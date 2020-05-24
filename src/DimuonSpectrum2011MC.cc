@@ -394,7 +394,7 @@ using namespace std;
 // WHAT: Fill number of ValidHits and PixelHits in current globalMuon-Track
 //       into histogram
 // WHY:  to check distribution before cuts
-    h60->Fill(ValidHits - p.numberOfValidMuonHits());
+    h60->Fill(ValidHits - p.numberOfValidHits());
     h61->Fill(PixelHits- p.numberOfValidPixelHits());
 
 // loop over globalMuon-Tracks satisfying quality cuts //
