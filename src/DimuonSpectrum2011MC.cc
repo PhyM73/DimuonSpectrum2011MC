@@ -361,7 +361,9 @@ using namespace std;
 // the following can be uncommented if more log information is wished
   // LogInfo("Demo")<<"muon track p"<<it->p()<<"  muon track pos"<<it->referencePoint()<<" muon track vertex"<<it->vertex();
   math::XYZPoint point(primvtx[0].position());
-  LogInfo("Demo")<<" muon track vertex"<<it->vertex()<<" gmoun track vertex"<<it->globalTrack()->vertex()<<"\n muon track dxy"<<it->globalTrack()->dxy(point)<<" muon track dz"<<it->globalTrack()->dz(point);
+  LogInfo("Demo")<<" muon track vertex r"<<it->vertex().Rho()<<" muon track vertex z"<<it->vertex().Z()
+  <<"\n gmoun track vertex"<<it->globalTrack()->vertex().Rho()<<" gmuon track vertex z"<<it->globalTrack()->vertex.Z()
+  <<"\n muon track dxy"<<it->globalTrack()->dxy(point)<<" muon track dz"<<it->globalTrack()->dz(point);
 //-----------------prepare variables to determine quality cuts---------------//
 // WHAT: 1) Find out the number of Hits in the current globalMuon-Track
 //       2) Determine if there are enough Hits that are considered to be Valid
