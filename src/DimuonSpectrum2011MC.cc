@@ -363,7 +363,7 @@ using namespace std;
   math::XYZPoint point(primvtx[0].position());
   LogInfo("Demo")<<" muon track vertex r"<<it->vertex().Rho()<<" muon track vertex z"<<it->vertex().Z()
   <<"\n gmoun track vertex"<<it->globalTrack()->vertex().Rho()<<" gmuon track vertex z"<<it->globalTrack()->vertex().Z()
-  <<"\n muon track dxy"<<it->globalTrack()->dxy(point)<<" muon track dz"<<it->globalTrack()->dz(point);
+  <<"\n muon track dxy"<<it->bestTrack()->dxy(point)<<" muon track dz"<<it->bestTrack()->dz(point);
 //-----------------prepare variables to determine quality cuts---------------//
 // WHAT: 1) Find out the number of Hits in the current globalMuon-Track
 //       2) Determine if there are enough Hits that are considered to be Valid
@@ -394,8 +394,8 @@ using namespace std;
 // WHAT: Fill number of ValidHits and PixelHits in current globalMuon-Track
 //       into histogram
 // WHY:  to check distribution before cuts
-    h60->Fill(ValidHits);
-    h61->Fill(PixelHits);
+    h60->Fill(ValidHits - p.numberOfValidMuonHits());
+    h61->Fill(PixelHits- p.numberOfValidPixelHits());
 
 // loop over globalMuon-Tracks satisfying quality cuts //
 
