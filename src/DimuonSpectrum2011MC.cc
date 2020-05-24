@@ -478,9 +478,9 @@ using namespace std;
             // h11->Fill(muons->size());
               if (iprequire(it->vertex().Rho(),it->vertex().Z(),i->vertex().Rho(),i->vertex().Z())){
                 h661->Fill(s);
-                if (it->isolationValid() && i->isolationValid()) {
-                 iso1=(it->isolationR03().hadEt+it->isolationR03().emEt+it->isolationR03().sumPt)/it->pt();
-                 iso2=(i->isolationR03().hadEt+i->isolationR03().emEt+i->isolationR03().sumPt)/i->pt();
+                if (it->isIsolationValid() && i->isIsolationValid()) {
+                 float iso1=(it->isolationR03().hadEt+it->isolationR03().emEt+it->isolationR03().sumPt)/it->pt();
+                 float iso2=(i->isolationR03().hadEt+i->isolationR03().emEt+i->isolationR03().sumPt)/i->pt();
                  if (iso1<0.15 && iso2<0.15) h662->Fill(s);
                 }
               }
