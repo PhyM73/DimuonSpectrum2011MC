@@ -290,11 +290,11 @@ using namespace std;
 
 // Event is to be analyzed
 
-  LogInfo("Demo")
-  << "Starting to analyze \n"
-  << "Event number: " << (iEvent.id()).event()
-  << ", Run number: " << iEvent.run()
-  << ", Lumisection: " << iEvent.luminosityBlock();
+  // LogInfo("Demo")
+  // << "Starting to analyze \n"
+  // << "Event number: " << (iEvent.id()).event()
+  // << ", Run number: " << iEvent.run()
+  // << ", Lumisection: " << iEvent.luminosityBlock();
 
 //------------------Load (relevant) Event information------------------------//
 // INFO: Getting Data From an Event
@@ -360,9 +360,8 @@ using namespace std;
 
 // the following can be uncommented if more log information is wished
   // LogInfo("Demo")<<"muon track p"<<it->p()<<"  muon track pos"<<it->referencePoint()<<" muon track vertex"<<it->vertex();
-  LogInfo("Demo")<<" muon track vertex"<<it->vertex();
   math::XYZPoint point(primvtx[0].position());
-  LogInfo("Demo")<<" muon track dxy"<<it->globalTrack()->dxy(point)<<" muon track dz"<<it->globalTrack()->dz(point);
+  LogInfo("Demo")<<" muon track vertex"<<it->vertex()<<" gmoun track vertex"<<it->globalTrack()->vertex()<<"\n muon track dxy"<<it->globalTrack()->dxy(point)<<" muon track dz"<<it->globalTrack()->dz(point);
 //-----------------prepare variables to determine quality cuts---------------//
 // WHAT: 1) Find out the number of Hits in the current globalMuon-Track
 //       2) Determine if there are enough Hits that are considered to be Valid
