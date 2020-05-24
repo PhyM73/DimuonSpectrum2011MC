@@ -478,7 +478,11 @@ using namespace std;
             // h11->Fill(muons->size());
               if (iprequire(it->vertex().Rho(),it->vertex().Z(),i->vertex().Rho(),i->vertex().Z())){
                 h661->Fill(s);
-                if (it->isolationR03()<0.15 && i->isolationR03()<0.15) h662->Fill(s);
+                if (it->isolationValid() && i->isolationValid()) {
+                 iso1=(it->isolationR03().hadEt+it->isolationR03().emEt+it->isolationR03().sumPt)/it->pt();
+                 iso2=(i->isolationR03().hadEt+i->isolationR03().emEt+i->isolationR03().sumPt)/i->pt();
+                 if (iso1<0.15 && iso2<0.15) h662->Fill(s);
+                }
               }
            } // import bounds in 10.1103/PhysRevD.100.015021
 
