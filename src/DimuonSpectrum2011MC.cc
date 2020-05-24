@@ -68,6 +68,11 @@
 #include "DataFormats/MuonReco/interface/MuonIsolation.h"
 #include "DataFormats/MuonReco/interface/MuonMETCorrectionData.h"
 #include "DataFormats/MuonReco/interface/MuonTimeExtra.h"
+
+// for vertex information 
+#include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/VertexReco/interface/VertexFwd.h"
+
 // class declaration
 //
 
@@ -82,7 +87,7 @@ private:
         virtual void endJob();
         bool providesGoodLumisection(const edm::Event& iEvent);
         bool eta21pt1510(double eta1, double eta2, double pt1, double pt2, double px1, double py1, double px2, double py2, double m);
-        bool iprequire(double r1, double z1, double r2, double z2,);
+        bool iprequire(double r1, double z1, double r2, double z2);
 
 // ----------member data ---------------------------
 
@@ -305,6 +310,18 @@ using namespace std;
   Handle<reco::MuonCollection> muons;
   iEvent.getByLabel("muons", muons);
 
+  Handle<reco::VertexCollection> primvtxHandle;
+  iEvent.getByLabel("offlinePrimaryVertices", primvtxHandle);
+  reco::VertexCollection primvtx;
+  if ( primvtxHandle.isValid() )
+    {
+      primvtx = *primvtxHandle;
+
+    } else
+    {
+     LogInfo("Demo")<< "No primary vertex available from EventSetup \n";
+    }
+
 //------------------analysing Muons (muons-TrackCollection)----------//
 
 // WHAT: declare variables used later
@@ -343,7 +360,9 @@ using namespace std;
 
 // the following can be uncommented if more log information is wished
   // LogInfo("Demo")<<"muon track p"<<it->p()<<"  muon track pos"<<it->referencePoint()<<" muon track vertex"<<it->vertex();
-
+  LogInfo("Demo")<<" muon track vertex"<<it->vertex();
+  math::XYZPoint point(primvtx[0].position());
+  LogInfo("Demo")<<" muon track dxy"<<it->globalTrack()->dxy(point)<<" muon track dz"<<it->globalTrack()->dz(point);
 //-----------------prepare variables to determine quality cuts---------------//
 // WHAT: 1) Find out the number of Hits in the current globalMuon-Track
 //       2) Determine if there are enough Hits that are considered to be Valid
