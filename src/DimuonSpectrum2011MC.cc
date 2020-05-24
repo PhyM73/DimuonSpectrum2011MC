@@ -102,6 +102,7 @@ TH1D *h5;
 TH1D *h6;
 TH1D *h66;
 TH1D *h661;
+TH1D *h662;
 
 TH1D *h10;
 // TH1D *h11;
@@ -244,6 +245,11 @@ h66->GetYaxis()->SetTitle("Number of Events");
 h661 = fs->make<TH1D>("GM_mass_cut_IP", "GM mass Cut IP", 70, 10., 150.);
 h661->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h661->GetYaxis()->SetTitle("Number of Events");
+
+// dimuon mass spectrum up to 120 GeV after impose bound, single pair for an event
+h662 = fs->make<TH1D>("GM_mass_cut_IP_IS", "GM mass Cut IP IS", 70, 10., 150.);
+h662->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
+h662->GetYaxis()->SetTitle("Number of Events");
 
 // // muon multiplicity after cut, abundant
 // h11 = fs->make<TH1D>("Mmultiplicty_Cut_ab", "Mmultiplicity Cut ab", 8, 0, 8);
@@ -472,6 +478,7 @@ using namespace std;
             // h11->Fill(muons->size());
               if (iprequire(it->vertex().Rho(),it->vertex().Z(),i->vertex().Rho(),i->vertex().Z())){
                 h661->Fill(s);
+                if (it->isolationR03()<0.15 && i->isolationR03()<0.15) h662->Fill(s);
               }
            } // import bounds in 10.1103/PhysRevD.100.015021
 
