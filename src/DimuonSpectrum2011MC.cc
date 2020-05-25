@@ -154,7 +154,7 @@ edm::Service<TFileService> fs;
 // intended for muons from Mu sample
 
 // muon multiplicity
-h10 = fs->make<TH1D>("Mmultiplicty", "Mmultiplicity", 8, 0, 8);
+h10 = fs->make<TH1D>("Mmultiplicity", "Mmultiplicity", 8, 0, 8);
 h10->GetXaxis()->SetTitle("Number of Muons");
 h10->GetYaxis()->SetTitle("Number of Events");
 
@@ -450,8 +450,8 @@ using namespace std;
               if (iprequire(it->vertex().Rho(),it->vertex().Z(),i->vertex().Rho(),i->vertex().Z())){
                 h661->Fill(s);
                 if (it->isIsolationValid() && i->isIsolationValid()) {
-                 float iso1=(it->isolationR03().hadEt+it->isolationR03().emEt+it->isolationR03().sumPt)/it->pt();
-                 float iso2=(i->isolationR03().hadEt+i->isolationR03().emEt+i->isolationR03().sumPt)/i->pt();
+                 double iso1=(it->isolationR03().hadEt+it->isolationR03().emEt+it->isolationR03().sumPt)/it->pt();
+                 double iso2=(i->isolationR03().hadEt+i->isolationR03().emEt+i->isolationR03().sumPt)/i->pt();
                  if (iso1<0.15 && iso2<0.15) h662->Fill(s);
                 }
               }
