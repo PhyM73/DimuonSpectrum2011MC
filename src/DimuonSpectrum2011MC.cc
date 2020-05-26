@@ -338,12 +338,12 @@ using namespace std;
   
   int run = iEvent.run();
   if ( (muons->size() >= 2) &&
-      (run >= 165088 && run <= 167043) ||
-      (run >= 167078 && run <= 167913) ||
-      (run >= 170249 && run <= 173198) ||
-      (run >= 173236 && run <= 178380) ||
-      (run >= 178420 && run <= 179889) ||
-      (run >= 179959 && run <= 180252)){ // http://opendata.cern.ch/record/2698 
+      ((run >= 165088 && run <= 167043) ||
+       (run >= 167078 && run <= 167913) ||
+       (run >= 170249 && run <= 173198) ||
+       (run >= 173236 && run <= 178380) ||
+       (run >= 178420 && run <= 179889) ||
+       (run >= 179959 && run <= 180252)) ){ // http://opendata.cern.ch/record/2698 
         h71->Fill(0);
       }
 
