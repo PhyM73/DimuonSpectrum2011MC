@@ -336,7 +336,7 @@ using namespace std;
 // WHY:  for monitoring purposes
   h10->Fill(muons->size());
   
-  int run = iEvent.run()
+  int run = iEvent.run();
   if ( (muons->size() >= 2) &&
       (run >= 165088 && run <= 167043) ||
       (run >= 167078 && run <= 167913) ||
@@ -422,7 +422,7 @@ using namespace std;
                 && p1.numberOfValidPixelHits() >= 2
                 && i->globalTrack()->normalizedChi2() < 10.0) {
 
-              h72->Fill();
+              h72->Fill(0);
 
 //----------Calculate invariant mass-----------------//
 // WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
