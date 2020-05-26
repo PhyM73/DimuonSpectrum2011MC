@@ -89,6 +89,7 @@ private:
         bool eta21pt1510(double eta1, double eta2, double pt1, double pt2, 
                 double px1, double py1, double px2, double py2, double m);
         bool iprequire(double r1, double z1, double r2, double z2);
+        bool acceptZ(double pt1, double pt2, double eta1, double eta2, double m);
 
 // ----------member data ---------------------------
 
@@ -119,6 +120,7 @@ TH1D *h61;
 // TH1D *h100;
 TH1D *h101;
 
+TH1D *h7;
 
 };
 
@@ -213,14 +215,13 @@ h61 = fs->make<TH1D>("GM_pixelhits", "GM_pixelhits", 14, 0., 14);
 h61->GetXaxis()->SetTitle("Munber of pixel hits");
 h61->GetYaxis()->SetTitle("Number of Events");
 
-// main histogram for MUO-10-004
-
 // unlike sign dimuon invariant mass from muon selection,
 // binning chosen to correspond to log(0.3) - log(500), 200 bins/log10 unit
 // h100 = fs->make<TH1D>("GM_mass_log", "GM_mass_log", 644, -.52, 2.7);
 // h100->GetXaxis()->SetTitle("Invariant Log10(Mass) for Nmuon>=2 (in log10(m/GeV/c^2))");
 // h100->GetYaxis()->SetTitle("Number of Events/GeV");
 
+// main histogram for MUO-10-004
 // unlike sign dimuon invariant mass from muon selection,
 // binning chosen to correspond to log(0.3) - log(500), 200 bins/log10 unit
 Int_t nbins = 644;
@@ -252,6 +253,7 @@ h662 = fs->make<TH1D>("GM_mass_cut_IP_IS", "GM mass Cut IP IS", 70, 10., 150.);
 h662->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h662->GetYaxis()->SetTitle("Number of Events");
 
+
 // // muon multiplicity after cut, abundant
 // h11 = fs->make<TH1D>("Mmultiplicty_Cut_ab", "Mmultiplicity Cut ab", 8, 0, 8);
 // h11->GetXaxis()->SetTitle("Number of Muons after Cut");
@@ -261,6 +263,10 @@ h662->GetYaxis()->SetTitle("Number of Events");
 // h12 = fs->make<TH1D>("Mmultiplicty_Cut", "Mmultiplicity Cut", 8, 0, 8);
 // h12->GetXaxis()->SetTitle("Number of Muons after Cut");
 // h12->GetYaxis()->SetTitle("Number of Events");
+
+h7 = fs->make<TH1D>("Z_mass_win", "Z_mass_win", 1, 0, 1);
+h662->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
+h662->GetYaxis()->SetTitle("Number of Events");
 
 }
 
@@ -339,6 +345,7 @@ using namespace std;
 // WHY:  for monitoring purposes
   h10->Fill(muons->size());
 
+  bool accept = false;
 // WHAT: Loop over all the Muons of current Event
 // WHY:  to select good candidates to be used in invariant mass calculation
   for (reco::MuonCollection::const_iterator it = muons->begin();
@@ -369,13 +376,6 @@ using namespace std;
   // <<"\n muon track dxy"<<it->bestTrack()->dxy(point)<<" muon track dz"<<it->bestTrack()->dz(point);
   
 //-----------------prepare variables to determine quality cuts---------------//
-// WHAT: 1) Find out the number of Hits in the current globalMuon-Track
-//       2) Determine if there are enough Hits that are considered to be Valid
-//       3) Determine if there are enough Hits that have been recorded in the
-//          pixel detector(s).
-// WHY:  quality cuts are applied to eliminate badly reconstructed muon
-//       candidates
-    int ValidHits = 0, PixelHits = 0;
 
 // WHAT: Get HitPattern-object for Track of current Muon
 // WHY:  in order to count the number of hits on the track
@@ -394,8 +394,8 @@ using namespace std;
 //       (succeeding globalMuon-Tracks that are in the muons-MuonCollection)
 //       need at least two candidates to calculate dimuon mass
     if (muons->size() >= 2
-        && ValidHits >= 12
-        && PixelHits >= 2
+        && p.numberOfValidHits() >= 12
+        && p.numberOfValidPixelHits() >= 2
         && it->globalTrack()->normalizedChi2() < 10.0) {
 // NTS: Stores iterator for current globalMuon-Track and advances it by one.
 //      In other words, the needed preparation to be able to compare all the
@@ -452,7 +452,12 @@ using namespace std;
                 if (it->isIsolationValid() && i->isIsolationValid()) {
                  double iso1=(it->isolationR03().hadEt+it->isolationR03().emEt+it->isolationR03().sumPt)/it->pt();
                  double iso2=(i->isolationR03().hadEt+i->isolationR03().emEt+i->isolationR03().sumPt)/i->pt();
-                 if (iso1<0.15 && iso2<0.15) h662->Fill(s);
+                 if (iso1<0.15 && iso2<0.15) {
+                    h662->Fill(s);
+                   if (acceptZ(it->pt(),i->pt(),it->eta(),i->eta(),s)){
+                     accept = true;
+                   }
+                 }
                 }
               }
               } // import bounds in 10.1103/PhysRevD.100.015021
@@ -461,6 +466,9 @@ using namespace std;
         } //end of for(;i!=muons....)
       } //end of if(muons->size >=2 .....)
     } // end of if(it->isGlobalMuon() && it->globalTrack().isNonnull())
+    if (accept == false){
+      h7->Fill(0);
+    }
   } //end of reco ::MuonCollection loop
 } //DimuonSpectrum2011MC: analyze ends
 
@@ -476,8 +484,8 @@ void DimuonSpectrum2011MC::endJob() {
 bool DimuonSpectrum2011MC::eta21pt1510 (double eta1, double eta2, double pt1, double pt2,double px1, double py1, double px2, double py2, double m){
   double pt = sqrt((px1+px2)*(px1+px2)+(py1+py2)*(py1+py2));
   if ((fabs(eta1) < 2.1 && fabs(eta2) < 2.1)
-      && (pt1 > 10 && pt2 > 10)
-      && (pt1 > 15 || pt2 > 15)
+      && (pt1 > 10. && pt2 > 10.)
+      && (pt1 > 15. || pt2 > 15.)
       && (pt < m)){
     return true;
   } // import bounds and selections in 10.1103/PhysRevD.100.015021
@@ -485,11 +493,18 @@ bool DimuonSpectrum2011MC::eta21pt1510 (double eta1, double eta2, double pt1, do
 }
 
 bool DimuonSpectrum2011MC::iprequire (double r1, double z1, double r2, double z2){
-  if (r1 < 2 && fabs(z1) < 10 && r2 < 2 && fabs(z2) < 10){
+  if (r1 < 2. && fabs(z1) < 10. && r2 < 2. && fabs(z2) < 10.){
     return true;
   } 
   // IP requirement, the reconstructed muon tracks must intersect the primary vertex
   // within d < 2mm in the x–y plane and z < 10mm in the z direction.
+  return false;
+}
+
+bool DimuonSpectrum2011MC::acceptZ (double pt1, double pt2, double eta1, double eta2, double m){
+  if (pt1 > 20. && pt2 > 20. && fabs(eta1) < 2.1 && fabs(eta2) < 2.1 && m > 60. && m < 120.){
+    return true;
+  }
   return false;
 }
 
