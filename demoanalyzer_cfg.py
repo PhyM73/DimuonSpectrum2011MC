@@ -70,6 +70,6 @@ process.demo = cms.EDAnalyzer('DimuonSpectrum2011MC')
 # default is DoubleMuMC.root                                *
 # change this according to your wish                        *
 # ***********************************************************
-process.TFileService = cms.Service("TFileService", fileName=cms.string('DoubleMuMC.root'))
+process.TFileService = cms.Service("TFileService", fileName=cms.string('DoubleMu2011.root'))
 
 process.p = cms.Path(process.demo)
