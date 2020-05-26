@@ -466,10 +466,10 @@ using namespace std;
         } //end of for(;i!=muons....)
       } //end of if(muons->size >=2 .....)
     } // end of if(it->isGlobalMuon() && it->globalTrack().isNonnull())
-    if (accept == false){
-      h7->Fill(0);
-    }
   } //end of reco ::MuonCollection loop
+  if (accept == false){
+    h7->Fill(0);
+    }
 } //DimuonSpectrum2011MC: analyze ends
 
 
