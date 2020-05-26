@@ -488,14 +488,7 @@ bool DimuonSpectrum2011MC::iprequire (double r1, double z1, double r2, double z2
   return false;
 }
 
-bool DimuonSpectrum2011MC::acceptZ (double pt1, double pt2, double eta1, double eta2, double m){
-  if (pt1 > 20. && pt2 > 20. && fabs(eta1) < 2.1 && fabs(eta2) < 2.1 && m > 60. && m < 120.){
-    return true;
-  }
-  return false;
-}
-
-bool DimuonSpectrum2011MC::acceptZp (const reco::MuonCollection::const_iterator m1, const reco::MuonCollection::const_iterator m2, double s){
+bool DimuonSpectrum2011MC::acceptZ (const reco::MuonCollection::const_iterator m1, const reco::MuonCollection::const_iterator m2, double s){
   if (m1->pt() > 20. && m2->pt() > 20. 
      && fabs(m1->eta()) < 2.1 && fabs(m2->eta()) < 2.1 
      && s > 60. && s < 120.){
