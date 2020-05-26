@@ -48,7 +48,7 @@ for path, dir_list, file_list in datasets:
 # *** MonteCarlo data sets ***
 # mcfilelist = FileUtils.loadListFromFile('datasets/mc/CMS_MonteCarlo2011_Summer11LegDR_DYJetsToLL_M-10To50_TuneZ2_7TeV-pythia6_AODSIM_PU_S13_START53_LV6-v1_00000_file_index.txt')
 
-process.source = cms.Source("PoolSource", fileNames=cms.untracked.vstring(*dmfilelist))
+process.source = cms.Source("PoolSource", fileNames=cms.untracked.vstring(*datafilelist))
 
 # define JSON file for 2011 (replace by 2012 version for 2012 data)
 # apply JSON file (only for data)
