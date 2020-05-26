@@ -347,6 +347,7 @@ using namespace std;
         h71->Fill(0);
       }
 
+  bool os = false;
   bool accept = false;
 // WHAT: Loop over all the Muons of current Event
 // WHY:  to select good candidates to be used in invariant mass calculation
@@ -422,7 +423,7 @@ using namespace std;
                 && p1.numberOfValidPixelHits() >= 2
                 && i->globalTrack()->normalizedChi2() < 10.0) {
 
-              h72->Fill(0);
+              os = true;
 
 //----------Calculate invariant mass-----------------//
 // WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
@@ -466,6 +467,9 @@ using namespace std;
       } //end of if(muons->size >=2 .....)
     } // end of if(it->isGlobalMuon() && it->globalTrack().isNonnull())
   } //end of reco ::MuonCollection loop
+  if (os == true){
+    h72->Fill(0);
+  }
   if (accept == true){
     h73->Fill(0);
   }
