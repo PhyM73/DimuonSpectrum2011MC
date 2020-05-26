@@ -89,7 +89,8 @@ private:
         bool eta21pt1510(const reco::MuonCollection::const_iterator, 
                          const reco::MuonCollection::const_iterator, double);
         bool iprequire(double r1, double z1, double r2, double z2);
-        bool isolation(const reco::MuonCollection::const_iterator, const reco::MuonCollection::const_iterator)
+        bool isolation(const reco::MuonCollection::const_iterator, 
+                       const reco::MuonCollection::const_iterator);
         bool acceptZ(const reco::MuonCollection::const_iterator, const reco::MuonCollection::const_iterator, double);
 
 // ----------member data ---------------------------
