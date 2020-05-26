@@ -90,6 +90,7 @@ private:
                 double px1, double py1, double px2, double py2, double m);
         bool iprequire(double r1, double z1, double r2, double z2);
         bool acceptZ(double pt1, double pt2, double eta1, double eta2, double m);
+        bool acceptZp(const reco::Muon&, const reco::Muon&, double);
 
 // ----------member data ---------------------------
 
@@ -121,6 +122,7 @@ TH1D *h61;
 TH1D *h101;
 
 TH1D *h7;
+TH1D *h71;
 
 };
 
@@ -265,8 +267,12 @@ h662->GetYaxis()->SetTitle("Number of Events");
 // h12->GetYaxis()->SetTitle("Number of Events");
 
 h7 = fs->make<TH1D>("Z_mass_win", "Z_mass_win", 1, 0, 1);
-h662->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
-h662->GetYaxis()->SetTitle("Number of Events");
+h7->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
+h7->GetYaxis()->SetTitle("Number of Events");
+
+h71 = fs->make<TH1D>("Z_mass_win_cp", "Z_mass_win_cp", 1, 0, 1);
+h71->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
+h71->GetYaxis()->SetTitle("Number of Events");
 
 }
 
@@ -346,6 +352,7 @@ using namespace std;
   h10->Fill(muons->size());
 
   bool accept = false;
+  bool acceptp = false;
 // WHAT: Loop over all the Muons of current Event
 // WHY:  to select good candidates to be used in invariant mass calculation
   for (reco::MuonCollection::const_iterator it = muons->begin();
@@ -457,6 +464,9 @@ using namespace std;
                    if (acceptZ(it->pt(),i->pt(),it->eta(),i->eta(),s)){
                      accept = true;
                    }
+                   if (acceptZp(it,i,s)){
+                     acceptp = true;
+                   }
                  }
                 }
               }
@@ -467,8 +477,11 @@ using namespace std;
       } //end of if(muons->size >=2 .....)
     } // end of if(it->isGlobalMuon() && it->globalTrack().isNonnull())
   } //end of reco ::MuonCollection loop
-  if (accept == false){
+  if (accept == true){
     h7->Fill(0);
+    }
+  if (acceptp == true){
+    h71->Fill(0);
     }
 } //DimuonSpectrum2011MC: analyze ends
 
@@ -503,6 +516,15 @@ bool DimuonSpectrum2011MC::iprequire (double r1, double z1, double r2, double z2
 
 bool DimuonSpectrum2011MC::acceptZ (double pt1, double pt2, double eta1, double eta2, double m){
   if (pt1 > 20. && pt2 > 20. && fabs(eta1) < 2.1 && fabs(eta2) < 2.1 && m > 60. && m < 120.){
+    return true;
+  }
+  return false;
+}
+
+bool DimuonSpectrum2011MC::acceptZp (const reco::Muon& m1, const reco::Muon& m2, double s){
+  if (m1->pt() > 20. && m2->pt() > 20. 
+     && fabs(m1->eta()) < 2.1 && fabs(m2->eta()) < 2.1 
+     && s > 60. && s < 120.){
     return true;
   }
   return false;
