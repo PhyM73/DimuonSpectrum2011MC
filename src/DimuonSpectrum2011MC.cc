@@ -119,7 +119,9 @@ TH1D *h61;
 
 TH1D *h100;
 
-TH1D *h7;
+TH1D *h71;
+TH1D *h72;
+TH1D *h73;
 
 };
 
@@ -246,10 +248,17 @@ h662 = fs->make<TH1D>("GM_mass_cut_IP_IS", "GM mass Cut IP IS", 70, 10., 150.);
 h662->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h662->GetYaxis()->SetTitle("Number of Events");
 
+//  the number of dm events passed mu13mu8 HLT
+h71 = fs->make<TH1D>("Mu13Mu8", "Mu13Mu8", 1, 0, 1);
+h71->GetYaxis()->SetTitle("Number of Events");
+
+//  the number of OS events passed Baseline Acceptance & Tight Muon Cuts
+h72 = fs->make<TH1D>("OS", "OS", 1, 0, 1);
+h72->GetYaxis()->SetTitle("Number of Events");
+
 //  the number of Z candidates
-h7 = fs->make<TH1D>("Z_mass_win", "Z_mass_win", 1, 0, 1);
-h7->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
-h7->GetYaxis()->SetTitle("Number of Events");
+h73 = fs->make<TH1D>("Z_mass_win", "Z_mass_win", 1, 0, 1);
+h73->GetYaxis()->SetTitle("Number of Events");
 
 }
 
@@ -326,6 +335,17 @@ using namespace std;
 // WHAT: Fill histogram of the number of Muon-Tracks in the current Event.
 // WHY:  for monitoring purposes
   h10->Fill(muons->size());
+  
+  run = iEvent.run()
+  if ( (muons->size() >= 2) &&
+      (run >= 165088 && run <= 167043) ||
+      (run >= 167078 && run <= 167913) ||
+      (run >= 170249 && run <= 173198) ||
+      (run >= 173236 && run <= 178380) ||
+      (run >= 178420 && run <= 179889) ||
+      (run >= 179959 && run <= 180252)){
+        h71->Fill(0);
+      }
 
   bool accept = false;
 // WHAT: Loop over all the Muons of current Event
@@ -402,6 +422,8 @@ using namespace std;
                 && p1.numberOfValidPixelHits() >= 2
                 && i->globalTrack()->normalizedChi2() < 10.0) {
 
+              h72->Fill();
+
 //----------Calculate invariant mass-----------------//
 // WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
 // (Iterators "it" and "i")
@@ -445,7 +467,7 @@ using namespace std;
     } // end of if(it->isGlobalMuon() && it->globalTrack().isNonnull())
   } //end of reco ::MuonCollection loop
   if (accept == true){
-    h7->Fill(0);
+    h73->Fill(0);
   }
 } //DimuonSpectrum2011MC: analyze ends
 
