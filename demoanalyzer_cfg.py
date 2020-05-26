@@ -54,10 +54,10 @@ process.source = cms.Source("PoolSource", fileNames=cms.untracked.vstring(*dataf
 # apply JSON file (only for data)
 #   (needs to be placed *after* the process.source input file definition!)
 #
-goodJSON = 'datasets/Cert_160404-180252_7TeV_ReRecoNov08_Collisions11_JSON.txt'
-myLumis = LumiList.LumiList(filename=goodJSON).getCMSSWString().split(',')
-process.source.lumisToProcess = CfgTypes.untracked(CfgTypes.VLuminosityBlockRange())
-process.source.lumisToProcess.extend(myLumis)
+# goodJSON = 'datasets/Cert_160404-180252_7TeV_ReRecoNov08_Collisions11_JSON.txt'
+# myLumis = LumiList.LumiList(filename=goodJSON).getCMSSWString().split(',')
+# process.source.lumisToProcess = CfgTypes.untracked(CfgTypes.VLuminosityBlockRange())
+# process.source.lumisToProcess.extend(myLumis)
 
 # *************************************************
 # number of events to be skipped (0 by default)   *
@@ -70,6 +70,6 @@ process.demo = cms.EDAnalyzer('DimuonSpectrum2011MC')
 # default is DoubleMuMC.root                                *
 # change this according to your wish                        *
 # ***********************************************************
-process.TFileService = cms.Service("TFileService", fileName=cms.string('DoubleMu2011.root'))
+process.TFileService = cms.Service("TFileService", fileName=cms.string('DoubleMuMC.root'))
 
 process.p = cms.Path(process.demo)

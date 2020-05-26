@@ -91,6 +91,7 @@ private:
         bool iprequire(double r1, double z1, double r2, double z2);
         bool acceptZ(const reco::MuonCollection::const_iterator, const reco::MuonCollection::const_iterator, double);
 
+
 // ----------member data ---------------------------
 
 // declare Root histograms
@@ -121,6 +122,7 @@ TH1D *h100;
 
 TH1D *h7;
 TH1D *h71;
+
 
 };
 
@@ -247,6 +249,7 @@ h662 = fs->make<TH1D>("GM_mass_cut_IP_IS", "GM mass Cut IP IS", 70, 10., 150.);
 h662->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h662->GetYaxis()->SetTitle("Number of Events");
 
+
 // // muon multiplicity after cut, abundant
 // h11 = fs->make<TH1D>("Mmultiplicty_Cut_ab", "Mmultiplicity Cut ab", 8, 0, 8);
 // h11->GetXaxis()->SetTitle("Number of Muons after Cut");
@@ -255,6 +258,10 @@ h662->GetYaxis()->SetTitle("Number of Events");
 h7 = fs->make<TH1D>("Z_mass_win_cp", "Z_mass_win_cp", 1, 0, 1);
 h7->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h7->GetYaxis()->SetTitle("Number of Events");
+
+h7 = fs->make<TH1D>("Z_mass_win", "Z_mass_win", 1, 0, 1);
+h662->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
+h662->GetYaxis()->SetTitle("Number of Events");
 
 }
 
@@ -453,6 +460,9 @@ using namespace std;
         } //end of for(;i!=muons....)
       } //end of if(muons->size >=2 .....)
     } // end of if(it->isGlobalMuon() && it->globalTrack().isNonnull())
+    if (accept == false){
+      h7->Fill(0);
+    }
   } //end of reco ::MuonCollection loop
   if (accept == true){
     h7->Fill(0);
