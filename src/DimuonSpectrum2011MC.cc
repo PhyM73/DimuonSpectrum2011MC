@@ -86,9 +86,10 @@ private:
         virtual void analyze(const edm::Event&, const edm::EventSetup&);
         virtual void endJob();
         bool providesGoodLumisection(const edm::Event& iEvent);
-        bool eta21pt1510(double eta1, double eta2, double pt1, double pt2, 
-                double px1, double py1, double px2, double py2, double m);
+        bool eta21pt1510(const reco::MuonCollection::const_iterator, 
+                         const reco::MuonCollection::const_iterator, double);
         bool iprequire(double r1, double z1, double r2, double z2);
+        bool isolation(const reco::MuonCollection::const_iterator, const reco::MuonCollection::const_iterator)
         bool acceptZ(const reco::MuonCollection::const_iterator, const reco::MuonCollection::const_iterator, double);
 
 // ----------member data ---------------------------
@@ -107,8 +108,6 @@ TH1D *h661;
 TH1D *h662;
 
 TH1D *h10;
-// TH1D *h11;
-// TH1D *h12;
 
 TH1D *h53;
 TH1D *h54;
@@ -137,11 +136,11 @@ TH1D *h7;
 
 DimuonSpectrum2011MC::DimuonSpectrum2011MC(const edm::ParameterSet& iConfig) {
 
-// *****************************************************************
+// ***************************************************************************
 // This is the main analysis routine
-// The goal is to approximately reproduce the dimuon mass spectrum
-// from MUO-10-004
-// *****************************************************************
+// The goal is to approximately reproduce the dimuon mass spectrum from 
+// MUO-10-004 and reproduce the validation test in 10.1103/PhysRevD.100.015021
+// ***************************************************************************
 
 //now do what ever initialization is needed
 edm::Service<TFileService> fs;
@@ -246,12 +245,8 @@ h662 = fs->make<TH1D>("GM_mass_cut_IP_IS", "GM mass Cut IP IS", 70, 10., 150.);
 h662->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h662->GetYaxis()->SetTitle("Number of Events");
 
-// // muon multiplicity after cut, abundant
-// h11 = fs->make<TH1D>("Mmultiplicty_Cut_ab", "Mmultiplicity Cut ab", 8, 0, 8);
-// h11->GetXaxis()->SetTitle("Number of Muons after Cut");
-// h11->GetYaxis()->SetTitle("Number of Events");
-
-h7 = fs->make<TH1D>("Z_mass_win_cp", "Z_mass_win_cp", 1, 0, 1);
+//  the number of Z candidates
+h7 = fs->make<TH1D>("Z_mass_win", "Z_mass_win", 1, 0, 1);
 h7->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h7->GetYaxis()->SetTitle("Number of Events");
 
@@ -320,15 +315,14 @@ using namespace std;
 
 //------------------analysing Muons (muons-TrackCollection)----------//
 
-// WHAT: declare variables used later
+// WHAT: Declare variables used later
   double sqm1, s1, s2, s, w;
 
-// WHAT: set square of muon mass
-// WHY:  needed in later calculations
+// WHAT: Set square of muon mass
+// WHY:  Needed in later calculations
   sqm1 = (0.105658) * (0.105658);
 
-// WHAT: Fill histogram of the number of Muon-Tracks
-//       in the current Event.
+// WHAT: Fill histogram of the number of Muon-Tracks in the current Event.
 // WHY:  for monitoring purposes
   h10->Fill(muons->size());
 
@@ -337,7 +331,7 @@ using namespace std;
 // WHY:  to select good candidates to be used in invariant mass calculation
   for (reco::MuonCollection::const_iterator it = muons->begin();
     it != muons->end(); it++) {
-  if (it->isGlobalMuon() && (it->globalTrack()).isNonnull()){
+    if (it->isGlobalMuon() && (it->globalTrack()).isNonnull()){
 // WHAT: Fill histograms for the following attributes from the current Muon-Track:
 // - p (momentum vector magnitude)
 // - pt (track transverse momentum)
@@ -346,13 +340,13 @@ using namespace std;
 // - ndof (number of degrees of freedom of the fit)
 // - normalizedChi2 (normalized chi-square == chi-squared divided by ndof
 //                   OR chi-squared * 1e6 if ndof is zero)
-    h1->Fill(it->p());
-    h2->Fill(it->pt());
-    h3->Fill(it->eta());
-    h4->Fill(it->phi());
-    h53->Fill(it->globalTrack()->chi2());
-    h54->Fill(it->globalTrack()->ndof());
-    h55->Fill(it->globalTrack()->normalizedChi2());
+      h1->Fill(it->p());
+      h2->Fill(it->pt());
+      h3->Fill(it->eta());
+      h4->Fill(it->phi());
+      h53->Fill(it->globalTrack()->chi2());
+      h54->Fill(it->globalTrack()->ndof());
+      h55->Fill(it->globalTrack()->normalizedChi2());
 
 // the following can be uncommented if more log information is wished
   // LogInfo("Demo")<<"muon track p"<<it->p()<<"  muon track pos"<<it->referencePoint()<<" muon track vertex"<<it->vertex();
@@ -366,13 +360,13 @@ using namespace std;
 
 // WHAT: Get HitPattern-object for Track of current Muon
 // WHY:  in order to count the number of hits on the track
-    const reco::HitPattern& p = it->globalTrack()->hitPattern();
+      const reco::HitPattern& p = it->globalTrack()->hitPattern();
 
 // WHAT: Fill number of ValidHits and PixelHits in current globalMuon-Track
 //       into histogram
 // WHY:  to check distribution before cuts
-    h60->Fill(p.numberOfValidHits());
-    h61->Fill(p.numberOfValidPixelHits());
+      h60->Fill(p.numberOfValidHits());
+      h61->Fill(p.numberOfValidPixelHits());
 
 // loop over globalMuon-Tracks satisfying quality cuts //
 
@@ -380,72 +374,68 @@ using namespace std;
 //       compared to other globalMuon-Tracks that come after this current one.
 //       (succeeding globalMuon-Tracks that are in the muons-MuonCollection)
 //       need at least two candidates to calculate dimuon mass
-    if (muons->size() >= 2
-        && p.numberOfValidHits() >= 12
-        && p.numberOfValidPixelHits() >= 2
-        && it->globalTrack()->normalizedChi2() < 10.0) {
+      if (muons->size() >= 2
+          && p.numberOfValidHits() >= 12
+          && p.numberOfValidPixelHits() >= 2
+          && it->globalTrack()->normalizedChi2() < 10.0) {
 // NTS: Stores iterator for current globalMuon-Track and advances it by one.
 //      In other words, the needed preparation to be able to compare all the
 //      other globalMuon-Tracks after
 //      the current one to the current globalMuon-Track with iterator it.
-      reco::MuonCollection::const_iterator i = it;
-      i++;
+        reco::MuonCollection::const_iterator i = it;
+        i++;
 
 // loop over 2nd muon candidate
-      for (; i != muons->end(); i++) {
-        if (i->isGlobalMuon() && (i->globalTrack()).isNonnull()){
-
-        const reco::HitPattern& p1 = i->globalTrack()->hitPattern();
+        for (; i != muons->end(); i++) {
+          if (i->isGlobalMuon() && (i->globalTrack()).isNonnull()){
+          
+            const reco::HitPattern& p1 = i->globalTrack()->hitPattern();
 
 // WHAT: Compare electric charges of the current two globalMuon-Tracks
 //       (Iterators "it" and "i")
-// WHY: Need to find out if the charges of the current two globalMuons-Tracks
+// WHY:  Need to find out if the charges of the current two globalMuons-Tracks
 //      are like or unlike charge, since the decaying parents are neutral
-        if (it->charge() == -(i->charge()) // unlike charges
+            if (it->charge() == -(i->charge()) // unlike charges
 // and cut on quality of 2nd muon candidate
-            && p1.numberOfValidHits() >= 12
-            && p1.numberOfValidPixelHits() >= 2
-            && i->globalTrack()->normalizedChi2() < 10.0) {
+                && p1.numberOfValidHits() >= 12
+                && p1.numberOfValidPixelHits() >= 2
+                && i->globalTrack()->normalizedChi2() < 10.0) {
 
 //----------Calculate invariant mass-----------------//
 // WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
 // (Iterators "it" and "i")
-// WHY: in order to fill the mass histogram
-          s1 = sqrt(((it->p())*(it->p()) + sqm1) * ((i->p())*(i->p()) + sqm1));
-          s2 = it->px()*i->px() + it->py()*i->py() + it->pz()*i->pz();
-          s = sqrt(2.0 * (sqm1 + (s1 - s2)));
+// WHY:  in order to fill the mass histogram
+              s1 = sqrt(((it->p())*(it->p()) + sqm1) * ((i->p())*(i->p()) + sqm1));
+              s2 = it->px()*i->px() + it->py()*i->py() + it->pz()*i->pz();
+              s = sqrt(2.0 * (sqm1 + (s1 - s2)));
 
 // WHAT: Store the invariant mass of two muons with unlike sign charges in
 //       linear scale
 // WHY:  in order to see the various mass peaks on linear scale
-          if (fabs(it->eta()) < 2.4 && fabs(i->eta()) < 2.4){
-            h5->Fill(s);}
-          h6->Fill(s);
+              if (fabs(it->eta()) < 2.4 && fabs(i->eta()) < 2.4){
+                h5->Fill(s);}
+              h6->Fill(s);
 
-// WHAT: apply weight 200/(ln10*m/GeV) according to histogram binning
-// WHY: to convert units to events/GeV in logarithmic mass plot
-          w = 200 / log(10) / s;
+// WHAT: Apply weight 200/(ln10*m/GeV) according to histogram binning
+// WHY:  to convert units to events/GeV in logarithmic mass plot
+              w = 200 / log(10) / s;
 
 // WHAT: Store the invariant mass of two muons with unlike charges in log scale
 // WHY: Reproduce the "Invariant mass spectrum of dimuons in events"-plot
 //      from MUO-10-004
-          h100->Fill(s, w); // MUO-10-004 with MuonCollection
+              h100->Fill(s, w); // MUO-10-004 with MuonCollection
            
-           if (eta21pt1510(it->eta(),i->eta(),it->pt(),i->pt(),it->px(),it->py(),i->px(),i->py(),s)){
-            h66->Fill(s);
-              if (iprequire(it->vertex().Rho(),it->vertex().Z(),i->vertex().Rho(),i->vertex().Z())){
-                h661->Fill(s);
-                if (it->isIsolationValid() && i->isIsolationValid()) {
-                 double iso1=(it->isolationR03().hadEt+it->isolationR03().emEt+it->isolationR03().sumPt)/it->pt();
-                 double iso2=(i->isolationR03().hadEt+i->isolationR03().emEt+i->isolationR03().sumPt)/i->pt();
-                 if (iso1<0.15 && iso2<0.15) {
+              if (eta21pt1510(it,i,s)){
+                h66->Fill(s);
+                if (iprequire(it->vertex().Rho(),it->vertex().Z(),i->vertex().Rho(),i->vertex().Z())){
+                  h661->Fill(s);
+                  if (isolation(it,i)) {
                     h662->Fill(s);
-                   if (acceptZ(it,i,s)){
-                     accept = true;
-                   }
-                 }
+                    if (acceptZ(it,i,s)){
+                      accept = true;
+                    }  
+                  }
                 }
-              }
               } // import bounds in 10.1103/PhysRevD.100.015021
             } // end of unlike charge if
           } // end of if(i->isGlobalMuon() && i->globalTrack().isNonnull())
@@ -455,7 +445,7 @@ using namespace std;
   } //end of reco ::MuonCollection loop
   if (accept == true){
     h7->Fill(0);
-    }
+  }
 } //DimuonSpectrum2011MC: analyze ends
 
 
@@ -467,12 +457,14 @@ void DimuonSpectrum2011MC::beginJob() {
 void DimuonSpectrum2011MC::endJob() {
 }
 
-bool DimuonSpectrum2011MC::eta21pt1510 (double eta1, double eta2, double pt1, double pt2,double px1, double py1, double px2, double py2, double m){
-  double pt = sqrt((px1+px2)*(px1+px2)+(py1+py2)*(py1+py2));
-  if ((fabs(eta1) < 2.1 && fabs(eta2) < 2.1)
-      && (pt1 > 10. && pt2 > 10.)
-      && (pt1 > 15. || pt2 > 15.)
-      && (pt < m)){
+bool DimuonSpectrum2011MC::eta21pt1510 (const reco::MuonCollection::const_iterator m1, 
+       const reco::MuonCollection::const_iterator m2, double s){
+  double pt = sqrt( pow(m1->px()+m2->px(), 2.0) + pow(m1->py()+m2->py(), 2.0) );
+
+  if ((fabs(m1->eta()) < 2.1 && fabs(m2->eta()) < 2.1)
+      && (m1->pt() > 10. && m2->pt() > 10.)
+      && (m1->pt() > 15. || m2->pt() > 15.)
+      && (pt < s)){
     return true;
   } // import bounds and selections in 10.1103/PhysRevD.100.015021
   return false;
@@ -487,7 +479,20 @@ bool DimuonSpectrum2011MC::iprequire (double r1, double z1, double r2, double z2
   return false;
 }
 
-bool DimuonSpectrum2011MC::acceptZ (const reco::MuonCollection::const_iterator m1, const reco::MuonCollection::const_iterator m2, double s){
+bool DimuonSpectrum2011MC::isolation (const reco::MuonCollection::const_iterator m1, 
+       const reco::MuonCollection::const_iterator m2){
+  if (m1->isIsolationValid() && m2->isIsolationValid()) {
+    double iso1=(m1->isolationR03().hadEt+m1->isolationR03().emEt+m1->isolationR03().sumPt)/m1->pt();
+    double iso2=(m2->isolationR03().hadEt+m2->isolationR03().emEt+m2->isolationR03().sumPt)/m2->pt();
+    if (iso1 < 0.15 && iso2 < 0.15){
+      return true;
+    }
+  }
+  return false;
+}
+
+bool DimuonSpectrum2011MC::acceptZ (const reco::MuonCollection::const_iterator m1, 
+       const reco::MuonCollection::const_iterator m2, double s){
   if (m1->pt() > 20. && m2->pt() > 20. 
      && fabs(m1->eta()) < 2.1 && fabs(m2->eta()) < 2.1 
      && s > 60. && s < 120.){
