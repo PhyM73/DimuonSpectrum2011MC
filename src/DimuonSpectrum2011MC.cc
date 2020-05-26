@@ -91,6 +91,7 @@ private:
         bool iprequire(double r1, double z1, double r2, double z2);
         bool acceptZ(const reco::MuonCollection::const_iterator, const reco::MuonCollection::const_iterator, double);
 
+
 // ----------member data ---------------------------
 
 // declare Root histograms
