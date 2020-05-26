@@ -90,7 +90,7 @@ private:
                 double px1, double py1, double px2, double py2, double m);
         bool iprequire(double r1, double z1, double r2, double z2);
         bool acceptZ(double pt1, double pt2, double eta1, double eta2, double m);
-        bool acceptZp(const reco::Muon&, const reco::Muon&, double);
+        bool acceptZp(const reco::MuonCollection::const_iterator, const reco::MuonCollection::const_iterator, double);
 
 // ----------member data ---------------------------
 
@@ -521,7 +521,7 @@ bool DimuonSpectrum2011MC::acceptZ (double pt1, double pt2, double eta1, double 
   return false;
 }
 
-bool DimuonSpectrum2011MC::acceptZp (const reco::Muon& m1, const reco::Muon& m2, double s){
+bool DimuonSpectrum2011MC::acceptZp (const reco::MuonCollection::const_iterator m1, const reco::MuonCollection::const_iterator m2, double s){
   if (m1->pt() > 20. && m2->pt() > 20. 
      && fabs(m1->eta()) < 2.1 && fabs(m2->eta()) < 2.1 
      && s > 60. && s < 120.){
