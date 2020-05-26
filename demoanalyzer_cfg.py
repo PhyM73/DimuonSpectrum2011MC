@@ -16,7 +16,7 @@ process.options = cms.untracked.PSet(wantSummary=cms.untracked.bool(True))
 #    according to need and wish                                        *
 #    default is preset to 10000 events                                 *
 # **********************************************************************
-process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(100000))
+process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(-1))
 
 # set the number of events to be skipped (if any) at end of file below
 
@@ -36,14 +36,14 @@ import FWCore.Utilities.FileUtils as FileUtils
 #
 
 # read the index files automatically
-# datafilelist = []
-# datasets = FileUtils.os.walk(r"./data")
-# for path, dir_list, file_list in datasets:
-#     for indexfile in file_list:
-#         datafilelist.extend(FileUtils.loadListFromFile(FileUtils.os.path.join(path, indexfile)))
+datafilelist = []
+datasets = FileUtils.os.walk(r"./data")
+for path, dir_list, file_list in datasets:
+    for indexfile in file_list:
+        datafilelist.extend(FileUtils.loadListFromFile(FileUtils.os.path.join(path, indexfile)))
 
 # *** 2011 DoubleMu data set, single file ***
-dmfilelist = FileUtils.loadListFromFile('datasets/double/CMS_Run2011A_DoubleMu_AOD_12Oct2013-v1_10000_file_index.txt')
+# dmfilelist = FileUtils.loadListFromFile('datasets/double/CMS_Run2011A_DoubleMu_AOD_12Oct2013-v1_10000_file_index.txt')
 
 # *** MonteCarlo data sets ***
 # mcfilelist = FileUtils.loadListFromFile('datasets/mc/CMS_MonteCarlo2011_Summer11LegDR_DYJetsToLL_M-10To50_TuneZ2_7TeV-pythia6_AODSIM_PU_S13_START53_LV6-v1_00000_file_index.txt')
