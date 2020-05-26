@@ -89,8 +89,7 @@ private:
         bool eta21pt1510(double eta1, double eta2, double pt1, double pt2, 
                 double px1, double py1, double px2, double py2, double m);
         bool iprequire(double r1, double z1, double r2, double z2);
-        bool acceptZ(double pt1, double pt2, double eta1, double eta2, double m);
-        bool acceptZp(const reco::MuonCollection::const_iterator, const reco::MuonCollection::const_iterator, double);
+        bool acceptZ(const reco::MuonCollection::const_iterator, const reco::MuonCollection::const_iterator, double);
 
 // ----------member data ---------------------------
 
@@ -118,8 +117,7 @@ TH1D *h55;
 TH1D *h60;
 TH1D *h61;
 
-// TH1D *h100;
-TH1D *h101;
+TH1D *h100;
 
 TH1D *h7;
 TH1D *h71;
@@ -182,13 +180,13 @@ h4 = fs->make<TH1D>("GM_phi", "GM_phi", 314, -3.15, 3.15);
 h4->GetXaxis()->SetTitle("Phi");
 h4->GetYaxis()->SetTitle("Number of Events");
 
-// dimuon mass spectrum up to 4 GeV (low mass range, rho/omega, phi, psi)
-h5 = fs->make<TH1D>("GMmass" , "GMmass" , 40, 8. , 12. );
+// dimuon mass spectrum, 8 to 12 GeV (upsilon)
+h5 = fs->make<TH1D>("GMmass_up" , "GMmass_up" , 40, 8. , 12. );
 h5->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h5->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 120 GeV (high mass range: upsilon, Z)
-h6 = fs->make<TH1D>("GMmass_extended" , "GMmass" , 150, 0. , 150. );
+h6 = fs->make<TH1D>("GMmass" , "GMmass" , 150, 0. , 150. );
 h6->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h6->GetYaxis()->SetTitle("Number of Events");
 
@@ -217,12 +215,6 @@ h61 = fs->make<TH1D>("GM_pixelhits", "GM_pixelhits", 14, 0., 14);
 h61->GetXaxis()->SetTitle("Munber of pixel hits");
 h61->GetYaxis()->SetTitle("Number of Events");
 
-// unlike sign dimuon invariant mass from muon selection,
-// binning chosen to correspond to log(0.3) - log(500), 200 bins/log10 unit
-// h100 = fs->make<TH1D>("GM_mass_log", "GM_mass_log", 644, -.52, 2.7);
-// h100->GetXaxis()->SetTitle("Invariant Log10(Mass) for Nmuon>=2 (in log10(m/GeV/c^2))");
-// h100->GetYaxis()->SetTitle("Number of Events/GeV");
-
 // main histogram for MUO-10-004
 // unlike sign dimuon invariant mass from muon selection,
 // binning chosen to correspond to log(0.3) - log(500), 200 bins/log10 unit
@@ -236,43 +228,33 @@ for (int i=0;i<=nbins;i++) {
   xbins[i] = exp( log(10) * xlog ); 
 }
 
-h101 = fs->make<TH1D>("GM_mass_log_axis", "GM_mass_log", nbins, xbins);
-h101->GetXaxis()->SetTitle("Invariant Log10(Mass) for Nmuon>=2 (in GeV/c^2)");
-h101->GetYaxis()->SetTitle("Number of Events");
+h100 = fs->make<TH1D>("GM_mass_log", "GM_mass_log", nbins, xbins);
+h100->GetXaxis()->SetTitle("Invariant Log10(Mass) for Nmuon>=2 (in GeV/c^2)");
+h100->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 120 GeV after impose bound
 h66 = fs->make<TH1D>("GM_mass_cut", "GM mass Cut", 70, 10., 150.);
 h66->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h66->GetYaxis()->SetTitle("Number of Events");
 
-// dimuon mass spectrum up to 120 GeV after impose bound, single pair for an event
+// dimuon mass spectrum up to 120 GeV after impose IP bound, 
 h661 = fs->make<TH1D>("GM_mass_cut_IP", "GM mass Cut IP", 70, 10., 150.);
 h661->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h661->GetYaxis()->SetTitle("Number of Events");
 
-// dimuon mass spectrum up to 120 GeV after impose bound, single pair for an event
+// dimuon mass spectrum up to 120 GeV after impose IP&ISo bound
 h662 = fs->make<TH1D>("GM_mass_cut_IP_IS", "GM mass Cut IP IS", 70, 10., 150.);
 h662->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h662->GetYaxis()->SetTitle("Number of Events");
-
 
 // // muon multiplicity after cut, abundant
 // h11 = fs->make<TH1D>("Mmultiplicty_Cut_ab", "Mmultiplicity Cut ab", 8, 0, 8);
 // h11->GetXaxis()->SetTitle("Number of Muons after Cut");
 // h11->GetYaxis()->SetTitle("Number of Events");
 
-// // muon multiplicity after cut
-// h12 = fs->make<TH1D>("Mmultiplicty_Cut", "Mmultiplicity Cut", 8, 0, 8);
-// h12->GetXaxis()->SetTitle("Number of Muons after Cut");
-// h12->GetYaxis()->SetTitle("Number of Events");
-
-h7 = fs->make<TH1D>("Z_mass_win", "Z_mass_win", 1, 0, 1);
+h7 = fs->make<TH1D>("Z_mass_win_cp", "Z_mass_win_cp", 1, 0, 1);
 h7->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h7->GetYaxis()->SetTitle("Number of Events");
-
-h71 = fs->make<TH1D>("Z_mass_win_cp", "Z_mass_win_cp", 1, 0, 1);
-h71->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
-h71->GetYaxis()->SetTitle("Number of Events");
 
 }
 
@@ -352,7 +334,6 @@ using namespace std;
   h10->Fill(muons->size());
 
   bool accept = false;
-  bool acceptp = false;
 // WHAT: Loop over all the Muons of current Event
 // WHY:  to select good candidates to be used in invariant mass calculation
   for (reco::MuonCollection::const_iterator it = muons->begin();
@@ -449,8 +430,7 @@ using namespace std;
 // WHAT: Store the invariant mass of two muons with unlike charges in log scale
 // WHY: Reproduce the "Invariant mass spectrum of dimuons in events"-plot
 //      from MUO-10-004
-          // h100->Fill(log10(s), w); // MUO-10-004 with MuonCollection
-          h101->Fill(s, w); // MUO-10-004 with MuonCollection
+          h100->Fill(s, w); // MUO-10-004 with MuonCollection
            
            if (eta21pt1510(it->eta(),i->eta(),it->pt(),i->pt(),it->px(),it->py(),i->px(),i->py(),s)){
             h66->Fill(s);
@@ -461,11 +441,8 @@ using namespace std;
                  double iso2=(i->isolationR03().hadEt+i->isolationR03().emEt+i->isolationR03().sumPt)/i->pt();
                  if (iso1<0.15 && iso2<0.15) {
                     h662->Fill(s);
-                   if (acceptZ(it->pt(),i->pt(),it->eta(),i->eta(),s)){
+                   if (acceptZ(it,i,s)){
                      accept = true;
-                   }
-                   if (acceptZp(it,i,s)){
-                     acceptp = true;
                    }
                  }
                 }
@@ -479,9 +456,6 @@ using namespace std;
   } //end of reco ::MuonCollection loop
   if (accept == true){
     h7->Fill(0);
-    }
-  if (acceptp == true){
-    h71->Fill(0);
     }
 } //DimuonSpectrum2011MC: analyze ends
 
