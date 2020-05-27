@@ -301,7 +301,7 @@ using namespace std;
   
     bool bsac = false;
     bool tight = false; 
-    // bool opps = false;
+    bool opps = false;
     bool zreg = false;
     bool pt20 = false;
     bool iso = false;
@@ -376,7 +376,7 @@ using namespace std;
           s1 = sqrt(((it->p())*(it->p()) + sqm1) * ((i->p())*(i->p()) + sqm1));
           s2 = it->px()*i->px() + it->py()*i->py() + it->pz()*i->pz();
           s = sqrt(2.0 * (sqm1 + (s1 - s2)));
-          
+
           if (eta21pt1510(it,i,s)){
           bsac = true;
     
@@ -390,7 +390,7 @@ using namespace std;
               if (it->charge() == -(i->charge()) ){// unlike charges
 // and cut on quality of 2nd muon candidate
 
-              // os = true;
+                opps = true;
 
 //----------Calculate invariant mass-----------------//
 // WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
@@ -429,15 +429,20 @@ using namespace std;
   }
   if (tight == true){
     h7->Fill(2);
+    if (opps == true) h7->Fill(3);
+    else {h7->Fill(8);}
   }
   if (zreg == true){
-    h7->Fill(3);
+    if (opps == true) {h7->Fill(4);}
+    else {h7->Fill(9);}
   }
   if (pt20 == true){
-    h7->Fill(4);
+    if (opps == true) {h7->Fill(5);}
+    else {h7->Fill(10);}
   }
   if (iso == true){
-    h7->Fill(5);
+    if (opps == true) {h7->Fill(6);}
+    else {h7->Fill(11);}
   }
   // if (accept == true){
   //   h73->Fill(0);
