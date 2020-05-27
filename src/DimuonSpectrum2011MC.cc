@@ -103,10 +103,10 @@ private:
 // TH1D *h4;
 
 // TH1D *h5;
-TH1D *h6;
+// TH1D *h6;
 TH1D *h66;
 TH1D *h661;
-TH1D *h662;
+// TH1D *h662;
 
 TH1D *h10;
 
@@ -183,9 +183,9 @@ h10->GetYaxis()->SetTitle("Number of Events");
 // h5->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 120 GeV (high mass range: upsilon, Z)
-h6 = fs->make<TH1D>("GMmass" , "GMmass" , 150, 0. , 150. );
-h6->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
-h6->GetYaxis()->SetTitle("Number of Events");
+// h6 = fs->make<TH1D>("GMmass" , "GMmass" , 150, 0. , 150. );
+// h6->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
+// h6->GetYaxis()->SetTitle("Number of Events");
 
 // // muon track chi2
 // h53 = fs->make<TH1D>("GM_chi2", "GM_Chi2", 300, 0, 150);
@@ -214,22 +214,22 @@ h6->GetYaxis()->SetTitle("Number of Events");
 
 
 // dimuon mass spectrum up to 120 GeV after impose bound
-h66 = fs->make<TH1D>("GM_mass_cut", "GM mass Cut", 70, 10., 150.);
+h66 = fs->make<TH1D>("GM_mass_tight", "GTM mass ", 70, 10., 150.);
 h66->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h66->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 120 GeV after impose IP bound, 
-h661 = fs->make<TH1D>("GM_mass_cut_IP", "GM mass Cut IP", 70, 10., 150.);
+h661 = fs->make<TH1D>("GM_mass_tight_iso", "GTM mass Iso", 70, 10., 150.);
 h661->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h661->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 120 GeV after impose IP&ISo bound
-h662 = fs->make<TH1D>("GM_mass_cut_IP_IS", "GM mass Cut IP IS", 70, 10., 150.);
-h662->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
-h662->GetYaxis()->SetTitle("Number of Events");
+// h662 = fs->make<TH1D>("GM_mass_cut_IP_IS", "GM mass Cut IP IS", 70, 10., 150.);
+// h662->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
+// h662->GetYaxis()->SetTitle("Number of Events");
 
 // cut flow for the analysis of xsec_Zmumu
-h7 = fs->make<TH1D>("Mu13Mu8", "Mu13Mu8", 12, 0, 12);
+h7 = fs->make<TH1D>("Cut_Flow", "Cut Flow", 12, 0, 12);
 h7->GetYaxis()->SetTitle("Number of Events");
 
 }
