@@ -301,7 +301,7 @@ using namespace std;
   
     bool bsac = false;
     bool tight = false; 
-    bool opps = false;
+    // bool opps = false;
     bool zreg = false;
     bool pt20 = false;
     bool iso = false;
@@ -312,7 +312,7 @@ using namespace std;
     h10->Fill(muons->size());
 
 // WHAT: Declare variables used later
-    double sqm1, s1, s2, s, w;
+    double sqm1, s1, s2, s;
 
 // WHAT: Set square of muon mass
 // WHY:  Needed in later calculations
@@ -423,9 +423,21 @@ using namespace std;
         } //end of for(;i!=muons....)
       } //end of if(muons->size >=2 )
     } //end of reco ::MuonCollection loop
-  // if (os == true){
-  //   h72->Fill(0);
-  // }
+  if (bsac == true){
+    h7->Fill(1);
+  }
+  if (tight == true){
+    h7->Fill(2);
+  }
+  if (zreg == true){
+    h7->Fill(3);
+  }
+  if (pt20 == true){
+    h7->Fill(4);
+  }
+  if (iso == true){
+    h7->Fill(5);
+  }
   // if (accept == true){
   //   h73->Fill(0);
   // }
@@ -442,16 +454,15 @@ void DimuonSpectrum2011MC::endJob() {
 }
 
 bool DimuonSpectrum2011MC::htl138active (int run){
-  if ( (muons->size() >= 2) &&
-     ((run >= 165088 && run <= 167043) ||
+  if ((run >= 165088 && run <= 167043) ||
       (run >= 167078 && run <= 167913) ||
       (run >= 170249 && run <= 173198) ||
       (run >= 173236 && run <= 178380) ||
       (run >= 178420 && run <= 179889) ||
       (run >= 179959 && run <= 180252)) ){ // http://opendata.cern.ch/record/2698 
-    return true  
+    return true;
   }
-  return false
+  return false;
 }
 
 bool DimuonSpectrum2011MC::eta21pt1510 (const reco::MuonCollection::const_iterator m1, 
@@ -468,7 +479,7 @@ bool DimuonSpectrum2011MC::eta21pt1510 (const reco::MuonCollection::const_iterat
 }
 
 bool DimuonSpectrum2011MC::istight (const reco::MuonCollection::const_iterator muon, math::XYZPoint point){
-  if (muon->isGlobalMuon() && muon->globalTrack()->isNonnull()){
+  if (muon->isGlobalMuon()){
     if ( muon->globalTrack()->normalizedChi2() < 10. 
       && muon->globalTrack()->hitPattern().numberOfValidMuonHits() > 0 
       && muon->numberOfMatchedStations() > 1 
