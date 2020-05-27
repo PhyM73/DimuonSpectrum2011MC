@@ -373,6 +373,10 @@ using namespace std;
 
 // loop over 2nd muon candidate
         for (; i != muons->end(); i++) {
+          s1 = sqrt(((it->p())*(it->p()) + sqm1) * ((i->p())*(i->p()) + sqm1));
+          s2 = it->px()*i->px() + it->py()*i->py() + it->pz()*i->pz();
+          s = sqrt(2.0 * (sqm1 + (s1 - s2)));
+          
           if (eta21pt1510(it,i,s)){
           bsac = true;
     
@@ -392,9 +396,6 @@ using namespace std;
 // WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
 // (Iterators "it" and "i")
 // WHY:  in order to fill the mass histogram
-                s1 = sqrt(((it->p())*(it->p()) + sqm1) * ((i->p())*(i->p()) + sqm1));
-                s2 = it->px()*i->px() + it->py()*i->py() + it->pz()*i->pz();
-                s = sqrt(2.0 * (sqm1 + (s1 - s2)));
 
 // WHAT: Store the invariant mass of two muons with unlike sign charges in
 //       linear scale
