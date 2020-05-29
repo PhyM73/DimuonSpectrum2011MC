@@ -88,7 +88,7 @@ private:
         bool providesGoodLumisection(const edm::Event& iEvent);
         bool htl138active(int);
         bool eta21pt1510(const reco::MuonCollection::const_iterator, 
-                         const reco::MuonCollection::const_iterator, double);
+                         const reco::MuonCollection::const_iterator);
         bool istight(const reco::MuonCollection::const_iterator,const math::XYZPoint);
         bool isolation(const reco::MuonCollection::const_iterator, 
                        const reco::MuonCollection::const_iterator);
@@ -298,6 +298,8 @@ using namespace std;
   math::XYZPoint point(primvtx[0].position());
 
   if (htl138active(iEvent.run())){
+    if (muons->size() >= 2){
+
     h7->Fill(0);
   
     bool bsac = false;
@@ -343,7 +345,6 @@ using namespace std;
 
 // loop over globalMuon-Tracks satisfying quality cuts //
 
-      if (muons->size() >= 2){
 // NTS: Stores iterator for current globalMuon-Track and advances it by one.
 //      In other words, the needed preparation to be able to compare all the
 //      other globalMuon-Tracks after
@@ -369,7 +370,7 @@ using namespace std;
 //       (succeeding globalMuon-Tracks that are in the muons-MuonCollection)
 //       need at least two candidates to calculate dimuon mass
 
-          if (eta21pt1510(it,i,s)) { bsac = true;
+          if (eta21pt1510(it,i)) { bsac = true;
     
             if (istight(it,point) && istight(i,point)) { tight = true;
 
@@ -386,10 +387,12 @@ using namespace std;
 // WHAT: Store the invariant mass of two muons with unlike charges
 // WHY: Reproduce the "Invariant mass spectrum of dimuons in events"-plot
 //      from MUO-10-004
-
-                h66->Fill(s);
-                if (isolation(it,i)) {
-                  h661->Fill(s);
+                double pt = sqrt( pow(it->px()+i->px(), 2.0) + pow(it->py()+i->py(), 2.0) );
+                if (pt<s){
+                  h66->Fill(s);
+                  if (isolation(it,i)) {
+                    h661->Fill(s);
+                  }
                 }
               } // end of unlike charge if
 
@@ -454,13 +457,13 @@ bool DimuonSpectrum2011MC::htl138active (int run){
 
 
 bool DimuonSpectrum2011MC::eta21pt1510 (const reco::MuonCollection::const_iterator m1, 
-       const reco::MuonCollection::const_iterator m2, double s){
-  double pt = sqrt( pow(m1->px()+m2->px(), 2.0) + pow(m1->py()+m2->py(), 2.0) );
+       const reco::MuonCollection::const_iterator m2){
+  // double pt = sqrt( pow(m1->px()+m2->px(), 2.0) + pow(m1->py()+m2->py(), 2.0) );
 
   if ((fabs(m1->eta()) < 2.1 && fabs(m2->eta()) < 2.1)
       && (m1->pt() > 10. && m2->pt() > 10.)
-      && (m1->pt() > 15. || m2->pt() > 15.)
-      && (pt < s)){
+      && (m1->pt() > 15. || m2->pt() > 15.)){
+      // && (pt < s)){
     return true;
   } // baseline acceptance in 10.1103/PhysRevD.100.015021
   return false;
@@ -474,11 +477,11 @@ bool DimuonSpectrum2011MC::istight (const reco::MuonCollection::const_iterator m
   // See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Tight_Muon_selection
   if (muon->isGlobalMuon()){
     if ( muon->globalTrack()->normalizedChi2() < 10. 
-      && muon->globalTrack()->hitPattern().numberOfValidMuonHits() > 0 
-      && muon->numberOfMatchedStations() > 1 
+      // && muon->globalTrack()->hitPattern().numberOfValidMuonHits() > 0 
+      // && muon->numberOfMatchedStations() > 1 
       && fabs(muon->innerTrack()->dxy(point)) < 0.2 
       && fabs(muon->innerTrack()->dz(point)) < 1.0 
-      && muon->innerTrack()->hitPattern().numberOfValidPixelHits() > 0 
+      // && muon->innerTrack()->hitPattern().numberOfValidPixelHits() > 0
       && muon->innerTrack()->hitPattern().numberOfValidTrackerHits() > 10 ){
         return true;
     }
