@@ -409,7 +409,7 @@ using namespace std;
           } // end of if(eta21pt15pt10)
         } //end of for(;i!=muons....)
       } //end of if(muons->size >=2 )
-    } //end of reco ::MuonCollection loop
+    // } //end of reco ::MuonCollection loop
     if (bsac == true){
       h7->Fill(1);
     }
@@ -429,6 +429,7 @@ using namespace std;
     if (iso == true){
       if (opps == true) {h7->Fill(6);}
       else {h7->Fill(11);}
+    }
     }
   } // end of HLT mu13mu8 active
 } //DimuonSpectrum2011MC: analyze ends
