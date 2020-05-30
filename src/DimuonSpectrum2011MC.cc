@@ -299,7 +299,7 @@ using namespace std;
 
   if (htl138active(iEvent.run())){
     // if (muons->size() >= 2){
-    if (muons->size() = 2){
+    if (muons->size() == 2){
 
     h7->Fill(0);
   
