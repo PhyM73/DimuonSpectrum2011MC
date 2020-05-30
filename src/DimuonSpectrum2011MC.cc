@@ -298,7 +298,8 @@ using namespace std;
   math::XYZPoint point(primvtx[0].position());
 
   if (htl138active(iEvent.run())){
-    if (muons->size() >= 2){
+    // if (muons->size() >= 2){
+    if (muons->size() = 2){
 
     h7->Fill(0);
   
