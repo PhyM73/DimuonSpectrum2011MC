@@ -73,6 +73,10 @@
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
 
+#include "HLTrigger/HLTcore/interface/TriggerExpressionData.h"
+#include "HLTrigger/HLTcore/interface/TriggerExpressionEvaluator.h"
+#include "HLTrigger/HLTcore/interface/TriggerExpressionParser.h"
+
 // class declaration
 //
 
@@ -94,6 +98,9 @@ private:
                        const reco::MuonCollection::const_iterator);
 
 // ----------member data ---------------------------
+
+double mumass;
+
 
 // declare Root histograms
 // for a description of their content see below
@@ -119,6 +126,9 @@ TH1D *h10;
 
 TH1D *h7;
 
+triggerExpression::Data m_triggerCache;
+std::unique_ptr<triggerExpression::Evaluator> m_triggerSelector;
+
 };
 
 //
@@ -133,7 +143,10 @@ TH1D *h7;
 // constructors and destructor
 //
 
-DimuonSpectrum2011MC::DimuonSpectrum2011MC(const edm::ParameterSet& iConfig) {
+DimuonSpectrum2011MC::DimuonSpectrum2011MC(const edm::ParameterSet& iConfig):
+                      m_triggerCache(triggerExpression::Data(edm::InputTag("TriggerResults","","HLT"), 
+                                     edm::InputTag("gtDigis"), 1, false, false, false)),
+                      m_triggerSelector(triggerExpression::parse( "HLT_Mu13_Mu8*" )){
 
 // ***************************************************************************
 // This is the main analysis routine
@@ -143,6 +156,8 @@ DimuonSpectrum2011MC::DimuonSpectrum2011MC(const edm::ParameterSet& iConfig) {
 
 //now do what ever initialization is needed
 edm::Service<TFileService> fs;
+
+mumass = (0.105658) * (0.105658);
 
 // ************************************
 // book histograms and set axis labels
@@ -297,6 +312,16 @@ using namespace std;
   }
   math::XYZPoint point(primvtx[0].position());
 
+  if (m_triggerSelector and m_triggerCache.setEvent(iEvent, iSetup)){
+  // if the L1 or HLT configurations have changed, (re)initialize the filters (including during the first event)
+    if (m_triggerCache.configurationUpdated())
+      m_triggerSelector ->init(m_triggerCache);
+
+    bool result = (*m_triggerSelector)(m_triggerCache);
+    cout << result;
+  }
+
+
   if (htl138active(iEvent.run())){
     // if (muons->size() >= 2){
     if (muons->size() == 2){
@@ -316,11 +341,12 @@ using namespace std;
     h10->Fill(muons->size());
 
 // WHAT: Declare variables used later
-    double sqm1, s1, s2, s;
+    // double sqm1, s1, s2, s;
+    double s1, s2, s;
 
 // WHAT: Set square of muon mass
 // WHY:  Needed in later calculations
-    sqm1 = (0.105658) * (0.105658);
+    // sqm1 = (0.105658) * (0.105658);
 
 // WHAT: Loop over all the Muons of current Event
 // WHY:  to select good candidates to be used in invariant mass calculation
@@ -360,9 +386,9 @@ using namespace std;
 // WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
 // (Iterators "it" and "i")
 // WHY:  in order to fill the mass histogram
-          s1 = sqrt(((it->p())*(it->p()) + sqm1) * ((i->p())*(i->p()) + sqm1));
+          s1 = sqrt(((it->p())*(it->p()) + mumass) * ((i->p())*(i->p()) + mumass));
           s2 = it->px()*i->px() + it->py()*i->py() + it->pz()*i->pz();
-          s = sqrt(2.0 * (sqm1 + (s1 - s2)));
+          s = sqrt(2.0 * (mumass + (s1 - s2)));
 
 //--------------------determine quality cuts----------------------//
 
@@ -479,11 +505,11 @@ bool DimuonSpectrum2011MC::istight (const reco::MuonCollection::const_iterator m
   // See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Tight_Muon_selection
   if (muon->isGlobalMuon()){
     if ( muon->globalTrack()->normalizedChi2() < 10. 
-      // && muon->globalTrack()->hitPattern().numberOfValidMuonHits() > 0 
-      // && muon->numberOfMatchedStations() > 1 
+      && muon->globalTrack()->hitPattern().numberOfValidMuonHits() > 0 
+      && muon->numberOfMatchedStations() > 1 
       && fabs(muon->innerTrack()->dxy(point)) < 0.2 
       && fabs(muon->innerTrack()->dz(point)) < 1.0 
-      // && muon->innerTrack()->hitPattern().numberOfValidPixelHits() > 0
+      && muon->innerTrack()->hitPattern().numberOfValidPixelHits() > 0
       && muon->innerTrack()->hitPattern().numberOfValidTrackerHits() > 10 ){
         return true;
     }
