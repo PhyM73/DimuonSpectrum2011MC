@@ -59,9 +59,9 @@ myLumis = LumiList.LumiList(filename=goodJSON).getCMSSWString().split(',')
 process.source.lumisToProcess = CfgTypes.untracked(CfgTypes.VLuminosityBlockRange())
 process.source.lumisToProcess.extend(myLumis)
 
-process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
-process.GlobalTag.connect = cms.string('sqlite_file:/cvmfs/cms-opendata-conddb.cern.ch/FT_53_LV5_AN1_RUNA.db')
-process.GlobalTag.globaltag = 'FT_53_LV5_AN1::All'
+# process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+# process.GlobalTag.connect = cms.string('sqlite_file:/cvmfs/cms-opendata-conddb.cern.ch/FT_53_LV5_AN1_RUNA.db')
+# process.GlobalTag.globaltag = 'FT_53_LV5_AN1::All'
 
 # *************************************************
 # number of events to be skipped (0 by default)   *

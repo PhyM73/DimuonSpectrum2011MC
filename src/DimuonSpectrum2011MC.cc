@@ -126,8 +126,8 @@ TH1D *h10;
 
 TH1D *h7;
 
-triggerExpression::Data m_triggerCache;
-std::unique_ptr<triggerExpression::Evaluator> m_triggerSelector;
+triggerExpression::Data triggerCache;
+std::unique_ptr<triggerExpression::Evaluator> triggerSelector;
 
 };
 
@@ -144,9 +144,9 @@ std::unique_ptr<triggerExpression::Evaluator> m_triggerSelector;
 //
 
 DimuonSpectrum2011MC::DimuonSpectrum2011MC(const edm::ParameterSet& iConfig):
-                      m_triggerCache(triggerExpression::Data(edm::InputTag("TriggerResults","","HLT"), 
-                                     edm::InputTag("gtDigis"), 1, false, false, false)),
-                      m_triggerSelector(triggerExpression::parse( "HLT_Mu13_Mu8*" )){
+                      triggerCache(triggerExpression::Data(edm::InputTag("TriggerResults","","HLT"), 
+                                     edm::InputTag(""), 1, false, false, false)),
+                      triggerSelector(triggerExpression::parse( "HLT_Mu13_Mu8*" )){
 
 // ***************************************************************************
 // This is the main analysis routine
@@ -312,19 +312,19 @@ using namespace std;
   }
   math::XYZPoint point(primvtx[0].position());
 
+  if (triggerSelector and triggerCache.setEvent(iEvent, iSetup)){
+  // if the L1 or HLT configurations have changed, (re)initialize the filters 
+  // (including during the first event)
+    if (triggerCache.configurationUpdated())
+      triggerSelector ->init(triggerCache);
+  }
 
+  bool trigger_result = (*triggerSelector)(triggerCache);
+  if (trigger_result){
 
-  if (htl138active(iEvent.run())){
-    if (m_triggerSelector and m_triggerCache.setEvent(iEvent, iSetup)){
-    // if the L1 or HLT configurations have changed, (re)initialize the filters (including during the first event)
-      if (m_triggerCache.configurationUpdated())
-        m_triggerSelector ->init(m_triggerCache);
-
-      bool result = (*m_triggerSelector)(m_triggerCache);
-      cout << "trigger result: "<<result<<endl;
-    }
-    // if (muons->size() >= 2){
-    if (muons->size() == 2){
+  // if (htl138active(iEvent.run())){
+    if (muons->size() >= 2){
+    // if (muons->size() == 2){
 
     h7->Fill(0);
   
