@@ -321,7 +321,7 @@ using namespace std;
         m_triggerSelector ->init(m_triggerCache);
 
       bool result = (*m_triggerSelector)(m_triggerCache);
-      cout << result;
+      cout << "trigger result: "<<result<<endl;
     }
     // if (muons->size() >= 2){
     if (muons->size() == 2){
