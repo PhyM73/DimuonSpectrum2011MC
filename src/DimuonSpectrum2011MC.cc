@@ -312,17 +312,17 @@ using namespace std;
   }
   math::XYZPoint point(primvtx[0].position());
 
-  if (m_triggerSelector and m_triggerCache.setEvent(iEvent, iSetup)){
-  // if the L1 or HLT configurations have changed, (re)initialize the filters (including during the first event)
-    if (m_triggerCache.configurationUpdated())
-      m_triggerSelector ->init(m_triggerCache);
-
-    bool result = (*m_triggerSelector)(m_triggerCache);
-    cout << result;
-  }
 
 
   if (htl138active(iEvent.run())){
+    if (m_triggerSelector and m_triggerCache.setEvent(iEvent, iSetup)){
+    // if the L1 or HLT configurations have changed, (re)initialize the filters (including during the first event)
+      if (m_triggerCache.configurationUpdated())
+        m_triggerSelector ->init(m_triggerCache);
+
+      bool result = (*m_triggerSelector)(m_triggerCache);
+      cout << result;
+    }
     // if (muons->size() >= 2){
     if (muons->size() == 2){
 
