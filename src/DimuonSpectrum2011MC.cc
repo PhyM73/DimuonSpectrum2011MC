@@ -73,6 +73,7 @@
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
 
+// for trigger information 
 #include "HLTrigger/HLTcore/interface/TriggerExpressionData.h"
 #include "HLTrigger/HLTcore/interface/TriggerExpressionEvaluator.h"
 #include "HLTrigger/HLTcore/interface/TriggerExpressionParser.h"
@@ -90,7 +91,7 @@ private:
         virtual void analyze(const edm::Event&, const edm::EventSetup&);
         virtual void endJob();
         bool providesGoodLumisection(const edm::Event& iEvent);
-        bool htl138active(int);
+        // bool htl138active(int);
         bool eta21pt1510(const reco::MuonCollection::const_iterator, 
                          const reco::MuonCollection::const_iterator);
         bool istight(const reco::MuonCollection::const_iterator,const math::XYZPoint);
@@ -98,9 +99,6 @@ private:
                        const reco::MuonCollection::const_iterator);
 
 // ----------member data ---------------------------
-
-double mumass;
-
 
 // declare Root histograms
 // for a description of their content see below
@@ -134,6 +132,7 @@ std::unique_ptr<triggerExpression::Evaluator> triggerSelector;
 //
 // constants, enums and typedefs
 //
+  const double sqmums = (0.105658)*(0.105658); // square of muon mass (in GeV^2/c^4)
 
 //
 // static data member definitions
@@ -144,9 +143,9 @@ std::unique_ptr<triggerExpression::Evaluator> triggerSelector;
 //
 
 DimuonSpectrum2011MC::DimuonSpectrum2011MC(const edm::ParameterSet& iConfig):
-                      triggerCache(triggerExpression::Data(edm::InputTag("TriggerResults","","HLT"), 
-                                     edm::InputTag(""), 1, false, false, false)),
-                      triggerSelector(triggerExpression::parse( "HLT_Mu13_Mu8*" )){
+    triggerCache(triggerExpression::Data(edm::InputTag("TriggerResults","","HLT"), 
+                 edm::InputTag(""), 1, false, false, false)) ,
+    triggerSelector(triggerExpression::parse("HLT_Mu13_Mu8*")) {
 
 // ***************************************************************************
 // This is the main analysis routine
@@ -156,8 +155,6 @@ DimuonSpectrum2011MC::DimuonSpectrum2011MC(const edm::ParameterSet& iConfig):
 
 //now do what ever initialization is needed
 edm::Service<TFileService> fs;
-
-mumass = (0.105658) * (0.105658);
 
 // ************************************
 // book histograms and set axis labels
@@ -307,23 +304,22 @@ using namespace std;
   if (primvtxHandle.isValid()) {
       primvtx = *primvtxHandle;
   } 
-  else{
-      LogInfo("Demo")<< "No primary vertex available from EventSetup \n";
-  }
+  else{ LogInfo("Demo")<< "No primary vertex available from EventSetup \n"; return; }
+
   math::XYZPoint point(primvtx[0].position());
 
+  // INFO: Use the trigger result as a evnet selector
+  // https://twiki.cern.ch/twiki/bin/viewauth/CMS/TriggerResultsFilter#Use_as_a_Selector_AN1
+  // Pass the Event and EventSetup to the cache object
   if (triggerSelector and triggerCache.setEvent(iEvent, iSetup)){
-  // if the L1 or HLT configurations have changed, (re)initialize the filters 
-  // (including during the first event)
+    // if the L1 or HLT configurations have changed, (re)initialize the filters 
+    // (including during the first event)
     if (triggerCache.configurationUpdated())
       triggerSelector ->init(triggerCache);
   }
 
   bool trigger_result = (*triggerSelector)(triggerCache);
-  if (trigger_result){
-
-  // if (htl138active(iEvent.run())){
-    if (muons->size() >= 2){
+  if (trigger_result && (muons->size() >= 2)) {
     // if (muons->size() == 2){
 
     h7->Fill(0);
@@ -343,10 +339,6 @@ using namespace std;
 // WHAT: Declare variables used later
     // double sqm1, s1, s2, s;
     double s1, s2, s;
-
-// WHAT: Set square of muon mass
-// WHY:  Needed in later calculations
-    // sqm1 = (0.105658) * (0.105658);
 
 // WHAT: Loop over all the Muons of current Event
 // WHY:  to select good candidates to be used in invariant mass calculation
@@ -386,9 +378,9 @@ using namespace std;
 // WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
 // (Iterators "it" and "i")
 // WHY:  in order to fill the mass histogram
-          s1 = sqrt(((it->p())*(it->p()) + mumass) * ((i->p())*(i->p()) + mumass));
+          s1 = sqrt(((it->p())*(it->p()) + sqmums) * ((i->p())*(i->p()) + sqmums));
           s2 = it->px()*i->px() + it->py()*i->py() + it->pz()*i->pz();
-          s = sqrt(2.0 * (mumass + (s1 - s2)));
+          s = sqrt(2.0 * (sqmums + (s1 - s2)));
 
 //--------------------determine quality cuts----------------------//
 
@@ -458,7 +450,6 @@ using namespace std;
       else {h7->Fill(11);}
     }
     }
-  } // end of HLT mu13mu8 active
 } //DimuonSpectrum2011MC: analyze ends
 
 
@@ -471,27 +462,25 @@ void DimuonSpectrum2011MC::endJob() {
 }
 
 
-bool DimuonSpectrum2011MC::htl138active (int run){
-  if ((run >= 165088 && run <= 167043) ||
-      (run >= 167078 && run <= 167913) ||
-      (run >= 170249 && run <= 173198) ||
-      (run >= 173236 && run <= 178380) ||
-      (run >= 178420 && run <= 179889) ||
-      (run >= 179959 && run <= 180252)){ // http://opendata.cern.ch/record/2698 
-    return true;
-  }
-  return false;
-}
+// bool DimuonSpectrum2011MC::htl138active (int run){
+//   if ((run >= 165088 && run <= 167043) ||
+//       (run >= 167078 && run <= 167913) ||
+//       (run >= 170249 && run <= 173198) ||
+//       (run >= 173236 && run <= 178380) ||
+//       (run >= 178420 && run <= 179889) ||
+//       (run >= 179959 && run <= 180252)){ // http://opendata.cern.ch/record/2698 
+//     return true;
+//   }
+//   return false;
+// }
 
 
 bool DimuonSpectrum2011MC::eta21pt1510 (const reco::MuonCollection::const_iterator m1, 
        const reco::MuonCollection::const_iterator m2){
-  // double pt = sqrt( pow(m1->px()+m2->px(), 2.0) + pow(m1->py()+m2->py(), 2.0) );
 
   if ((fabs(m1->eta()) < 2.1 && fabs(m2->eta()) < 2.1)
       && (m1->pt() > 10. && m2->pt() > 10.)
       && (m1->pt() > 15. || m2->pt() > 15.)){
-      // && (pt < s)){
     return true;
   } // baseline acceptance in 10.1103/PhysRevD.100.015021
   return false;
@@ -505,11 +494,11 @@ bool DimuonSpectrum2011MC::istight (const reco::MuonCollection::const_iterator m
   // See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Tight_Muon_selection
   if (muon->isGlobalMuon()){
     if ( muon->globalTrack()->normalizedChi2() < 10. 
-      && muon->globalTrack()->hitPattern().numberOfValidMuonHits() > 0 
-      && muon->numberOfMatchedStations() > 1 
+      // && muon->globalTrack()->hitPattern().numberOfValidMuonHits() > 0 
+      // && muon->numberOfMatchedStations() > 1 
       && fabs(muon->innerTrack()->dxy(point)) < 0.2 
       && fabs(muon->innerTrack()->dz(point)) < 1.0 
-      && muon->innerTrack()->hitPattern().numberOfValidPixelHits() > 0
+      // && muon->innerTrack()->hitPattern().numberOfValidPixelHits() > 0
       && muon->innerTrack()->hitPattern().numberOfValidTrackerHits() > 10 ){
         return true;
     }
