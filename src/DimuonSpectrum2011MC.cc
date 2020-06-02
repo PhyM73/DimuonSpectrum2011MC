@@ -320,7 +320,6 @@ using namespace std;
 
   bool trigger_result = (*triggerSelector)(triggerCache);
   if (trigger_result && (muons->size() >= 2)) {
-    // if (muons->size() == 2){
 
     h7->Fill(0);
   
@@ -494,11 +493,11 @@ bool DimuonSpectrum2011MC::istight (const reco::MuonCollection::const_iterator m
   // See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Tight_Muon_selection
   if (muon->isGlobalMuon()){
     if ( muon->globalTrack()->normalizedChi2() < 10. 
-      // && muon->globalTrack()->hitPattern().numberOfValidMuonHits() > 0 
-      // && muon->numberOfMatchedStations() > 1 
+      && muon->globalTrack()->hitPattern().numberOfValidMuonHits() > 0 
+      && muon->numberOfMatchedStations() > 1 
       && fabs(muon->innerTrack()->dxy(point)) < 0.2 
       && fabs(muon->innerTrack()->dz(point)) < 1.0 
-      // && muon->innerTrack()->hitPattern().numberOfValidPixelHits() > 0
+      && muon->innerTrack()->hitPattern().numberOfValidPixelHits() > 0
       && muon->innerTrack()->hitPattern().numberOfValidTrackerHits() > 10 ){
         return true;
     }
