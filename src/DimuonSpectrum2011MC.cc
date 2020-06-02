@@ -124,8 +124,8 @@ TH1D *h10;
 
 TH1D *h7;
 
-triggerExpression::Data triggerCache;
-std::unique_ptr<triggerExpression::Evaluator> triggerSelector;
+// triggerExpression::Data triggerCache;
+// std::unique_ptr<triggerExpression::Evaluator> triggerSelector;
 
 };
 
@@ -142,10 +142,7 @@ std::unique_ptr<triggerExpression::Evaluator> triggerSelector;
 // constructors and destructor
 //
 
-DimuonSpectrum2011MC::DimuonSpectrum2011MC(const edm::ParameterSet& iConfig):
-    triggerCache(triggerExpression::Data(edm::InputTag("TriggerResults","","HLT"), 
-                 edm::InputTag(""), 1, false, false, false)) ,
-    triggerSelector(triggerExpression::parse("HLT_Mu13_Mu8*")) {
+DimuonSpectrum2011MC::DimuonSpectrum2011MC(const edm::ParameterSet& iConfig){
 
 // ***************************************************************************
 // This is the main analysis routine
@@ -311,15 +308,16 @@ using namespace std;
   // INFO: Use the trigger result as a evnet selector
   // https://twiki.cern.ch/twiki/bin/viewauth/CMS/TriggerResultsFilter#Use_as_a_Selector_AN1
   // Pass the Event and EventSetup to the cache object
-  if (triggerSelector and triggerCache.setEvent(iEvent, iSetup)){
-    // if the L1 or HLT configurations have changed, (re)initialize the filters 
-    // (including during the first event)
-    if (triggerCache.configurationUpdated())
-      triggerSelector ->init(triggerCache);
-  }
+  // if (triggerSelector and triggerCache.setEvent(iEvent, iSetup)){
+  //   // if the L1 or HLT configurations have changed, (re)initialize the filters 
+  //   // (including during the first event)
+  //   if (triggerCache.configurationUpdated())
+  //     triggerSelector ->init(triggerCache);
+  // }
 
-  bool trigger_result = (*triggerSelector)(triggerCache);
-  if (trigger_result && (muons->size() >= 2)) {
+  // bool trigger_result = (*triggerSelector)(triggerCache);
+  // if (trigger_result && (muons->size() >= 2)) {
+  if (muons->size() >= 2) {
 
     h7->Fill(0);
   
