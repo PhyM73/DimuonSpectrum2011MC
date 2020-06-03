@@ -305,6 +305,10 @@ using namespace std;
 
   math::XYZPoint point(primvtx[0].position());
 
+// WHAT: Fill histogram of the number of Muon-Tracks in the current Event.
+// WHY:  for monitoring purposes
+  h10->Fill(muons->size());
+
   // INFO: Use the trigger result as a evnet selector
   // https://twiki.cern.ch/twiki/bin/viewauth/CMS/TriggerResultsFilter#Use_as_a_Selector_AN1
   // Pass the Event and EventSetup to the cache object
@@ -329,9 +333,6 @@ using namespace std;
     bool iso  = false;
 //------------------analysing Muons (muons-TrackCollection)----------//
 
-// WHAT: Fill histogram of the number of Muon-Tracks in the current Event.
-// WHY:  for monitoring purposes
-    h10->Fill(muons->size());
 
 // WHAT: Declare variables used later
     // double sqm1, s1, s2, s;
