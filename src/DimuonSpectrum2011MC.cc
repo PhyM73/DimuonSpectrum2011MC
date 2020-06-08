@@ -97,6 +97,7 @@ private:
         bool isolation(const reco::MuonCollection::const_iterator, 
                        const reco::MuonCollection::const_iterator);
 
+
 // ----------member data ---------------------------
 
 // declare Root histograms
@@ -164,6 +165,7 @@ h661 = fs->make<TH1D>("GM_mass_tight_iso", "GTM mass Iso", 70, 10., 150.);
 h661->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h661->GetYaxis()->SetTitle("Number of Events");
 
+
 // cut flow for the analysis of xsec_Zmumu
 h7 = fs->make<TH1D>("Cut_Flow", "Cut Flow", 12, 0, 12);
 h7->GetYaxis()->SetTitle("Number of Events");
@@ -223,7 +225,7 @@ bool DimuonSpectrum2011MC::isolation (const reco::MuonCollection::const_iterator
 }
 
 
-// ------------ method called for each event  ------------
+// ------------ method called for each event  ------------//
 void DimuonSpectrum2011MC::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
 // **********************************************
