@@ -94,11 +94,9 @@ private:
         virtual void analyze(const edm::Event&, const edm::EventSetup&);
         virtual void endJob();
         bool providesGoodLumisection(const edm::Event& iEvent);
-        bool eta21pt1510(const reco::MuonCollection::const_iterator, 
-                         const reco::MuonCollection::const_iterator);
-        bool istight(const reco::MuonCollection::const_iterator,const math::XYZPoint);
-        bool isolation(const reco::MuonCollection::const_iterator, 
-                       const reco::MuonCollection::const_iterator);
+        bool eta21pt1510(const reco::Muon&, const reco::Muon&);
+        bool istight(const reco::Muon&, const math::XYZPoint);
+        bool isolation(const reco::Muon&);
 
 // ----------member data ---------------------------
 
@@ -180,31 +178,30 @@ DimuonSpectrum2011MC::~DimuonSpectrum2011MC() {
 
 // member functions
 
-bool DimuonSpectrum2011MC::eta21pt1510 (const reco::MuonCollection::const_iterator m1, 
-       const reco::MuonCollection::const_iterator m2){
+bool DimuonSpectrum2011MC::eta21pt1510 (const reco::Muon& m1, const reco::Muon& m2){
 
-  if ((fabs(m1->eta()) < 2.1 && fabs(m2->eta()) < 2.1)
-      && (m1->pt() > 10. && m2->pt() > 10.)
-      && (m1->pt() > 15. || m2->pt() > 15.)){
+  if ((fabs(m1.eta()) < 2.1 && fabs(m2.eta()) < 2.1)
+      && (m1.pt() > 10. && m2.pt() > 10.)
+      && (m1.pt() > 15. || m2.pt() > 15.)){
     return true;
   } // baseline acceptance in 10.1103/PhysRevD.100.015021
   return false;
 }
 
 
-bool DimuonSpectrum2011MC::istight (const reco::MuonCollection::const_iterator muon, math::XYZPoint point){
+bool DimuonSpectrum2011MC::istight (const reco::Muon& muon, math::XYZPoint point){
   // Global muon with additional muon quality reqirements.
   // Starting from 50X release this set of selection is into an omni-comprehensive selector 
   // in DataFormats/MuonReco/interface/MuonSelectors.h
   // See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Tight_Muon_selection
-  if (muon->isGlobalMuon()){
-    if ( muon->globalTrack()->normalizedChi2() < 10. 
-      && muon->globalTrack()->hitPattern().numberOfValidMuonHits() > 0 
-      && muon->numberOfMatchedStations() > 1 
-      && fabs(muon->innerTrack()->dxy(point)) < 0.2 
-      && fabs(muon->innerTrack()->dz(point)) < 1.0 
-      && muon->innerTrack()->hitPattern().numberOfValidPixelHits() > 0
-      && muon->innerTrack()->hitPattern().numberOfValidTrackerHits() > 10 ){
+  if (muon.isGlobalMuon()){
+    if ( muon.globalTrack()->normalizedChi2() < 10. 
+      && muon.globalTrack()->hitPattern().numberOfValidMuonHits() > 0 
+      && muon.numberOfMatchedStations() > 1 
+      && fabs(muon.innerTrack()->dxy(point)) < 0.2 
+      && fabs(muon.innerTrack()->dz(point)) < 1.0 
+      && muon.innerTrack()->hitPattern().numberOfValidPixelHits() > 0
+      && muon.innerTrack()->hitPattern().numberOfValidTrackerHits() > 10 ){
         return true;
     }
   } 
@@ -212,14 +209,10 @@ bool DimuonSpectrum2011MC::istight (const reco::MuonCollection::const_iterator m
 }
 
 
-bool DimuonSpectrum2011MC::isolation (const reco::MuonCollection::const_iterator m1, 
-       const reco::MuonCollection::const_iterator m2){
-  if (m1->isIsolationValid() && m2->isIsolationValid()) {
-    double iso1=(m1->isolationR03().hadEt+m1->isolationR03().emEt+m1->isolationR03().sumPt)/m1->pt();
-    double iso2=(m2->isolationR03().hadEt+m2->isolationR03().emEt+m2->isolationR03().sumPt)/m2->pt();
-    if (iso1 < 0.15 && iso2 < 0.15){
-      return true;
-    }
+bool DimuonSpectrum2011MC::isolation (const reco::Muon& muon){
+  if (muon.isIsolationValid()) {
+    double iso=(muon.isolationR03().hadEt + muon.isolationR03().emEt + muon.isolationR03().sumPt)/muon.pt();
+    if (iso < 0.15) return true;
   }
   return false;
 }
@@ -284,12 +277,13 @@ using namespace std;
     const reco::GenParticle & p = (*genParticles)[i];
     int id = p.pdgId();
     int st = p.status();  
-    const reco::Candidate * mom = p.mother();
+    // const reco::Candidate * mom = p.mother();
     // double pt = p.pt(), eta = p.eta(), phi = p.phi(), mass = p.mass();
     // double vx = p.vx(), vy = p.vy(), vz = p.vz();
     // int charge = p.charge();
     // int n = p.numberOfDaughters();
-    cout<<"id: "<<id<<" status: "<<st<<" mom: "<<mom.pdgId()<<endl;
+    cout<<"id: "<<id<<" status: "<<st<<endl;
+    // cout<<"id: "<<id<<" status: "<<st<<" mom: "<<mom.pdgId()
   }
 
 
@@ -339,9 +333,9 @@ using namespace std;
 //       (succeeding globalMuon-Tracks that are in the muons-MuonCollection)
 //       need at least two candidates to calculate dimuon mass
 
-        if (eta21pt1510(it,i)) { bsac = true;
+        if (eta21pt1510(*it,*i)) { bsac = true;
     
-          if (istight(it,point) && istight(i,point)) { tight = true;
+          if (istight(*it,point) && istight(*i,point)) { tight = true;
 
 // WHAT: Compare electric charges of the current two globalMuon-Tracks
 //       (Iterators "it" and "i")
@@ -359,7 +353,7 @@ using namespace std;
               double pt = sqrt( pow(it->px()+i->px(), 2.0) + pow(it->py()+i->py(), 2.0) );
               if (pt<s){
                 h66->Fill(s);
-                if (isolation(it,i)) {
+                if (isolation(*it) && isolation(*i)) {
                   h661->Fill(s);
                 }
               }
