@@ -363,7 +363,7 @@ using namespace std;
               zreg = true;
               if (it->pt()>20. && i->pt()>20.) {
                 pt20 = true;
-                if (isolation(it,i)) {
+                if (isolation(*it) && isolation(*i)) {
                   iso = true;
                 }
               }
