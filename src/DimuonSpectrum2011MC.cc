@@ -98,7 +98,7 @@ private:
         bool istight(const reco::Muon&, const math::XYZPoint);
         bool isolation(const reco::Muon&);
         double invmass(const reco::Candidate&, const reco::Candidate&);
-        reco::GenParticle* daughter_fsr(reco::GenParticle& );
+        // reco::GenParticle* daughter_fsr(reco::GenParticle& );
 // ----------member data ---------------------------
 
 // declare Root histograms
@@ -233,14 +233,14 @@ double DimuonSpectrum2011MC::invmass (const reco::Candidate& p1, const reco::Can
   return s;
 }
 
-reco::GenParticle* DimuonSpectrum2011MC::daughter_fsr(reco::GenParticle& p ){
-  if (p.numberOfDaughters() == 0) return &p;
-  for(size_t i = 0; i < p.numberOfDaughters();++i){
-    if (p.daughter(i)->pdgId() == p.pdgId()){
-      return daughter_fsr(p.daughter(i));
-    }
-  }
-}
+// reco::GenParticle* DimuonSpectrum2011MC::daughter_fsr(reco::GenParticle& p ){
+//   if (p.numberOfDaughters() == 0) return &p;
+//   for(size_t i = 0; i < p.numberOfDaughters();++i){
+//     if (p.daughter(i)->pdgId() == p.pdgId()){
+//       return daughter_fsr(p.daughter(i));
+//     }
+//   }
+// }
 
 
 // ------------ method called for each event  ------------
@@ -304,23 +304,23 @@ using namespace std;
       itp != genParticles->end(); itp++) {
 
     if(abs(itp->pdgId()) == 13 && itp->mother()->pdgId() == 23){
-      reco::GenParticle* mufsr1= daughter_fsr(*itp);
+      // reco::GenParticle* mufsr1= daughter_fsr(*itp);
 
       reco::GenParticleCollection::const_iterator ip = itp;
       ip++;
       for(; ip != genParticles->end() && ip->status() == 3 ; ip++){
         if(abs(ip->pdgId()) == 13 && ip->mother()->pdgId() == 23){
-          reco::GenParticle* mufsr2= daughter_fsr(*ip);
+          // reco::GenParticle* mufsr2= daughter_fsr(*ip);
 
           double mass=invmass(*itp,*ip);
           if (mass > 60 && mass < 120) h8->Fill(0);
 
-          double fsrmass=invmass(*mufsr1,*mufsr2);
-          if (fsrmass > 60 && fsrmass <120 
-              && mufsr1->pt()>20 && fabs(mufsr1->eta())<2.1 
-              && mufsr2->pt()>20 && fabs(mufsr2->eta())<2.1){
-              h8->Fill(1);
-            }
+          // double fsrmass=invmass(*mufsr1,*mufsr2);
+          // if (fsrmass > 60 && fsrmass <120 
+          //     && mufsr1->pt()>20 && fabs(mufsr1->eta())<2.1 
+          //     && mufsr2->pt()>20 && fabs(mufsr2->eta())<2.1){
+          //     h8->Fill(1);
+          //   }
 
         }
       }
