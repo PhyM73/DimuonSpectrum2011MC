@@ -296,7 +296,10 @@ using namespace std;
 
     // if(abs(itp->pdgId()) == 13 && itp->mother()->pdgId() == 23){
     if(abs(itp->pdgId()) == 13 ){
-      cout << "tid: "<< itp->daughter()->pdgId();
+      for(size_t j = 0; j < itp->numberOfDaughters();++j){
+      
+        cout << "tid: "<< itp->daughter(j)->pdgId();
+      }
       // reco::GenParticleCollection::const_iterator ip = itp;
       // ip++;
       // for(; ip != genParticles->end() && ip->status() == 3 ; ip++){
@@ -309,7 +312,6 @@ using namespace std;
       // }
     }
   } 
-      // for(size_t j = 0; j < p.numberOfDaughters();++j){
         // const reco::Candidate * d = p.daughter(j);
         // if(d->status() == 3 && abs(d->pdgId()) == 13 
           //  && d->pt() < 20 && fabs(d->eta()) < 2.1){
