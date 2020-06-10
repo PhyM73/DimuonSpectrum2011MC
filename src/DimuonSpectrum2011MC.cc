@@ -97,6 +97,7 @@ private:
         bool eta21pt1510(const reco::Muon&, const reco::Muon&);
         bool istight(const reco::Muon&, const math::XYZPoint);
         bool isolation(const reco::Muon&);
+        double invmass(const reco::GenParticle&, const reco::GenParticle&);
 
 // ----------member data ---------------------------
 
@@ -109,6 +110,8 @@ TH1D *h661;
 TH1D *h10;
 
 TH1D *h7;
+
+TH1D *h8;
 
 // triggerExpression::Data triggerCache;
 // std::unique_ptr<triggerExpression::Evaluator> triggerSelector;
@@ -167,6 +170,10 @@ h661->GetYaxis()->SetTitle("Number of Events");
 h7 = fs->make<TH1D>("Cut_Flow", "Cut Flow", 12, 0, 12);
 h7->GetYaxis()->SetTitle("Number of Events");
 
+// cut flow for the analysis of xsec_Zmumu
+h8 = fs->make<TH1D>("Accept", "Acceptance", 2, 0, 2);
+h8->GetYaxis()->SetTitle("Number of Events");
+
 }
 
 
@@ -215,6 +222,14 @@ bool DimuonSpectrum2011MC::isolation (const reco::Muon& muon){
     if (iso < 0.15) return true;
   }
   return false;
+}
+
+
+double DimuonSpectrum2011MC::invmass (const reco::GenParticle& p1, const reco::GenParticle& p2){
+  double  s1 = sqrt(((p1.p())*(p1.p()) + sqmums) * ((p2.p())*(p2.p()) + sqmums));
+  double  s2 = p1.px()*p2.px() + p1.py()*p2.py() + p1.pz()*p2.pz();
+  double  s = sqrt(2.0 * (sqmums + (s1 - s2)));
+  return s;
 }
 
 
@@ -273,21 +288,29 @@ using namespace std;
   // WHY:  for monitoring purposes
   h10->Fill(muons->size());
 
-  const reco::Candidate * m1;
-  // const reco::Candidate * m2;
-  // const reco::Candidate * m1fsr;
-  // const reco::Candidate * m2fsr;
-  reco::GenParticleCollection::const_iterator itp = genParticles->begin();
-  for(itp; itp != genParticles->end() && itp->status() == 3 ; ++itp) {
-    // const reco::GenParticle & p = (*genParticles)[i];
-    // if(p.status() == 3 && abs(p.pdgId()) == 23){
+
+  for(reco::GenParticleCollection::const_iterator itp = genParticles->begin();
+      itp != genParticles->end() && itp->status() == 3 ; itp++) {
+
+    if(abs(itp->pdgId()) == 13 && itp->mother()->pdgId() == 23){
+      
+      reco::GenParticleCollection::const_iterator ip = itp;
+      ip++;
+      for(; ip != genParticles->end() && ip->status() == 3 ; ip++){
+        if(abs(ip->pdgId()) == 13 && ip->mother()->pdgId() == 23){
+          double mass=invmass(*itp,*ip);
+          if (mass > 60 && mass < 120){
+            h8->Fill(0);
+          }
+        }
+      }
+    }
+  } 
       // for(size_t j = 0; j < p.numberOfDaughters();++j){
         // const reco::Candidate * d = p.daughter(j);
         // if(d->status() == 3 && abs(d->pdgId()) == 13 
           //  && d->pt() < 20 && fabs(d->eta()) < 2.1){
           // m1 = d;
-    cout<<itp->pdgId();
-    //const reco::Candidate * mom = p.mother();
     //if (!mom->empty()){
 // double pt = p.pt(), eta = p.eta(), phi = p.phi(), mass = p.mass();
     // double vx = p.vx(), vy = p.vy(), vz = p.vz();
@@ -299,7 +322,6 @@ using namespace std;
     //mom++;
     //int m2id = mom->pdgId();
     //cout<<m2id<<endl;
-        } 
       // }
     // }
   
