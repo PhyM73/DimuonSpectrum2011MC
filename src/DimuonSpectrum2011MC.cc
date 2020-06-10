@@ -273,18 +273,36 @@ using namespace std;
   // WHY:  for monitoring purposes
   h10->Fill(muons->size());
 
-  for(size_t i = 0; i < genParticles->size(); ++i) {
-    const reco::GenParticle & p = (*genParticles)[i];
-    int id = p.pdgId();
-    int st = p.status();  
-    // const reco::Candidate * mom = p.mother();
-    // double pt = p.pt(), eta = p.eta(), phi = p.phi(), mass = p.mass();
+  const reco::Candidate * m1;
+  // const reco::Candidate * m2;
+  // const reco::Candidate * m1fsr;
+  // const reco::Candidate * m2fsr;
+  reco::GenParticleCollection::const_iterator itp = genParticles->begin();
+  for(itp; itp != genParticles->end() && itp->status() == 3 ; ++itp) {
+    // const reco::GenParticle & p = (*genParticles)[i];
+    // if(p.status() == 3 && abs(p.pdgId()) == 23){
+      // for(size_t j = 0; j < p.numberOfDaughters();++j){
+        // const reco::Candidate * d = p.daughter(j);
+        // if(d->status() == 3 && abs(d->pdgId()) == 13 
+          //  && d->pt() < 20 && fabs(d->eta()) < 2.1){
+          // m1 = d;
+    cout<<itp->pdgId();
+    //const reco::Candidate * mom = p.mother();
+    //if (!mom->empty()){
+// double pt = p.pt(), eta = p.eta(), phi = p.phi(), mass = p.mass();
     // double vx = p.vx(), vy = p.vy(), vz = p.vz();
     // int charge = p.charge();
     // int n = p.numberOfDaughters();
-    cout<<"id: "<<id<<" status: "<<st<<endl;
-    // cout<<"id: "<<id<<" status: "<<st<<" mom: "<<mom.pdgId()
-  }
+    //cout<<mom<<endl;
+        // int mid = mom->pdgId();
+      // cout<<"   mid: "<< mid <<endl;
+    //mom++;
+    //int m2id = mom->pdgId();
+    //cout<<m2id<<endl;
+        } 
+      // }
+    // }
+  
 
 
   if (muons->size() >= 2) {
