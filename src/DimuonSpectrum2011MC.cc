@@ -237,7 +237,7 @@ reco::GenParticle* DimuonSpectrum2011MC::daughter_fsr(reco::GenParticle& p ){
   if (p.numberOfDaughters() == 0) return &p;
   for(size_t i = 0; i < p.numberOfDaughters();++i){
     if (p.daughter(i)->pdgId() == p.pdgId()){
-      return daughter_fsr(*p.daughter(i));
+      return daughter_fsr(p.daughter(i));
     }
   }
 }
