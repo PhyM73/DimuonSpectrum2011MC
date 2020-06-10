@@ -225,7 +225,8 @@ bool DimuonSpectrum2011MC::isolation (const reco::Muon& muon){
 }
 
 
-double DimuonSpectrum2011MC::invmass (const reco::GenParticle& p1, const reco::GenParticle& p2){
+// double DimuonSpectrum2011MC::invmass (const reco::GenParticle& p1, const reco::GenParticle& p2){
+double DimuonSpectrum2011MC::invmass (const reco::Candidate& p1, const reco::Candidate& p2){
   double  s1 = sqrt(((p1.p())*(p1.p()) + sqmums) * ((p2.p())*(p2.p()) + sqmums));
   double  s2 = p1.px()*p2.px() + p1.py()*p2.py() + p1.pz()*p2.pz();
   double  s = sqrt(2.0 * (sqmums + (s1 - s2)));
@@ -290,20 +291,22 @@ using namespace std;
 
 
   for(reco::GenParticleCollection::const_iterator itp = genParticles->begin();
-      itp != genParticles->end() && itp->status() == 3 ; itp++) {
+      // itp != genParticles->end() && itp->status() == 3 ; itp++) {
+      itp != genParticles->end(); itp++) {
 
-    if(abs(itp->pdgId()) == 13 && itp->mother()->pdgId() == 23){
-      
-      reco::GenParticleCollection::const_iterator ip = itp;
-      ip++;
-      for(; ip != genParticles->end() && ip->status() == 3 ; ip++){
-        if(abs(ip->pdgId()) == 13 && ip->mother()->pdgId() == 23){
-          double mass=invmass(*itp,*ip);
-          if (mass > 60 && mass < 120){
-            h8->Fill(0);
-          }
-        }
-      }
+    // if(abs(itp->pdgId()) == 13 && itp->mother()->pdgId() == 23){
+    if(abs(itp->pdgId()) == 13 ){
+      cout << "tid: "<< itp->daughter->pdgId();
+      // reco::GenParticleCollection::const_iterator ip = itp;
+      // ip++;
+      // for(; ip != genParticles->end() && ip->status() == 3 ; ip++){
+      //   if(abs(ip->pdgId()) == 13 && ip->mother()->pdgId() == 23){
+      //     double mass=invmass(*itp,*ip);
+      //     if (mass > 60 && mass < 120){
+      //       h8->Fill(0);
+      //     }
+      //   }
+      // }
     }
   } 
       // for(size_t j = 0; j < p.numberOfDaughters();++j){
