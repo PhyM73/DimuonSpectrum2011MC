@@ -97,7 +97,7 @@ private:
         bool eta21pt1510(const reco::Muon&, const reco::Muon&);
         bool istight(const reco::Muon&, const math::XYZPoint);
         bool isolation(const reco::Muon&);
-        double invmass(const reco::GenParticle&, const reco::GenParticle&);
+        double invmass(const reco::Candidate&, const reco::Candidate&);
 
 // ----------member data ---------------------------
 
@@ -296,7 +296,7 @@ using namespace std;
 
     // if(abs(itp->pdgId()) == 13 && itp->mother()->pdgId() == 23){
     if(abs(itp->pdgId()) == 13 ){
-      cout << "tid: "<< itp->daughter->pdgId();
+      cout << "tid: "<< itp->daughter()->pdgId();
       // reco::GenParticleCollection::const_iterator ip = itp;
       // ip++;
       // for(; ip != genParticles->end() && ip->status() == 3 ; ip++){
