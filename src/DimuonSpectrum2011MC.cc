@@ -98,7 +98,7 @@ private:
         bool istight(const reco::Muon&, const math::XYZPoint);
         bool isolation(const reco::Muon&);
         double invmass(const reco::Candidate&, const reco::Candidate&);
-        reco::GenParticle* daughter_fsr(const reco::GenParticle& );
+        const reco::GenParticle* daughter_fsr(const reco::GenParticle& );
 // ----------member data ---------------------------
 
 // declare Root histograms
@@ -233,7 +233,7 @@ double DimuonSpectrum2011MC::invmass (const reco::Candidate& p1, const reco::Can
   return s;
 }
 
-reco::GenParticle* DimuonSpectrum2011MC::daughter_fsr(const reco::GenParticle& p ){
+const reco::GenParticle* DimuonSpectrum2011MC::daughter_fsr(const reco::GenParticle& p ){
   if (p.numberOfDaughters() == 0) return &p;
   for(size_t i = 0; i < p.numberOfDaughters();++j){
     if (p.daughter(j)->pdgId() == p.pdgId()){
