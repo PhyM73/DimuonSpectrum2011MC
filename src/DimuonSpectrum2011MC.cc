@@ -385,7 +385,6 @@ using namespace std;
     }
     if (tight == true){
       h7->Fill(2);
-      h71->Fill(0);
       if (opps == true) h7->Fill(3);
       else {h7->Fill(8);}
     }
