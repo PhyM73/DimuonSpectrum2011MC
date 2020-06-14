@@ -172,7 +172,7 @@ for (int i=0; i<6; i++){
 
 
 // cut flow for the analysis of xsec_Zmumu
-h7 = fs->make<TH1D>("Cut_Flow", "Cut Flow", 13, 0, 13);
+h7 = fs->make<TH1D>("Cut_Flow", "Cut Flow", 14, 0, 14);
 h7->GetYaxis()->SetTitle("Number of Events");
 
 }
@@ -306,7 +306,7 @@ using namespace std;
     bool iso  = false;  // Iso < 0.15
     bool sea  = false;  // search region
 
-//------------------analysing Muons (muons-TrackCollection)----------//
+    //------------------analysing Muons (muons-TrackCollection)--------------------//
 
     // WHAT: Declare variables used later
     double s1, s2, s;
@@ -325,7 +325,7 @@ using namespace std;
       // loop over 2nd muon candidate
       for (; i != muons->end(); i++) {
 
-//-------------------------Calculate invariant mass-----------------------------//
+        //-------------------------Calculate invariant mass----------------------//
         // WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
         // (Iterators "it" and "i")
         // WHY:  in order to fill the mass histogram
@@ -333,7 +333,7 @@ using namespace std;
         s2 = it->px()*i->px() + it->py()*i->py() + it->pz()*i->pz();
         s = sqrt(2.0 * (sqmums + (s1 - s2)));
 
-//--------------------determine quality cuts----------------------//
+        //--------------------determine quality cuts-----------------------------//
 
         // WHAT: If these Muon-Tracks satisfy the quality-cut-criteria, the cut flow 
         //       is recorded and their invariant mass is collected.
@@ -365,8 +365,7 @@ using namespace std;
                   if (pt>25.) h66[4]->Fill(s);
                   if (pt>60.) h66[5]->Fill(s);
                 }
-
-                }
+              }
 
             } // end of unlike charge if
 
@@ -380,29 +379,14 @@ using namespace std;
         } // end of if(eta21pt15pt10)
       } //end of for(;i!=muons....)
     } //end of reco ::MuonCollection loop
-    if (bsac == true){
-      h7->Fill(1);
-    }
-    if (tight == true){
-      h7->Fill(2);
-      if (opps == true) h7->Fill(3);
-      else {h7->Fill(8);}
-    }
-    if (zreg == true){
-      if (opps == true) {h7->Fill(4);}
-      else {h7->Fill(9);}
-    }
-    if (pt20 == true){
-      if (opps == true) {h7->Fill(5);}
-      else {h7->Fill(10);}
-    }
-    if (iso == true){
-      if (opps == true) {h7->Fill(6);}
-      else {h7->Fill(11);}
-    }
-    if (sea == true){
-      h7->Fill(13);
-    }
+    if (bsac == true) h7->Fill(1);
+    if (tight == true){ h7->Fill(2);
+      if (opps == true) h7->Fill(3); else {h7->Fill(8); 
+      }
+    if (zreg == true){ if (opps == true) h7->Fill(4); else h7->Fill(9);  }
+    if (pt20 == true){ if (opps == true) h7->Fill(5); else h7->Fill(10); }
+    if (iso == true) { if (opps == true) h7->Fill(6); else h7->Fill(11); }
+    if (sea == true) { h7->Fill(13); }
   } // end of trigger_result
 } //DimuonSpectrum2011MC: analyze ends
 
