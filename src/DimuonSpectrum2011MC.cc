@@ -91,11 +91,10 @@ private:
         virtual void analyze(const edm::Event&, const edm::EventSetup&);
         virtual void endJob();
         bool providesGoodLumisection(const edm::Event& iEvent);
-        bool eta21pt1510(const reco::MuonCollection::const_iterator, 
-                         const reco::MuonCollection::const_iterator);
-        bool istight(const reco::MuonCollection::const_iterator,const math::XYZPoint);
-        bool isolation(const reco::MuonCollection::const_iterator, 
-                       const reco::MuonCollection::const_iterator);
+        bool eta21pt1510(const reco::Muon&, const reco::Muon&);
+        bool istight(const reco::Muon&, const math::XYZPoint);
+        bool isolation(const reco::Muon&);
+        bool search(const reco::Muon&, const math::XYZPoint);
 
 
 // ----------member data ---------------------------
@@ -103,12 +102,15 @@ private:
 // declare Root histograms
 // for a description of their content see below
 
-TH1D *h66;
-TH1D *h661;
-
 TH1D *h10;
 
+TH1D *h6;
+
+TH1D *h66[6];
+
 TH1D *h7;
+
+TH1D *h71;
 
 triggerExpression::Data triggerCache;
 std::unique_ptr<triggerExpression::Evaluator> triggerSelector;
@@ -155,20 +157,29 @@ h10 = fs->make<TH1D>("Mmultiplicity", "Mmultiplicity", 8, 0, 8);
 h10->GetXaxis()->SetTitle("Number of Muons");
 h10->GetYaxis()->SetTitle("Number of Events");
 
-// dimuon mass spectrum up to 120 GeV for tight muons
-h66 = fs->make<TH1D>("GM_mass_tight", "GTM mass ", 70, 10., 150.);
-h66->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
-h66->GetYaxis()->SetTitle("Number of Events");
+// dimuon mass spectrum up to 150 GeV for tight muons after impose Isolaiton requires, 
+h6 = fs->make<TH1D>("GM_mass_tight_iso", "GTM mass Iso", 70, 10., 150.);
+h6->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
+h6->GetYaxis()->SetTitle("Number of Events");
 
-// dimuon mass spectrum up to 120 GeV for tight muons after impose Isolaiton requires, 
-h661 = fs->make<TH1D>("GM_mass_tight_iso", "GTM mass Iso", 70, 10., 150.);
-h661->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
-h661->GetYaxis()->SetTitle("Number of Events");
+
+const char* name[6] = {"GM_mass_iso_0", "GM_mass_iso_25", "GM_mass_iso_60", 
+                       "GM_mass_pro_0", "GM_mass_pro_25", "GM_mass_pro_60"};
+// dimuon mass spectrum in 2 GeV bins. 
+for (int i=0; i<6; i++){
+  h66[i] = fs->make<TH1D>(name[i], "GM mass", 37.5, 10., 85.);
+  h66[i]->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
+  h66[i]->GetYaxis()->SetTitle("Number of Events");
+}
 
 
 // cut flow for the analysis of xsec_Zmumu
 h7 = fs->make<TH1D>("Cut_Flow", "Cut Flow", 12, 0, 12);
 h7->GetYaxis()->SetTitle("Number of Events");
+
+// cut flow for the analysis of xsec_Zmumu
+h71 = fs->make<TH1D>("Cut_Flow_Search", "Cut Flow for Search", 8, 0, 8);
+h71->GetYaxis()->SetTitle("Number of Events");
 
 }
 
@@ -180,31 +191,30 @@ DimuonSpectrum2011MC::~DimuonSpectrum2011MC() {
 
 // member functions
 
-bool DimuonSpectrum2011MC::eta21pt1510 (const reco::MuonCollection::const_iterator m1, 
-       const reco::MuonCollection::const_iterator m2){
+bool DimuonSpectrum2011MC::eta21pt1510 (const reco::Muon& m1, const reco::Muon& m2){
 
-  if ((fabs(m1->eta()) < 2.1 && fabs(m2->eta()) < 2.1)
-      && (m1->pt() > 10. && m2->pt() > 10.)
-      && (m1->pt() > 15. || m2->pt() > 15.)){
+  if ((fabs(m1.eta()) < 2.1 && fabs(m2.eta()) < 2.1)
+      && (m1.pt() > 10. && m2.pt() > 10.)
+      && (m1.pt() > 15. || m2.pt() > 15.)){
     return true;
   } // baseline acceptance in 10.1103/PhysRevD.100.015021
   return false;
 }
 
 
-bool DimuonSpectrum2011MC::istight (const reco::MuonCollection::const_iterator muon, math::XYZPoint point){
+bool DimuonSpectrum2011MC::istight (const reco::Muon& muon, math::XYZPoint point){
   // Global muon with additional muon quality reqirements.
   // Starting from 50X release this set of selection is into an omni-comprehensive selector 
   // in DataFormats/MuonReco/interface/MuonSelectors.h
   // See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Tight_Muon_selection
-  if (muon->isGlobalMuon()){
-    if ( muon->globalTrack()->normalizedChi2() < 10. 
-      && muon->globalTrack()->hitPattern().numberOfValidMuonHits() > 0 
-      && muon->numberOfMatchedStations() > 1 
-      && fabs(muon->innerTrack()->dxy(point)) < 0.2 
-      && fabs(muon->innerTrack()->dz(point)) < 1.0 
-      && muon->innerTrack()->hitPattern().numberOfValidPixelHits() > 0
-      && muon->innerTrack()->hitPattern().numberOfValidTrackerHits() > 10 ){
+  if (muon.isGlobalMuon()){
+    if ( muon.globalTrack()->normalizedChi2() < 10. 
+      && muon.globalTrack()->hitPattern().numberOfValidMuonHits() > 0 
+      && muon.numberOfMatchedStations() > 1 
+      && fabs(muon.innerTrack()->dxy(point)) < 0.2 
+      && fabs(muon.innerTrack()->dz(point)) < 1.0 
+      && muon.innerTrack()->hitPattern().numberOfValidPixelHits() > 0
+      && muon.innerTrack()->hitPattern().numberOfValidTrackerHits() > 10 ){
         return true;
     }
   } 
@@ -212,18 +222,20 @@ bool DimuonSpectrum2011MC::istight (const reco::MuonCollection::const_iterator m
 }
 
 
-bool DimuonSpectrum2011MC::isolation (const reco::MuonCollection::const_iterator m1, 
-       const reco::MuonCollection::const_iterator m2){
-  if (m1->isIsolationValid() && m2->isIsolationValid()) {
-    double iso1=(m1->isolationR03().hadEt+m1->isolationR03().emEt+m1->isolationR03().sumPt)/m1->pt();
-    double iso2=(m2->isolationR03().hadEt+m2->isolationR03().emEt+m2->isolationR03().sumPt)/m2->pt();
-    if (iso1 < 0.15 && iso2 < 0.15){
-      return true;
-    }
+bool DimuonSpectrum2011MC::isolation (const reco::Muon& m){
+  if (m.isIsolationValid()) {
+    double iso=(m.isolationR03().hadEt+m.isolationR03().emEt+m.isolationR03().sumPt)/m.pt();
+    if (iso < 0.15){ return true; }
   }
   return false;
 }
 
+
+bool DimuonSpectrum2011MC::search (const reco::Muon& muon, math::XYZPoint point){
+  if (fabs(muon.innerTrack()->dxy(point)) < 0.025 
+      && fabs(muon.innerTrack()->dz(point)) < 0.2) return true; 
+  return false;
+}
 
 // ------------ method called for each event  ------------//
 void DimuonSpectrum2011MC::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
@@ -298,6 +310,7 @@ using namespace std;
     bool zreg = false;  // z-mass region
     bool pt20 = false;  // pt > 20 Gev/c
     bool iso  = false;  // Iso < 0.15
+    bool sea  = false;  // search region
 
 //------------------analysing Muons (muons-TrackCollection)----------//
 
@@ -331,9 +344,9 @@ using namespace std;
         // WHAT: If these Muon-Tracks satisfy the quality-cut-criteria, the cut flow 
         //       is recorded and their invariant mass is collected.
 
-        if (eta21pt1510(it,i)) { bsac = true;
+        if (eta21pt1510(*it,*i)) { bsac = true;
     
-          if (istight(it,point) && istight(i,point)) { tight = true;
+          if (istight(*it,point) && istight(*i,point)) { tight = true;
 
             // WHAT: Compare electric charges of the current two globalMuon-Tracks
             //       (Iterators "it" and "i")
@@ -341,24 +354,34 @@ using namespace std;
               // unlike charges
 
               double pt = sqrt( pow(it->px()+i->px(), 2.0) + pow(it->py()+i->py(), 2.0) );
-              if (pt<s){
-                h66->Fill(s);
-                if (isolation(it,i)) {
-                  h661->Fill(s);
-                  // WHAT: Store the invariant mass of two muons with unlike sign charges
-                }
+              if (pt<s && isolation(*it) && isolation(*i)){
+                h6->Fill(s);
+                // WHAT: Store the invariant mass of two muons with unlike sign charges
               }
+
+              if (search(*it,point) && search(*i,point) && s >= 11. && s <= 83. ) { 
+                sea = true;
+                if (istight(*it,point) && istight(*i,point)){
+                  h66[0]->Fill(s);
+                  if (pt>25.) h66[1]->Fill(s);
+                  if (pt>60.) h66[2]->Fill(s);
+                }
+                if (fabs(it->innerTrack()->dxy(point)) < 0.01 && fabs(i->innerTrack()->dxy(point)) < 0.01){
+                  h66[3]->Fill(s);
+                  if (pt>25.) h66[4]->Fill(s);
+                  if (pt>60.) h66[5]->Fill(s);
+                }
+
+                }
+
             } // end of unlike charge if
 
-            if (s >= 60. && s <= 120.) {
-              zreg = true;
-              if (it->pt()>20. && i->pt()>20.) {
-                pt20 = true;
-                if (isolation(it,i)) {
-                  iso = true;
-                }
+            if (s >= 60. && s <= 120.) { zreg = true;
+              if (it->pt()>20. && i->pt()>20.) { pt20 = true;
+                if (isolation(*it) && isolation(*i)) { iso = true; }
               }
             }
+
           } // end of if(istight)
         } // end of if(eta21pt15pt10)
       } //end of for(;i!=muons....)
@@ -368,6 +391,7 @@ using namespace std;
     }
     if (tight == true){
       h7->Fill(2);
+      h71->Fill(0);
       if (opps == true) h7->Fill(3);
       else {h7->Fill(8);}
     }
@@ -383,7 +407,10 @@ using namespace std;
       if (opps == true) {h7->Fill(6);}
       else {h7->Fill(11);}
     }
-    } // end of trigger_result
+    if (sea == true){
+      h71->Fill(1);
+    }
+  } // end of trigger_result
 } //DimuonSpectrum2011MC: analyze ends
 
 
