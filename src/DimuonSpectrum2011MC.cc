@@ -381,7 +381,7 @@ using namespace std;
     } //end of reco ::MuonCollection loop
     if (bsac == true) h7->Fill(1);
     if (tight == true){ h7->Fill(2);
-      if (opps == true) h7->Fill(3); else {h7->Fill(8); 
+      if (opps == true) h7->Fill(3); else h7->Fill(8); 
       }
     if (zreg == true){ if (opps == true) h7->Fill(4); else h7->Fill(9);  }
     if (pt20 == true){ if (opps == true) h7->Fill(5); else h7->Fill(10); }
