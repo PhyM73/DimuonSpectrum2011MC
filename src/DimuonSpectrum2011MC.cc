@@ -110,8 +110,6 @@ TH1D *h66[6];
 
 TH1D *h7;
 
-TH1D *h71;
-
 triggerExpression::Data triggerCache;
 std::unique_ptr<triggerExpression::Evaluator> triggerSelector;
 
@@ -174,12 +172,8 @@ for (int i=0; i<6; i++){
 
 
 // cut flow for the analysis of xsec_Zmumu
-h7 = fs->make<TH1D>("Cut_Flow", "Cut Flow", 12, 0, 12);
+h7 = fs->make<TH1D>("Cut_Flow", "Cut Flow", 13, 0, 13);
 h7->GetYaxis()->SetTitle("Number of Events");
-
-// cut flow for the analysis of xsec_Zmumu
-h71 = fs->make<TH1D>("Cut_Flow_Search", "Cut Flow for Search", 8, 0, 8);
-h71->GetYaxis()->SetTitle("Number of Events");
 
 }
 
@@ -408,7 +402,7 @@ using namespace std;
       else {h7->Fill(11);}
     }
     if (sea == true){
-      h71->Fill(1);
+      h7->Fill(13);
     }
   } // end of trigger_result
 } //DimuonSpectrum2011MC: analyze ends
