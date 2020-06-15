@@ -50,7 +50,7 @@ filelist = FileUtils.loadListFromFile('datasets/double/CMS_Run2011A_DoubleMu_AOD
 
 process.source = cms.Source("PoolSource", fileNames=cms.untracked.vstring(*filelist))
 
-# define JSON file for 2011 (replace by 2012 version for 2012 data)
+# define JSON file for 2011
 # apply JSON file (only for data)
 #   (needs to be placed *after* the process.source input file definition!)
 #
@@ -67,7 +67,7 @@ process.source.skipEvents = cms.untracked.uint32(0)
 process.demo = cms.EDAnalyzer('DimuonSpectrum2011MC')
 # ***********************************************************
 # output file name                                          *
-# default is DoubleMuMC.root                                *
+# default is DoubleMu2011.root                              *
 # change this according to your wish                        *
 # ***********************************************************
 process.TFileService = cms.Service("TFileService", fileName=cms.string('DoubleMu2011.root'))
