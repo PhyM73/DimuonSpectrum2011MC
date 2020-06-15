@@ -57,10 +57,8 @@
 // for Moun information
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
-// #include "DataFormats/MuonReco/interface/MuonSelectors.h"
 #include "DataFormats/MuonReco/interface/MuonIsolation.h"
-// #include "DataFormats/MuonReco/interface/MuonMETCorrectionData.h"
-// #include "DataFormats/MuonReco/interface/MuonTimeExtra.h"
+// #include "DataFormats/MuonReco/interface/MuonSelectors.h"
 
 // for vertex information 
 #include "DataFormats/VertexReco/interface/Vertex.h"
@@ -344,7 +342,7 @@ using namespace std;
 
               if (search(*it,point) && search(*i,point) && s >= 11. && s <= 83. ) { 
                 sea = true;
-                if (istight(*it,point) && istight(*i,point)){ 
+                if (isolation15(*it,point) && isolation15(*i,point)){ 
                   // isolated sample
                   h66[0]->Fill(s);
                   if (pt>25.) h66[1]->Fill(s);
