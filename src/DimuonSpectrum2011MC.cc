@@ -262,22 +262,15 @@ using namespace std;
   iEvent.getByLabel("muons", muons);
 
   // INFO: Primary Vertex
-  Handle<reco::VertexCollection> primvtx;
-  iEvent.getByLabel("offlinePrimaryVertices", primvtx);
-  if (primvtx.isValid()) {
-    math::XYZPoint point(*primvtx[0].position());
+  Handle<reco::VertexCollection> primvtxHandle;
+  iEvent.getByLabel("offlinePrimaryVertices", primvtxHandle);
+  reco::VertexCollection primvtx;
+  if (primvtxHandle.isValid()) {
+      primvtx = *primvtxHandle;
   } 
   else{ LogInfo("Demo")<< "No primary vertex available from EventSetup \n"; return; }
 
-  // Handle<reco::VertexCollection> primvtxHandle;
-  // iEvent.getByLabel("offlinePrimaryVertices", primvtxHandle);
-  // reco::VertexCollection primvtx;
-  // if (primvtxHandle.isValid()) {
-  //     primvtx = *primvtxHandle;
-  // } 
-  // else{ LogInfo("Demo")<< "No primary vertex available from EventSetup \n"; return; }
-
-  // math::XYZPoint point(primvtx[0].position());
+  math::XYZPoint point(primvtx[0].position());
 
   // WHAT: Fill histogram of the number of Muon-Tracks in the current Event.
   // WHY:  for monitoring purposes
