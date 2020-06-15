@@ -342,7 +342,7 @@ using namespace std;
 
               if (search(*it,point) && search(*i,point) && s >= 11. && s <= 83. ) { 
                 sea = true;
-                if (istight(*it,point) && istight(*i,point)){ 
+                if (isolation15(*it,point) && isolation15(*i,point)){ 
                   // isolated sample
                   h66[0]->Fill(s);
                   if (pt>25.) h66[1]->Fill(s);
