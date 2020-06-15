@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
-// Original Package:    DimuonSpectrum2011
-// Original Class:      DimuonSpectrum2011
+// Package:    DimuonSpectrum2011MC
+// Class:      DimuonSpectrum2011MC
 //
 /**\class DimuonSpectrum2011MC DimuonSpectrum2011MC.cc Demo/DimuonSpectrum2011/src/DimuonSpectrum2011MC.cc
 
@@ -12,25 +12,18 @@
  */
 //
 // Original Author:
-//         Created:  Mon May  4 15:24:13 CEST 2015
+//         Created:  Mon  May 4, 15:24:13 CEST 2015
 //         Finalized: February 24, 2016  by   A. Geiser
 //                    with contributions from I. Dutta,
 //                                            H. Hirvonsalo
 //                                            B. Sheeran
+
+// Author:
+//         Created:  Mon  Apr 6, 2020
+//         Finalized: Jun 12, 2020  by   F.Q. Meng (still in development)
 // $Id$
 // ..
 //
-// ***************************************************************************
-// version of DEMO setup provided by CMS open data access team               *
-// expanded/upgraded to contain a pedagocigal analysis example for the       *
-// dimuon mass spectrum (MUO-10-004)                                         *
-//                                                                           *
-// Note that the published spectrum is reproduced approximately, but not     *
-// exactly, since the data sets only partially overlap, and, for reasons of  *
-// simplicity, there is no trigger selection beyond the one implicit in the  *
-// Mu data set, only global muons are used, and only part of the muon        *
-// quality cuts are applied                                                  *
-// ***************************************************************************
 
 // system include files
 #include <memory>
@@ -66,8 +59,8 @@
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
 // #include "DataFormats/MuonReco/interface/MuonSelectors.h"
 #include "DataFormats/MuonReco/interface/MuonIsolation.h"
-#include "DataFormats/MuonReco/interface/MuonMETCorrectionData.h"
-#include "DataFormats/MuonReco/interface/MuonTimeExtra.h"
+// #include "DataFormats/MuonReco/interface/MuonMETCorrectionData.h"
+// #include "DataFormats/MuonReco/interface/MuonTimeExtra.h"
 
 // for vertex information 
 #include "DataFormats/VertexReco/interface/Vertex.h"
@@ -93,7 +86,7 @@ private:
         bool providesGoodLumisection(const edm::Event& iEvent);
         bool eta21pt1510(const reco::Muon&, const reco::Muon&);
         bool istight(const reco::Muon&, const math::XYZPoint);
-        bool isolation(const reco::Muon&);
+        bool isolation15(const reco::Muon&);
         bool search(const reco::Muon&, const math::XYZPoint);
 
 
@@ -105,11 +98,11 @@ private:
 TH1D *h10;
 
 TH1D *h6;
-
 TH1D *h66[6];
 
 TH1D *h7;
 
+// declare the trigger selector
 triggerExpression::Data triggerCache;
 std::unique_ptr<triggerExpression::Evaluator> triggerSelector;
 
@@ -135,8 +128,8 @@ DimuonSpectrum2011MC::DimuonSpectrum2011MC(const edm::ParameterSet& iConfig):
 
 // ***************************************************************************
 // This is the main analysis routine
-// The goal is to approximately reproduce the dimuon mass spectrum from 
-// MUO-10-004 and reproduce the validation test in 10.1103/PhysRevD.100.015021
+// The goal is to reproduce the validation test and the resonance search
+// in 10.1103/PhysRevD.100.015021  
 // ***************************************************************************
 
 //now do what ever initialization is needed
@@ -147,15 +140,15 @@ edm::Service<TFileService> fs;
 // (called once for initialization)
 // ************************************
 
-// monitoring histograms for muons,
-// intended for muons from Mu sample
-
+// monitoring histograms for muons, intended for muons from Mu sample
 // muon multiplicity
 h10 = fs->make<TH1D>("Mmultiplicity", "Mmultiplicity", 8, 0, 8);
 h10->GetXaxis()->SetTitle("Number of Muons");
 h10->GetYaxis()->SetTitle("Number of Events");
 
-// dimuon mass spectrum up to 150 GeV for tight muons after impose Isolaiton requires, 
+
+// dimuon mass spectrum up to 150 GeV for tight muons after impose Isolaiton requires 
+// Perform the comparison between the CMS2011a data set and Monte Carlo Samples
 h6 = fs->make<TH1D>("GM_mass_tight_iso", "GTM mass Iso", 70, 10., 150.);
 h6->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h6->GetYaxis()->SetTitle("Number of Events");
@@ -165,13 +158,13 @@ const char* name[6] = {"GM_mass_iso_0", "GM_mass_iso_25", "GM_mass_iso_60",
                        "GM_mass_pro_0", "GM_mass_pro_25", "GM_mass_pro_60"};
 // dimuon mass spectrum in 2 GeV bins. 
 for (int i=0; i<6; i++){
-  h66[i] = fs->make<TH1D>(name[i], "GM mass", 37.5, 10., 85.);
+  h66[i] = fs->make<TH1D>(name[i], "GM mass", 37, 10.5, 84.5);
   h66[i]->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
   h66[i]->GetYaxis()->SetTitle("Number of Events");
 }
 
 
-// cut flow for the analysis of xsec_Zmumu
+// cut flow for the analysis of xsec_Zmumu and the search work
 h7 = fs->make<TH1D>("Cut_Flow", "Cut Flow", 14, 0, 14);
 h7->GetYaxis()->SetTitle("Number of Events");
 
@@ -197,7 +190,7 @@ bool DimuonSpectrum2011MC::eta21pt1510 (const reco::Muon& m1, const reco::Muon& 
 
 
 bool DimuonSpectrum2011MC::istight (const reco::Muon& muon, math::XYZPoint point){
-  // Global muon with additional muon quality reqirements.
+  // Perform the Tight Muon selection explicitly
   // Starting from 50X release this set of selection is into an omni-comprehensive selector 
   // in DataFormats/MuonReco/interface/MuonSelectors.h
   // See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Tight_Muon_selection
@@ -216,7 +209,7 @@ bool DimuonSpectrum2011MC::istight (const reco::Muon& muon, math::XYZPoint point
 }
 
 
-bool DimuonSpectrum2011MC::isolation (const reco::Muon& m){
+bool DimuonSpectrum2011MC::isolation15 (const reco::Muon& m){
   if (m.isIsolationValid()) {
     double iso=(m.isolationR03().hadEt+m.isolationR03().emEt+m.isolationR03().sumPt)/m.pt();
     if (iso < 0.15){ return true; }
@@ -226,6 +219,7 @@ bool DimuonSpectrum2011MC::isolation (const reco::Muon& m){
 
 
 bool DimuonSpectrum2011MC::search (const reco::Muon& muon, math::XYZPoint point){
+  // the tight IP cuts for resonance search
   if (fabs(muon.innerTrack()->dxy(point)) < 0.025 
       && fabs(muon.innerTrack()->dz(point)) < 0.2) return true; 
   return false;
@@ -282,7 +276,7 @@ using namespace std;
   // WHY:  for monitoring purposes
   h10->Fill(muons->size());
 
-  // INFO: Use the trigger result as a evnet selector
+  // INFO: Use the trigger result as a evnet selector, see the link below: 
   // https://twiki.cern.ch/twiki/bin/viewauth/CMS/TriggerResultsFilter#Use_as_a_Selector_AN1
   // Pass the Event and EventSetup to the cache object
   if (triggerSelector and triggerCache.setEvent(iEvent, iSetup)){
@@ -311,18 +305,14 @@ using namespace std;
     // WHAT: Declare variables used later
     double s1, s2, s;
 
-    // WHAT: Loop over all the Muons of current Event
-    // WHY:  to select good candidates to be used in invariant mass calculation
+    // Loop over all the Muons of current Event
     for (reco::MuonCollection::const_iterator it = muons->begin();
       it != muons->end(); it++) {
 
-    // NTS: Stores iterator for current Muon-Track and advances it by one.
-    //      In other words, the needed preparation to be able to compare all the other
-    //      Muon-Tracks after the current one to the current Muon-Track with iterator it.
       reco::MuonCollection::const_iterator i = it;
       i++;
 
-      // loop over 2nd muon candidate
+      // Loop over 2nd muon candidate
       for (; i != muons->end(); i++) {
 
         //-------------------------Calculate invariant mass----------------------//
@@ -345,22 +335,23 @@ using namespace std;
             // WHAT: Compare electric charges of the current two globalMuon-Tracks
             //       (Iterators "it" and "i")
             if (it->charge() == -(i->charge()) ){ opps = true;
-              // unlike charges
 
               double pt = sqrt( pow(it->px()+i->px(), 2.0) + pow(it->py()+i->py(), 2.0) );
-              if (pt<s && isolation(*it) && isolation(*i)){
+              if (pt<s && isolation15(*it) && isolation15(*i)){
                 h6->Fill(s);
                 // WHAT: Store the invariant mass of two muons with unlike sign charges
               }
 
               if (search(*it,point) && search(*i,point) && s >= 11. && s <= 83. ) { 
                 sea = true;
-                if (istight(*it,point) && istight(*i,point)){
+                if (istight(*it,point) && istight(*i,point)){ 
+                  // isolated sample
                   h66[0]->Fill(s);
                   if (pt>25.) h66[1]->Fill(s);
                   if (pt>60.) h66[2]->Fill(s);
                 }
                 if (fabs(it->innerTrack()->dxy(point)) < 0.01 && fabs(i->innerTrack()->dxy(point)) < 0.01){
+                  // prompt sample
                   h66[3]->Fill(s);
                   if (pt>25.) h66[4]->Fill(s);
                   if (pt>60.) h66[5]->Fill(s);
@@ -371,14 +362,15 @@ using namespace std;
 
             if (s >= 60. && s <= 120.) { zreg = true;
               if (it->pt()>20. && i->pt()>20.) { pt20 = true;
-                if (isolation(*it) && isolation(*i)) { iso = true; }
+                if (isolation15(*it) && isolation15(*i)) { iso = true; }
               }
             }
 
           } // end of if(istight)
         } // end of if(eta21pt15pt10)
-      } //end of for(;i!=muons....)
-    } //end of reco ::MuonCollection loop
+      } //end of for(;i!=muons->end();...)
+    } //end of reco::MuonCollection loop
+    // Fill the histo of the cut flow
     if (bsac == true) h7->Fill(1);
     if (tight == true){ h7->Fill(2);
       if (opps == true) h7->Fill(3); else h7->Fill(8); 
