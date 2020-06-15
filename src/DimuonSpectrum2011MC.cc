@@ -57,10 +57,8 @@
 // for Moun information
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
-// #include "DataFormats/MuonReco/interface/MuonSelectors.h"
 #include "DataFormats/MuonReco/interface/MuonIsolation.h"
-// #include "DataFormats/MuonReco/interface/MuonMETCorrectionData.h"
-// #include "DataFormats/MuonReco/interface/MuonTimeExtra.h"
+// #include "DataFormats/MuonReco/interface/MuonSelectors.h"
 
 // for vertex information 
 #include "DataFormats/VertexReco/interface/Vertex.h"
