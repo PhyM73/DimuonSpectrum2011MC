@@ -276,7 +276,7 @@ using namespace std;
     //------------------analysing Muons (muons-TrackCollection)--------------------//
 
     // WHAT: Declare variables used later
-    double s1, s2, s;
+    double e1, e2, e3, p12, p13, p23, s;
 
     // Loop over all the Muons of current Event
     for (reco::MuonCollection::const_iterator mu = muons->begin();
