@@ -294,25 +294,22 @@ using namespace std;
         // Loop over 3rd muon candidate
         for (; muii != muons->end(); muii++) {
 
-        //-------------------------Calculate invariant mass----------------------//
-        // WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
-        // (Iterators "it" and "i")
-        // WHY:  in order to fill the mass histogram
-        e1 = (mu->p())*(mu->p()) + sqmums;
-        e2 = (mui->p())*(mui->p()) + sqmums;
-        e3 = (muii->p())*(muii->p()) + sqmums;
-        p12 = mu->px()*mui->px() + mu->py()*mui->py() + mu->pz()*mui->pz();
-        p13 = mu->px()*muii->px() + mu->py()*muii->py() + mu->pz()*muii->pz();
-        p23 = mui->px()*muii->px() + mui->py()*muii->py() + mui->pz()*muii->pz();
-        s = sqrt(3.0*sqmums + 2.0*(sqrt(e1*e2) + sqrt(e1*e3) + sqrt(e2*e3) - p12 - p13 - p23));
 
-        //--------------------determine quality cuts-----------------------------//
-
-        // WHAT: If these Muon-Tracks satisfy the quality-cut-criteria, the cut flow 
-        //       is recorded and their invariant mass is collected.
-   
           if (istight(*mu,point) && istight(*mui,point) && istight(*muii,point)
               && isolation15(*mu) && isolation15(*mui) && isolation15(*muii)){
+
+            //-------------------------Calculate invariant mass----------------------//
+            // WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
+            // (Iterators "it" and "i")
+            // WHY:  in order to fill the mass histogram
+            e1 = (mu->p())*(mu->p()) + sqmums;
+            e2 = (mui->p())*(mui->p()) + sqmums;
+            e3 = (muii->p())*(muii->p()) + sqmums;
+            p12 = mu->px()*mui->px() + mu->py()*mui->py() + mu->pz()*mui->pz();
+            p13 = mu->px()*muii->px() + mu->py()*muii->py() + mu->pz()*muii->pz();
+            p23 = mui->px()*muii->px() + mui->py()*muii->py() + mui->pz()*muii->pz();
+            s = sqrt(3.0*sqmums + 2.0*(sqrt(e1*e2) + sqrt(e1*e3) + sqrt(e2*e3) - p12 - p13 - p23));
+
             h66[0]->Fill(s);
   
             if (mu->charge() == mui->charge() && mu->charge() == muii->charge() ){ 
@@ -330,7 +327,6 @@ using namespace std;
                   (mui->charge() > 0 && muii->charge() > 0) ||
                   (mu->charge() > 0 && muii->charge() > 0) ){ 
                 h66[5]->Fill(s);
-
               }
               else {
               h66[6]->Fill(s);
