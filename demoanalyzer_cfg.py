@@ -6,7 +6,7 @@ process = cms.Process("Demo")
 
 # intialize MessageLogger and output report
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
-process.MessageLogger.cerr.threshold = 'ERROR'
+process.MessageLogger.cerr.threshold = 'INFO'
 process.MessageLogger.categories.append('Demo')
 process.MessageLogger.cerr.INFO = cms.untracked.PSet(limit=cms.untracked.int32(-1))
 process.options = cms.untracked.PSet(wantSummary=cms.untracked.bool(True))
@@ -16,7 +16,7 @@ process.options = cms.untracked.PSet(wantSummary=cms.untracked.bool(True))
 #    according to need and wish                                        *
 #    default is preset to 10000 events                                 *
 # **********************************************************************
-process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(-1))
+process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(10000))
 
 # set the number of events to be skipped (if any) at end of file below
 
@@ -36,14 +36,14 @@ import FWCore.Utilities.FileUtils as FileUtils
 #
 
 # read the index files automatically
-filelist = []
-datasets = FileUtils.os.walk(r"./data")
-for path, dir_list, file_list in datasets:
-    for indexfile in file_list:
-        filelist.extend(FileUtils.loadListFromFile(FileUtils.os.path.join(path, indexfile)))
+# filelist = []
+# datasets = FileUtils.os.walk(r"./data")
+# for path, dir_list, file_list in datasets:
+#     for indexfile in file_list:
+#         filelist.extend(FileUtils.loadListFromFile(FileUtils.os.path.join(path, indexfile)))
 
 # *** 2011 DoubleMu data set, single file ***
-# filelist = FileUtils.loadListFromFile('datasets/double/CMS_Run2011A_DoubleMu_AOD_12Oct2013-v1_10000_file_index.txt')
+filelist = FileUtils.loadListFromFile('datasets/double/CMS_Run2011A_DoubleMu_AOD_12Oct2013-v1_10000_file_index.txt')
 
 # *** MonteCarlo data sets ***
 # filelist = FileUtils.loadListFromFile('datasets/mc/CMS_MonteCarlo2011_Summer11LegDR_DYJetsToLL_M-10To50_TuneZ2_7TeV-pythia6_AODSIM_PU_S13_START53_LV6-v1_00000_file_index.txt')
@@ -70,6 +70,6 @@ process.demo = cms.EDAnalyzer('DimuonSpectrum2011MC')
 # default is DoubleMu2011.root                              *
 # change this according to your wish                        *
 # ***********************************************************
-process.TFileService = cms.Service("TFileService", fileName=cms.string('DoubleMu2011.root'))
+process.TFileService = cms.Service("TFileService", fileName=cms.string('DoubleMu2011trimu.root'))
 
 process.p = cms.Path(process.demo)

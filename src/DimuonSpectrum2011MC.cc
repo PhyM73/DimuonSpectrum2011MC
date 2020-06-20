@@ -82,10 +82,10 @@ private:
         virtual void analyze(const edm::Event&, const edm::EventSetup&);
         virtual void endJob();
         bool providesGoodLumisection(const edm::Event& iEvent);
-        bool eta21pt1510(const reco::Muon&, const reco::Muon&);
+        // bool eta21pt1510(const reco::Muon&, const reco::Muon&);
         bool istight(const reco::Muon&, const math::XYZPoint);
         bool isolation15(const reco::Muon&);
-        bool search(const reco::Muon&, const math::XYZPoint);
+        // bool search(const reco::Muon&, const math::XYZPoint);
 
 
 // ----------member data ---------------------------
@@ -95,14 +95,14 @@ private:
 
 TH1D *h10;
 
-TH1D *h6;
-TH1D *h66[6];
+// TH1D *h6;
+TH1D *h66[7];
 
-TH1D *h7;
+// TH1D *h7;
 
 // declare the trigger selector
-triggerExpression::Data triggerCache;
-std::unique_ptr<triggerExpression::Evaluator> triggerSelector;
+// triggerExpression::Data triggerCache;
+// std::unique_ptr<triggerExpression::Evaluator> triggerSelector;
 
 };
 
@@ -119,10 +119,11 @@ std::unique_ptr<triggerExpression::Evaluator> triggerSelector;
 // constructors and destructor
 //
 
-DimuonSpectrum2011MC::DimuonSpectrum2011MC(const edm::ParameterSet& iConfig):
-    triggerCache(triggerExpression::Data(edm::InputTag("TriggerResults","","HLT"), 
-                 edm::InputTag(""), 1, false, false, false)) ,
-    triggerSelector(triggerExpression::parse("HLT_Mu13_Mu8*")) {
+// DimuonSpectrum2011MC::DimuonSpectrum2011MC(const edm::ParameterSet& iConfig):
+    // triggerCache(triggerExpression::Data(edm::InputTag("TriggerResults","","HLT"), 
+                //  edm::InputTag(""), 1, false, false, false)) ,
+    // triggerSelector(triggerExpression::parse("HLT_Mu13_Mu8*")) {
+DimuonSpectrum2011MC::DimuonSpectrum2011MC(const edm::ParameterSet& iConfig){
 
 // ***************************************************************************
 // This is the main analysis routine
@@ -147,24 +148,20 @@ h10->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 150 GeV for tight muons after impose Isolaiton requires 
 // Perform the comparison between the CMS2011a data set and Monte Carlo Samples
-h6 = fs->make<TH1D>("GM_mass_tight_iso", "GTM mass Iso", 70, 10., 150.);
-h6->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
-h6->GetYaxis()->SetTitle("Number of Events");
+// h6 = fs->make<TH1D>("GM_mass_tight_iso", "GTM mass Iso", 70, 10., 150.);
+// h6->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
+// h6->GetYaxis()->SetTitle("Number of Events");
 
 
-const char* name[6] = {"GM_mass_iso_0", "GM_mass_iso_25", "GM_mass_iso_60", 
-                       "GM_mass_pro_0", "GM_mass_pro_25", "GM_mass_pro_60"};
+const char* name[7] = {"GM_mass_tri", "GM_mass_tri_ss", "GM_mass_tri_ss_ppp", "GM_mass_tri_ss_nnn",
+                       "GM_mass_tri_os", "GM_mass_tri_os_p", "GM_mass_tri_os_n"};
 // dimuon mass spectrum in 2 GeV bins. 
-for (int i=0; i<6; i++){
-  h66[i] = fs->make<TH1D>(name[i], "GM mass", 37, 10.5, 84.5);
+for (int i=0; i<7; i++){
+  h66[i] = fs->make<TH1D>(name[i], "GM mass", 140, 10, 150);
   h66[i]->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
   h66[i]->GetYaxis()->SetTitle("Number of Events");
 }
 
-
-// cut flow for the analysis of xsec_Zmumu and the search work
-h7 = fs->make<TH1D>("Cut_Flow", "Cut Flow", 14, 0, 14);
-h7->GetYaxis()->SetTitle("Number of Events");
 
 }
 
@@ -176,15 +173,15 @@ DimuonSpectrum2011MC::~DimuonSpectrum2011MC() {
 
 // member functions
 
-bool DimuonSpectrum2011MC::eta21pt1510 (const reco::Muon& m1, const reco::Muon& m2){
+// bool DimuonSpectrum2011MC::eta21pt1510 (const reco::Muon& m1, const reco::Muon& m2){
 
-  if ((fabs(m1.eta()) < 2.1 && fabs(m2.eta()) < 2.1)
-      && (m1.pt() > 10. && m2.pt() > 10.)
-      && (m1.pt() > 15. || m2.pt() > 15.)){
-    return true;
-  } // baseline acceptance in 10.1103/PhysRevD.100.015021
-  return false;
-}
+//   if ((fabs(m1.eta()) < 2.1 && fabs(m2.eta()) < 2.1)
+//       && (m1.pt() > 10. && m2.pt() > 10.)
+//       && (m1.pt() > 15. || m2.pt() > 15.)){
+//     return true;
+//   } // baseline acceptance in 10.1103/PhysRevD.100.015021
+//   return false;
+// }
 
 
 bool DimuonSpectrum2011MC::istight (const reco::Muon& muon, math::XYZPoint point){
@@ -216,12 +213,12 @@ bool DimuonSpectrum2011MC::isolation15 (const reco::Muon& m){
 }
 
 
-bool DimuonSpectrum2011MC::search (const reco::Muon& muon, math::XYZPoint point){
-  // the tight IP cuts for resonance search
-  if (fabs(muon.innerTrack()->dxy(point)) < 0.025 
-      && fabs(muon.innerTrack()->dz(point)) < 0.2) return true; 
-  return false;
-}
+// bool DimuonSpectrum2011MC::search (const reco::Muon& muon, math::XYZPoint point){
+//   // the tight IP cuts for resonance search
+//   if (fabs(muon.innerTrack()->dxy(point)) < 0.025 
+//       && fabs(muon.innerTrack()->dz(point)) < 0.2) return true; 
+//   return false;
+// }
 
 // ------------ method called for each event  ------------//
 void DimuonSpectrum2011MC::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
@@ -274,29 +271,7 @@ using namespace std;
   // WHY:  for monitoring purposes
   h10->Fill(muons->size());
 
-  // INFO: Use the trigger result as a evnet selector, see the link below: 
-  // https://twiki.cern.ch/twiki/bin/viewauth/CMS/TriggerResultsFilter#Use_as_a_Selector_AN1
-  // Pass the Event and EventSetup to the cache object
-  if (triggerSelector and triggerCache.setEvent(iEvent, iSetup)){
-    // if the L1 or HLT configurations have changed, (re)initialize the filters 
-    // (including during the first event)
-    if (triggerCache.configurationUpdated())
-      triggerSelector ->init(triggerCache);
-  }
-
-  bool trigger_result = (*triggerSelector)(triggerCache);
-  if (trigger_result && (muons->size() >= 2)) {
-
-    h7->Fill(0);
-  
-    // sign for cut flow 
-    bool bsac = false;  // baseline acceptance
-    bool tight= false;  // tight muon
-    bool opps = false;  // opposite sign
-    bool zreg = false;  // z-mass region
-    bool pt20 = false;  // pt > 20 Gev/c
-    bool iso  = false;  // Iso < 0.15
-    bool sea  = false;  // search region
+  if ((muons->size() >= 3)) {
 
     //------------------analysing Muons (muons-TrackCollection)--------------------//
 
@@ -304,80 +279,68 @@ using namespace std;
     double s1, s2, s;
 
     // Loop over all the Muons of current Event
-    for (reco::MuonCollection::const_iterator it = muons->begin();
-      it != muons->end(); it++) {
+    for (reco::MuonCollection::const_iterator mu = muons->begin();
+      mu != muons->end(); mu++) {
 
-      reco::MuonCollection::const_iterator i = it;
-      i++;
+      reco::MuonCollection::const_iterator mui = mu;
+      mui++;
 
       // Loop over 2nd muon candidate
-      for (; i != muons->end(); i++) {
+      for (; mui != muons->end(); mui++) {
+
+        reco::MuonCollection::const_iterator muii = mui;
+        muii++;
+
+        // Loop over 3rd muon candidate
+        for (; muii != muons->end(); muii++) {
 
         //-------------------------Calculate invariant mass----------------------//
         // WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
         // (Iterators "it" and "i")
         // WHY:  in order to fill the mass histogram
-        s1 = sqrt(((it->p())*(it->p()) + sqmums) * ((i->p())*(i->p()) + sqmums));
-        s2 = it->px()*i->px() + it->py()*i->py() + it->pz()*i->pz();
-        s = sqrt(2.0 * (sqmums + (s1 - s2)));
+        e1 = (mu->p())*(mu->p()) + sqmums;
+        e2 = (mui->p())*(mui->p()) + sqmums;
+        e3 = (muii->p())*(muii->p()) + sqmums;
+        p12 = mu->px()*mui->px() + mu->py()*mui->py() + mu->pz()*mui->pz();
+        p13 = mu->px()*muii->px() + mu->py()*muii->py() + mu->pz()*muii->pz();
+        p23 = mui->px()*muii->px() + mui->py()*muii->py() + mui->pz()*muii->pz();
+        s = sqrt(3.0*sqmums + 2.0*(sqrt(e1*e2) + sqrt(e1*e3) + sqrt(e2*e3) - p12 - p13 - p23));
 
         //--------------------determine quality cuts-----------------------------//
 
         // WHAT: If these Muon-Tracks satisfy the quality-cut-criteria, the cut flow 
         //       is recorded and their invariant mass is collected.
-
-        if (eta21pt1510(*it,*i)) { bsac = true;
-    
-          if (istight(*it,point) && istight(*i,point)) { tight = true;
-
-            // WHAT: Compare electric charges of the current two globalMuon-Tracks
-            //       (Iterators "it" and "i")
-            if (it->charge() == -(i->charge()) ){ opps = true;
-
-              double pt = sqrt( pow(it->px()+i->px(), 2.0) + pow(it->py()+i->py(), 2.0) );
-              if (pt<s && isolation15(*it) && isolation15(*i)){
-                h6->Fill(s);
-                // WHAT: Store the invariant mass of two muons with unlike sign charges
+   
+          if (istight(*mu,point) && istight(*mui,point) && istight(*muii,point)
+              && isolation15(*mu) && isolation15(*mui) && isolation15(*muii)){
+            h66[0]->Fill(s);
+  
+            if (mu->charge() == mui->charge() && mu->charge() == muii->charge() ){ 
+              h66[1]->Fill(s);
+              if (mu->charge() > 0){
+                h66[2]->Fill(s);
+              } 
+              else {
+                h66[3]->Fill(s);
               }
+            } 
+            else {
+              h66[4]->Fill(s);
+              if ((mu->charge() > 0 && mui->charge() > 0) || 
+                  (mui->charge() > 0 && muii->charge() > 0) ||
+                  (mu->charge() > 0 && muii->charge() > 0) ){ 
+                h66[5]->Fill(s);
 
-              if (search(*it,point) && search(*i,point) && s >= 11. && s <= 83. ) { 
-                sea = true;
-                if (isolation15(*it) && isolation15(*i)){ 
-                  // isolated sample
-                  h66[0]->Fill(s);
-                  if (pt>25.) h66[1]->Fill(s);
-                  if (pt>60.) h66[2]->Fill(s);
-                }
-                if (fabs(it->innerTrack()->dxy(point)) < 0.01 && fabs(i->innerTrack()->dxy(point)) < 0.01){
-                  // prompt sample
-                  h66[3]->Fill(s);
-                  if (pt>25.) h66[4]->Fill(s);
-                  if (pt>60.) h66[5]->Fill(s);
-                }
               }
-
-            } // end of unlike charge if
-
-            if (s >= 60. && s <= 120.) { zreg = true;
-              if (it->pt()>20. && i->pt()>20.) { pt20 = true;
-                if (isolation15(*it) && isolation15(*i)) { iso = true; }
+              else {
+              h66[6]->Fill(s);
               }
-            }
-
-          } // end of if(istight)
-        } // end of if(eta21pt15pt10)
-      } //end of for(;i!=muons->end();...)
+            } // end of charge if
+          }
+        } //end of for(;muii!=muons->end();...)
+      } //end of for(;mui!=muons->end();...)
     } //end of reco::MuonCollection loop
-    // Fill the histo of the cut flow
-    if (bsac == true) h7->Fill(1);
-    if (tight == true){ h7->Fill(2);
-      if (opps == true) h7->Fill(3); else h7->Fill(8); 
-      }
-    if (zreg == true){ if (opps == true) h7->Fill(4); else h7->Fill(9);  }
-    if (pt20 == true){ if (opps == true) h7->Fill(5); else h7->Fill(10); }
-    if (iso == true) { if (opps == true) h7->Fill(6); else h7->Fill(11); }
-    if (sea == true) { h7->Fill(13); }
-  } // end of trigger_result
+  } // end of size>=3
 } //DimuonSpectrum2011MC: analyze ends
 
 
