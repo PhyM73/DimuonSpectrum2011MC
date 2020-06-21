@@ -157,7 +157,7 @@ const char* name[7] = {"GM_mass_tri", "GM_mass_tri_ss", "GM_mass_tri_ss_ppp", "G
                        "GM_mass_tri_os", "GM_mass_tri_os_p", "GM_mass_tri_os_n"};
 // dimuon mass spectrum in 2 GeV bins. 
 for (int i=0; i<7; i++){
-  h66[i] = fs->make<TH1D>(name[i], "GM mass", 140, 10, 150);
+  h66[i] = fs->make<TH1D>(name[i], "GM mass", 160, 0., 160.);
   h66[i]->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
   h66[i]->GetYaxis()->SetTitle("Number of Events");
 }
