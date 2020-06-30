@@ -296,7 +296,8 @@ using namespace std;
 
 
           if (istight(*mu,point) && istight(*mui,point) && istight(*muii,point)
-              && isolation15(*mu) && isolation15(*mui) && isolation15(*muii)){
+              && isolation15(*mu) && isolation15(*mui) && isolation15(*muii)
+              && mu->pt()>10. && mui->pt()>10. && muii->pt()>10. ){
 
             //-------------------------Calculate invariant mass----------------------//
             // WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
