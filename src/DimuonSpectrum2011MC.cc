@@ -314,7 +314,7 @@ using namespace std;
         muon2 = muon1;
         muon1 = *it;
       } else if (it->pt()>muon2.pt()){
-        muon2 = *it
+        muon2 = *it;
       }
     }  
 
@@ -335,7 +335,7 @@ using namespace std;
       if (istight(muon1,point) && istight(muon2,point)) { h7->Fill(2);
 
         // WHAT: Compare electric charges of the current two Muons
-        if (muon1.charge() == -(muon2.charge()) ){ h7->Fill(3)
+        if (muon1.charge() == -(muon2.charge()) ){ h7->Fill(3);
 
           double pt = sqrt( pow(muon1.px()+muon2.px(), 2.0) + pow(muon1.py()+muon2.py(), 2.0) );
           if (pt<s && isolation15(muon1) && isolation15(muon2)){
@@ -351,7 +351,7 @@ using namespace std;
               if (pt>25.) h66[1]->Fill(s);
               if (pt>60.) h66[2]->Fill(s);
             }
-            if (fabs(it->innerTrack()->dxy(point)) < 0.01 && fabs(i->innerTrack()->dxy(point)) < 0.01){
+            if (fabs(muon1.innerTrack()->dxy(point)) < 0.01 && fabs(muon2.innerTrack()->dxy(point)) < 0.01){
               // prompt sample
               h66[3]->Fill(s);
               if (pt>25.) h66[4]->Fill(s);
