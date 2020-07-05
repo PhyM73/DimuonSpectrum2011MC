@@ -133,10 +133,6 @@ DimuonSpectrum2011MC::DimuonSpectrum2011MC(const edm::ParameterSet& iConfig):
 //now do what ever initialization is needed
 edm::Service<TFileService> fs;
 
-// ************************************
-// book histograms and set axis labels
-// (called once for initialization)
-// ************************************
 
 // monitoring histograms for muons, intended for muons from Mu sample
 // muon multiplicity
@@ -270,8 +266,7 @@ using namespace std;
 
   math::XYZPoint point(primvtx[0].position());
 
-  // WHAT: Fill histogram of the number of Muon-Tracks in the current Event.
-  // WHY:  for monitoring purposes
+  // Fill histogram of the number of Muon-Tracks in the current Event for monitoring purposes
   h10->Fill(muons->size());
 
   // INFO: Use the trigger result as a evnet selector, see the link below: 
@@ -290,93 +285,147 @@ using namespace std;
     h7->Fill(0);
   
     // sign for cut flow 
-    bool bsac = false;  // baseline acceptance
-    bool tight= false;  // tight muon
-    bool opps = false;  // opposite sign
-    bool zreg = false;  // z-mass region
-    bool pt20 = false;  // pt > 20 Gev/c
-    bool iso  = false;  // Iso < 0.15
-    bool sea  = false;  // search region
+    // bool bsac = false;  // baseline acceptance
+    // bool tight= false;  // tight muon
+    // bool opps = false;  // opposite sign
+    // bool zreg = false;  // z-mass region
+    // bool pt20 = false;  // pt > 20 Gev/c
+    // bool iso  = false;  // Iso < 0.15
+    // bool sea  = false;  // search region
 
     //------------------analysing Muons (muons-TrackCollection)--------------------//
 
     // WHAT: Declare variables used later
     double s1, s2, s;
+    // leading muon subleading
+    reco::MuonCollection::const_iterator it = muons->begin();
+    reco::Muon muon1 = *it;
+    it++;
+    reco::Muon muon2 = *it;
+    if (muon2.pt() > muon1.pt()){
+      reco::Muon m = muon2;
+      muon2 = muon1;
+      muon1 = m;
+    }
 
     // Loop over all the Muons of current Event
-    for (reco::MuonCollection::const_iterator it = muons->begin();
-      it != muons->end(); it++) {
+    for (; it != muons->end(); it++) {
+      if (it->pt()>muon1.pt()){
+        muon2 = muon1;
+        muon1 = *it;
+      } else if (it->pt()>muon2.pt()){
+        muon2 = *it
+      }
+    }  
 
-      reco::MuonCollection::const_iterator i = it;
-      i++;
+    //-------------------------Calculate invariant mass----------------------//
+    // WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
+    // (Iterators "it" and "i")
+    // WHY:  in order to fill the mass histogram
+    s1 = sqrt(((muon1.p())*(muon1.p()) + sqmums) * ((muon2.p())*(muon2.p()) + sqmums));
+    s2 = muon1.px()*muon2.px() + muon1.py()*muon2.py() + muon1.pz()*muon2.pz();
+    s = sqrt(2.0 * (sqmums + (s1 - s2)));
+
+    //--------------------determine quality cuts-----------------------------//
+
+    // WHAT: If these Muon-Tracks satisfy the quality-cut-criteria, the cut flow 
+    //       is recorded and their invariant mass is collected.
+    if (eta21pt1510(muon1,muon2)) { h7->Fill(1);
+
+      if (istight(muon1,point) && istight(muon2,point)) { h7->Fill(2);
+
+        // WHAT: Compare electric charges of the current two Muons
+        if (muon1.charge() == -(muon2.charge()) ){ h7->Fill(3)
+
+          double pt = sqrt( pow(muon1.px()+muon2.px(), 2.0) + pow(muon1.py()+muon2.py(), 2.0) );
+          if (pt<s && isolation15(muon1) && isolation15(muon2)){
+            h6->Fill(s);
+            // WHAT: Store the invariant mass of two muons with unlike sign charges
+          }
+
+          if (search(muon1,point) && search(muon2,point) && s >= 11. && s <= 83. ) { 
+            h7->Fill(13);
+            if (isolation15(muon1) && isolation15(muon2)){ 
+              // isolated sample
+              h66[0]->Fill(s);
+              if (pt>25.) h66[1]->Fill(s);
+              if (pt>60.) h66[2]->Fill(s);
+            }
+            if (fabs(it->innerTrack()->dxy(point)) < 0.01 && fabs(i->innerTrack()->dxy(point)) < 0.01){
+              // prompt sample
+              h66[3]->Fill(s);
+              if (pt>25.) h66[4]->Fill(s);
+              if (pt>60.) h66[5]->Fill(s);
+            }
+          }
+
+        } // end of unlike charge if
+
+        if (s >= 60. && s <= 120.) { h7->Fill(5);
+          if (muon1.pt()>20. && muon2.pt()>20.) { h7->Fill(6);
+            if (isolation15(muon1) && isolation15(muon2)) { h7->Fill(7); }
+          }
+        }
+
+      } // end of if(istight)
+    } // end of if(eta21pt15pt10)
 
       // Loop over 2nd muon candidate
-      for (; i != muons->end(); i++) {
+      // for (; i != muons->end(); i++) {
 
-        //-------------------------Calculate invariant mass----------------------//
-        // WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
-        // (Iterators "it" and "i")
-        // WHY:  in order to fill the mass histogram
-        s1 = sqrt(((it->p())*(it->p()) + sqmums) * ((i->p())*(i->p()) + sqmums));
-        s2 = it->px()*i->px() + it->py()*i->py() + it->pz()*i->pz();
-        s = sqrt(2.0 * (sqmums + (s1 - s2)));
 
-        //--------------------determine quality cuts-----------------------------//
-
-        // WHAT: If these Muon-Tracks satisfy the quality-cut-criteria, the cut flow 
-        //       is recorded and their invariant mass is collected.
-
-        if (eta21pt1510(*it,*i)) { bsac = true;
+        // if (eta21pt1510(*it,*i)) { bsac = true;
     
-          if (istight(*it,point) && istight(*i,point)) { tight = true;
+        //   if (istight(*it,point) && istight(*i,point)) { tight = true;
 
-            // WHAT: Compare electric charges of the current two globalMuon-Tracks
-            //       (Iterators "it" and "i")
-            if (it->charge() == -(i->charge()) ){ opps = true;
+        //     // WHAT: Compare electric charges of the current two globalMuon-Tracks
+        //     //       (Iterators "it" and "i")
+        //     if (it->charge() == -(i->charge()) ){ opps = true;
 
-              double pt = sqrt( pow(it->px()+i->px(), 2.0) + pow(it->py()+i->py(), 2.0) );
-              if (pt<s && isolation15(*it) && isolation15(*i)){
-                h6->Fill(s);
-                // WHAT: Store the invariant mass of two muons with unlike sign charges
-              }
+        //       double pt = sqrt( pow(it->px()+i->px(), 2.0) + pow(it->py()+i->py(), 2.0) );
+        //       if (pt<s && isolation15(*it) && isolation15(*i)){
+        //         h6->Fill(s);
+        //         // WHAT: Store the invariant mass of two muons with unlike sign charges
+        //       }
 
-              if (search(*it,point) && search(*i,point) && s >= 11. && s <= 83. ) { 
-                sea = true;
-                if (isolation15(*it) && isolation15(*i)){ 
-                  // isolated sample
-                  h66[0]->Fill(s);
-                  if (pt>25.) h66[1]->Fill(s);
-                  if (pt>60.) h66[2]->Fill(s);
-                }
-                if (fabs(it->innerTrack()->dxy(point)) < 0.01 && fabs(i->innerTrack()->dxy(point)) < 0.01){
-                  // prompt sample
-                  h66[3]->Fill(s);
-                  if (pt>25.) h66[4]->Fill(s);
-                  if (pt>60.) h66[5]->Fill(s);
-                }
-              }
+        //       if (search(*it,point) && search(*i,point) && s >= 11. && s <= 83. ) { 
+        //         sea = true;
+        //         if (isolation15(*it) && isolation15(*i)){ 
+        //           // isolated sample
+        //           h66[0]->Fill(s);
+        //           if (pt>25.) h66[1]->Fill(s);
+        //           if (pt>60.) h66[2]->Fill(s);
+        //         }
+        //         if (fabs(it->innerTrack()->dxy(point)) < 0.01 && fabs(i->innerTrack()->dxy(point)) < 0.01){
+        //           // prompt sample
+        //           h66[3]->Fill(s);
+        //           if (pt>25.) h66[4]->Fill(s);
+        //           if (pt>60.) h66[5]->Fill(s);
+        //         }
+        //       }
 
-            } // end of unlike charge if
+        //     } // end of unlike charge if
 
-            if (s >= 60. && s <= 120.) { zreg = true;
-              if (it->pt()>20. && i->pt()>20.) { pt20 = true;
-                if (isolation15(*it) && isolation15(*i)) { iso = true; }
-              }
-            }
+        //     if (s >= 60. && s <= 120.) { zreg = true;
+        //       if (it->pt()>20. && i->pt()>20.) { pt20 = true;
+        //         if (isolation15(*it) && isolation15(*i)) { iso = true; }
+        //       }
+        //     }
 
-          } // end of if(istight)
-        } // end of if(eta21pt15pt10)
-      } //end of for(;i!=muons->end();...)
-    } //end of reco::MuonCollection loop
+        //   } // end of if(istight)
+        // } // end of if(eta21pt15pt10)
+
+      // } //end of for(;i!=muons->end();...)
+    // } //end of reco::MuonCollection loop
     // Fill the histo of the cut flow
-    if (bsac == true) h7->Fill(1);
-    if (tight == true){ h7->Fill(2);
-      if (opps == true) h7->Fill(3); else h7->Fill(8); 
-      }
-    if (zreg == true){ if (opps == true) h7->Fill(4); else h7->Fill(9);  }
-    if (pt20 == true){ if (opps == true) h7->Fill(5); else h7->Fill(10); }
-    if (iso == true) { if (opps == true) h7->Fill(6); else h7->Fill(11); }
-    if (sea == true) { h7->Fill(13); }
+    // if (bsac == true) h7->Fill(1);
+    // if (tight == true){ h7->Fill(2);
+    //   if (opps == true) h7->Fill(3); else h7->Fill(8); 
+    //   }
+    // if (zreg == true){ if (opps == true) h7->Fill(4); else h7->Fill(9);  }
+    // if (pt20 == true){ if (opps == true) h7->Fill(5); else h7->Fill(10); }
+    // if (iso == true) { if (opps == true) h7->Fill(6); else h7->Fill(11); }
+    // if (sea == true) { h7->Fill(13); }
   } // end of trigger_result
 } //DimuonSpectrum2011MC: analyze ends
 
