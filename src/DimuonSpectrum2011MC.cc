@@ -361,7 +361,7 @@ using namespace std;
         } // end of unlike charge if
 
         if (s >= 60. && s <= 120.) { 
-          if (muon1.charge() == -(muon2.charge()) ) h7->Fill(5) else h7->Fill(9);
+          if (muon1.charge() == -(muon2.charge()) ) h7->Fill(5); else h7->Fill(9);
           if (muon1.pt()>20. && muon2.pt()>20.) { 
             h7->Fill(6);
             if (isolation15(muon1) && isolation15(muon2)) { 
