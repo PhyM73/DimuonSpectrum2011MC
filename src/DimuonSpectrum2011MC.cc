@@ -283,20 +283,10 @@ using namespace std;
   if (trigger_result && (muons->size() >= 2)) {
 
     h7->Fill(0);
-  
-    // sign for cut flow 
-    // bool bsac = false;  // baseline acceptance
-    // bool tight= false;  // tight muon
-    // bool opps = false;  // opposite sign
-    // bool zreg = false;  // z-mass region
-    // bool pt20 = false;  // pt > 20 Gev/c
-    // bool iso  = false;  // Iso < 0.15
-    // bool sea  = false;  // search region
 
     //------------------analysing Muons (muons-TrackCollection)--------------------//
-
     
-    // declare leading muon and subleading muon
+    // select the leading muon and subleading muon
     reco::MuonCollection::const_iterator it = muons->begin();
     reco::Muon muon1 = *it;
     it++;
@@ -306,9 +296,8 @@ using namespace std;
       muon2 = muon1;
       muon1 = m;
     }
-
-    // Loop over all the remain Muons (if any) of current Event
     for (; it != muons->end(); it++) {
+      // Loop over all the remain Muons (if any) of current Event
       if (it->pt()>muon1.pt()){
         muon2 = muon1;
         muon1 = *it;
@@ -318,7 +307,6 @@ using namespace std;
     }  
 
     //-------------------------Calculate invariant mass----------------------//
-    // Calculate invariant mass of the current two Muons
     double s1, s2, s;
     s1 = sqrt(((muon1.p())*(muon1.p()) + sqmums) * ((muon2.p())*(muon2.p()) + sqmums));
     s2 = muon1.px()*muon2.px() + muon1.py()*muon2.py() + muon1.pz()*muon2.pz();
