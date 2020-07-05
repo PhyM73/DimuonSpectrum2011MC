@@ -79,6 +79,10 @@ There are some differences between the analysis workflow for collision data and 
 - `datasets/mc` 
    - [Simulated dataset DYJetsToLL_M-10To50_TuneZ2_7TeV-pythia6 in AODSIM format for 2011 collision data](http://opendata.cern.ch/record/1393) 
    - [Simulated dataset DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola in AODSIM format for 2011 collision data](http://opendata.cern.ch/record/1395)
+
+- `datasets/double100` Files in `datasets/double` divided into every 100 indexes.
+- `datasets/mc100` Files in `datasets/mc` divided into every 100 indexes.
+
 - [CMS list of validated runs for primary datasets of 2011 data taking](http://opendata.cern.ch/record/1001)
 
 You can obtain the luminosity information from [CMS luminosity information for 2011 CMS open data](http://opendata.cern.ch/record/1051) as needed.
