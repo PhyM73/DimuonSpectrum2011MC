@@ -104,17 +104,11 @@ private:
 // declare Root histograms
 // for a description of their content see below
 
-TH1D *h66;
-TH1D *h661;
+TH1D *h6;
 
 TH1D *h10;
 
-TH1D *h7;
-
 TH1D *h8;
-
-// triggerExpression::Data triggerCache;
-// std::unique_ptr<triggerExpression::Evaluator> triggerSelector;
 
 };
 
@@ -156,21 +150,14 @@ h10->GetXaxis()->SetTitle("Number of Muons");
 h10->GetYaxis()->SetTitle("Number of Events");
 
 
-// dimuon mass spectrum up to 120 GeV after impose bound
-h66 = fs->make<TH1D>("GM_mass_tight", "GTM mass ", 70, 10., 150.);
-h66->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
-h66->GetYaxis()->SetTitle("Number of Events");
+// dimuon mass spectrum up to 150 GeV for tight muons after impose Isolaiton requires 
+// Perform the comparison between the CMS2011a data set and Monte Carlo Samples
+h6 = fs->make<TH1D>("GM_mass_tight_iso", "GTM mass Iso", 70, 10., 150.);
+h6->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
+h6->GetYaxis()->SetTitle("Number of Events");
 
-// dimuon mass spectrum up to 120 GeV after impose IP bound, 
-h661 = fs->make<TH1D>("GM_mass_tight_iso", "GTM mass Iso", 70, 10., 150.);
-h661->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
-h661->GetYaxis()->SetTitle("Number of Events");
 
-// cut flow for the analysis of xsec_Zmumu
-h7 = fs->make<TH1D>("Cut_Flow", "Cut Flow", 12, 0, 12);
-h7->GetYaxis()->SetTitle("Number of Events");
-
-// cut flow for the analysis of xsec_Zmumu
+// the numerator and the denominator of the acceptance for the analysis of xsec_Zmumu
 h8 = fs->make<TH1D>("Accept", "Acceptance", 2, 0, 2);
 h8->GetYaxis()->SetTitle("Number of Events");
 
@@ -188,8 +175,7 @@ DimuonSpectrum2011MC::~DimuonSpectrum2011MC() {
 bool DimuonSpectrum2011MC::eta21pt1510 (const reco::Muon& m1, const reco::Muon& m2){
 
   if ((fabs(m1.eta()) < 2.1 && fabs(m2.eta()) < 2.1)
-      && (m1.pt() > 10. && m2.pt() > 10.)
-      && (m1.pt() > 15. || m2.pt() > 15.)){
+      && m1.pt() > 15. && m2.pt() > 10.){
     return true;
   } // baseline acceptance in 10.1103/PhysRevD.100.015021
   return false;
@@ -294,8 +280,7 @@ using namespace std;
   Handle<reco::GenParticleCollection> genParticles;
   iEvent.getByLabel("genParticles", genParticles);
 
-  // WHAT: Fill histogram of the number of Muon-Tracks in the current Event.
-  // WHY:  for monitoring purposes
+  // Fill histogram of the number of Muon-Tracks in the current Event for monitoring purposes
   h10->Fill(muons->size());
 
 
@@ -348,109 +333,49 @@ using namespace std;
 
   if (muons->size() >= 2) {
 
-    h7->Fill(0);
-  
-    bool bsac = false;
-    bool tight= false; 
-    bool opps = false;
-    bool zreg = false;
-    bool pt20 = false;
-    bool iso  = false;
-//------------------analysing Muons (muons-TrackCollection)----------//
+    //------------------analysing Muons (muons-TrackCollection)----------//
 
+    // select the leading muon and subleading muon
+    reco::MuonCollection::const_iterator it = muons->begin();
+    reco::Muon muon1 = *it;
+    it++;
+    reco::Muon muon2 = *it;
+    it++;
+    if (muon2.pt() > muon1.pt()){
+      reco::Muon m = muon2;
+      muon2 = muon1;
+      muon1 = m;
+    }
+    for (; it != muons->end(); it++) {
+      // Loop over all the remain Muons (if any) of current Event
+      if (it->pt()>muon1.pt()){
+        muon2 = muon1;
+        muon1 = *it;
+      } else if (it->pt()>muon2.pt()){
+        muon2 = *it;
+      }
+    }  
 
-  // WHAT: Declare variables used later
+    //-------------------------Calculate invariant mass-----------------------------//
     double s1, s2, s;
+    s1 = sqrt(((muon1.p())*(muon1.p()) + sqmums) * ((muon2.p())*(muon2.p()) + sqmums));
+    s2 = muon1.px()*muon2.px() + muon1.py()*muon2.py() + muon1.pz()*muon2.pz();
+    s = sqrt(2.0 * (sqmums + (s1 - s2)));
 
-  // WHAT: Loop over all the Muons of current Event
-  // WHY:  to select good candidates to be used in invariant mass calculation
-    for (reco::MuonCollection::const_iterator it = muons->begin();
-      it != muons->end(); it++) {
+    //--------------------determine quality cuts----------------------//
 
-      // NTS: Stores iterator for current globalMuon-Track and advances it by one.
-      //      In other words, the needed preparation to be able to compare all the
-      //      other globalMuon-Tracks after
-      //      the current one to the current globalMuon-Track with iterator it.
-      reco::MuonCollection::const_iterator i = it;
-      i++;
+    // If these Muon-Tracks satisfy the quality-cut-criteria, their invariant mass is collected
+    if (eta21pt1510(muon1,muon2)) {
+      if (istight(muon1,point) && istight(muon2,point)) {
+        if (muon1.charge() == -(muon2.charge()) ){ 
 
-      // loop over 2nd muon candidate
-      for (; i != muons->end(); i++) {
-
-//-------------------------Calculate invariant mass-----------------------------//
-// WHAT: Calculate invariant mass of globalMuon-Tracks under comparison
-// (Iterators "it" and "i")
-// WHY:  in order to fill the mass histogram
-        s1 = sqrt(((it->p())*(it->p()) + sqmums) * ((i->p())*(i->p()) + sqmums));
-        s2 = it->px()*i->px() + it->py()*i->py() + it->pz()*i->pz();
-        s = sqrt(2.0 * (sqmums + (s1 - s2)));
-
-//--------------------determine quality cuts----------------------//
-
-// WHAT: If current globalMuon-Track satisfies quality-cut-criteria, it is
-//       compared to other globalMuon-Tracks that come after this current one.
-//       (succeeding globalMuon-Tracks that are in the muons-MuonCollection)
-//       need at least two candidates to calculate dimuon mass
-
-        if (eta21pt1510(*it,*i)) { bsac = true;
-    
-          if (istight(*it,point) && istight(*i,point)) { tight = true;
-
-// WHAT: Compare electric charges of the current two globalMuon-Tracks
-//       (Iterators "it" and "i")
-// WHY:  Need to find out if the charges of the current two globalMuons-Tracks
-//       are like or unlike charge, since the decaying parents are neutral
-            if (it->charge() == -(i->charge()) ){ opps = true;
-              // unlike charges
-
-// WHAT: Store the invariant mass of two muons with unlike sign charges in
-//       linear scale
-// WHY:  in order to see the various mass peaks on linear scale
-// WHAT: Store the invariant mass of two muons with unlike charges
-// WHY: Reproduce the "Invariant mass spectrum of dimuons in events"-plot
-//      from MUO-10-004
-              double pt = sqrt( pow(it->px()+i->px(), 2.0) + pow(it->py()+i->py(), 2.0) );
-              if (pt<s){
-                h66->Fill(s);
-                if (isolation(*it) && isolation(*i)) {
-                  h661->Fill(s);
-                }
-              }
-            } // end of unlike charge if
-
-            if (s >= 60. && s <= 120.) {
-              zreg = true;
-              if (it->pt()>20. && i->pt()>20.) {
-                pt20 = true;
-                if (isolation(*it) && isolation(*i)) {
-                  iso = true;
-                }
-              }
-            }
-          } // end of if(istight)
-        } // end of if(eta21pt15pt10)
-      } //end of for(;i!=muons....)
-    } //end of reco ::MuonCollection loop
-    if (bsac == true){
-      h7->Fill(1);
-    }
-    if (tight == true){
-      h7->Fill(2);
-      if (opps == true) h7->Fill(3);
-      else {h7->Fill(8);}
-    }
-    if (zreg == true){
-      if (opps == true) {h7->Fill(4);}
-      else {h7->Fill(9);}
-    }
-    if (pt20 == true){
-      if (opps == true) {h7->Fill(5);}
-      else {h7->Fill(10);}
-    }
-    if (iso == true){
-      if (opps == true) {h7->Fill(6);}
-      else {h7->Fill(11);}
-    }
+          double pt = sqrt( pow(muon1.px()+muon2.px(), 2.0) + pow(muon1.py()+muon2.py(), 2.0) );
+          if (pt<s && isolation(muon1) && isolation(muon2)) {
+            h6->Fill(s);
+          }
+        } // end of unlike charge if
+      } // end of if(istight)
+    } // end of if(eta21pt15pt10)
   } //end of if (size() >=2 )
 } //DimuonSpectrum2011MC: analyze ends
 
