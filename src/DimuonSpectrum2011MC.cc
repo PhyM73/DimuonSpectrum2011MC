@@ -65,9 +65,9 @@
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
 
 // for trigger information 
-#include "HLTrigger/HLTcore/interface/TriggerExpressionData.h"
-#include "HLTrigger/HLTcore/interface/TriggerExpressionEvaluator.h"
-#include "HLTrigger/HLTcore/interface/TriggerExpressionParser.h"
+// #include "HLTrigger/HLTcore/interface/TriggerExpressionData.h"
+// #include "HLTrigger/HLTcore/interface/TriggerExpressionEvaluator.h"
+// #include "HLTrigger/HLTcore/interface/TriggerExpressionParser.h"
 
 //for generator information
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
@@ -316,24 +316,30 @@ using namespace std;
   Handle<reco::GenParticleCollection> genParticles;
   iEvent.getByLabel("genParticles", genParticles);
 
-  reco::GenParticle *muonbeforeFSR[2];
+  reco::GenParticle muonbeforeFSR[2];
+  int count = 0;
 
   for(reco::GenParticleCollection::const_iterator itp = genParticles->begin();
       itp != genParticles->end() && itp->status() == 3 ; itp++) {
-      // itp != genParticles->end(); itp++) {
 
     if(abs(itp->pdgId()) == 13 && itp->mother()->pdgId() == 23){
-      if (muonbeforeFSR[0] == nullptr) muonbeforeFSR[0] = itp;
-      else muonbeforeFSR[1] = itp;
+      if (count == 0) {
+        muonbeforeFSR[0] = *itp;
+        count++;
+      else { muonbeforeFSR[1] = itp;
+        count++;
+      }    
     }
   }    
-  
-  double mass=invmass(*muonbeforeFSR[0],*muonbeforeFSR[0]);
-  if (mass > 60 && mass < 120) h8->Fill(0); //the denominator of the acceptance
+
+  if (count == 2) {
+    double mass = invmass(muonbeforeFSR[0], muonbeforeFSR[1]);
+    if (mass > 60. && mass < 120.) h8->Fill(0); //the denominator of the acceptance
+  }
 
   for(reco::GenParticleCollection::const_iterator itp = genParticles->begin();
       itp != genParticles->end(); itp++){
-        cout<<itp->pdgId()<<" "<<itp->status()<<" "<<itp->mother()<<" "<<itp->daughter()<<endl;
+        cout<<itp->pdgId()<<" "<<itp->status()<<" "<<itp->mother()<<" "<<itp->numberOfDaughters()<<endl;
       }
 
       // reco::GenParticle* mufsr1= daughter_fsr(*itp);
