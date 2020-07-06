@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
-// Original Package:    DimuonSpectrum2011
-// Original Class:      DimuonSpectrum2011
+// Package:    DimuonSpectrum2011MC
+// Class:      DimuonSpectrum2011MC
 //
 /**\class DimuonSpectrum2011MC DimuonSpectrum2011MC.cc Demo/DimuonSpectrum2011/src/DimuonSpectrum2011MC.cc
 
@@ -17,20 +17,13 @@
 //                    with contributions from I. Dutta,
 //                                            H. Hirvonsalo
 //                                            B. Sheeran
+//
+// Author:
+//         Created:  Mon  Apr 6, 2020
+//         Finalized: Jun 12, 2020  by   F.Q. Meng (still in development)
 // $Id$
 // ..
 //
-// ***************************************************************************
-// version of DEMO setup provided by CMS open data access team               *
-// expanded/upgraded to contain a pedagocigal analysis example for the       *
-// dimuon mass spectrum (MUO-10-004)                                         *
-//                                                                           *
-// Note that the published spectrum is reproduced approximately, but not     *
-// exactly, since the data sets only partially overlap, and, for reasons of  *
-// simplicity, there is no trigger selection beyond the one implicit in the  *
-// Mu data set, only global muons are used, and only part of the muon        *
-// quality cuts are applied                                                  *
-// ***************************************************************************
 
 // system include files
 #include <memory>
@@ -65,8 +58,6 @@
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
 #include "DataFormats/MuonReco/interface/MuonIsolation.h"
-#include "DataFormats/MuonReco/interface/MuonMETCorrectionData.h"
-#include "DataFormats/MuonReco/interface/MuonTimeExtra.h"
 // #include "DataFormats/MuonReco/interface/MuonSelectors.h"
 
 // for vertex information 
@@ -96,7 +87,7 @@ private:
         bool providesGoodLumisection(const edm::Event& iEvent);
         bool eta21pt1510(const reco::Muon&, const reco::Muon&);
         bool istight(const reco::Muon&, const math::XYZPoint);
-        bool isolation(const reco::Muon&);
+        bool isolation15(const reco::Muon&);
         double invmass(const reco::Candidate&, const reco::Candidate&);
         // reco::GenParticle* daughter_fsr(reco::GenParticle& );
 // ----------member data ---------------------------
@@ -104,9 +95,9 @@ private:
 // declare Root histograms
 // for a description of their content see below
 
-TH1D *h6;
-
 TH1D *h10;
+
+TH1D *h6;
 
 TH1D *h8;
 
@@ -127,12 +118,6 @@ TH1D *h8;
 
 DimuonSpectrum2011MC::DimuonSpectrum2011MC(const edm::ParameterSet& iConfig){
 
-// ***************************************************************************
-// This is the main analysis routine
-// The goal is to approximately reproduce the dimuon mass spectrum from 
-// MUO-10-004 and reproduce the validation test in 10.1103/PhysRevD.100.015021
-// ***************************************************************************
-
 //now do what ever initialization is needed
 edm::Service<TFileService> fs;
 
@@ -141,8 +126,7 @@ edm::Service<TFileService> fs;
 // (called once for initialization)
 // ************************************
 
-// monitoring histograms for muons,
-// intended for muons from Mu sample
+// monitoring histograms for muons, intended for muons from Mu sample
 
 // muon multiplicity
 h10 = fs->make<TH1D>("Mmultiplicity", "Mmultiplicity", 8, 0, 8);
@@ -202,7 +186,7 @@ bool DimuonSpectrum2011MC::istight (const reco::Muon& muon, math::XYZPoint point
 }
 
 
-bool DimuonSpectrum2011MC::isolation (const reco::Muon& muon){
+bool DimuonSpectrum2011MC::isolation15 (const reco::Muon& muon){
   if (muon.isIsolationValid()) {
     double iso=(muon.isolationR03().hadEt + muon.isolationR03().emEt + muon.isolationR03().sumPt)/muon.pt();
     if (iso < 0.15) return true;
@@ -229,7 +213,7 @@ double DimuonSpectrum2011MC::invmass (const reco::Candidate& p1, const reco::Can
 // }
 
 
-// ------------ method called for each event  ------------
+// ------------ method called for each event  ------------//
 void DimuonSpectrum2011MC::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
 // **********************************************
@@ -318,7 +302,7 @@ using namespace std;
         if (muon1.charge() == -(muon2.charge()) ){ 
 
           double pt = sqrt( pow(muon1.px()+muon2.px(), 2.0) + pow(muon1.py()+muon2.py(), 2.0) );
-          if (pt<s && isolation(muon1) && isolation(muon2)) {
+          if (pt<s && isolation15(muon1) && isolation15(muon2)) {
             h6->Fill(s);
           }
         } // end of unlike charge if
@@ -332,21 +316,33 @@ using namespace std;
   Handle<reco::GenParticleCollection> genParticles;
   iEvent.getByLabel("genParticles", genParticles);
 
+  reco::GenParticle *muonbeforeFSR[2];
+
   for(reco::GenParticleCollection::const_iterator itp = genParticles->begin();
-      // itp != genParticles->end() && itp->status() == 3 ; itp++) {
-      itp != genParticles->end(); itp++) {
+      itp != genParticles->end() && itp->status() == 3 ; itp++) {
+      // itp != genParticles->end(); itp++) {
 
     if(abs(itp->pdgId()) == 13 && itp->mother()->pdgId() == 23){
-      // reco::GenParticle* mufsr1= daughter_fsr(*itp);
+      if (muonbeforeFSR[0] == nullptr) muonbeforeFSR[0] = itp;
+      else muonbeforeFSR[1] = itp;
+    }
+  }    
+  
+  double mass=invmass(*muonbeforeFSR[0],*muonbeforeFSR[0]);
+  if (mass > 60 && mass < 120) h8->Fill(0); //the denominator of the acceptance
 
-      reco::GenParticleCollection::const_iterator ip = itp;
-      ip++;
-      for(; ip != genParticles->end() && ip->status() == 3 ; ip++){
-        if(abs(ip->pdgId()) == 13 && ip->mother()->pdgId() == 23){
+  for(reco::GenParticleCollection::const_iterator itp = genParticles->begin();
+      itp != genParticles->end(); itp++){
+        cout<<itp->pdgId()<<" "<<itp->status()<<" "<<itp->mother()<<" "<<itp->daughter()<<endl;
+      }
+
+      // reco::GenParticle* mufsr1= daughter_fsr(*itp);
+      // reco::GenParticleCollection::const_iterator ip = itp;
+      // ip++;
+      // for(; ip != genParticles->end() && ip->status() == 3 ; ip++){
+        // if(abs(ip->pdgId()) == 13 && ip->mother()->pdgId() == 23){
           // reco::GenParticle* mufsr2= daughter_fsr(*ip);
 
-          double mass=invmass(*itp,*ip);
-          if (mass > 60 && mass < 120) h8->Fill(0); //the denominator of the acceptance
 
           // double fsrmass=invmass(*mufsr1,*mufsr2);
           // if (fsrmass > 60 && fsrmass <120 
@@ -355,10 +351,9 @@ using namespace std;
           //     h8->Fill(1);
           //   }
 
-        }
-      }
-    }
-  } 
+        // }
+      // }
+   
         // const reco::Candidate * d = p.daughter(j);
         // if(d->status() == 3 && abs(d->pdgId()) == 13 
           //  && d->pt() < 20 && fabs(d->eta()) < 2.1){
