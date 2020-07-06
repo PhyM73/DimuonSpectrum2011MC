@@ -174,9 +174,8 @@ DimuonSpectrum2011MC::~DimuonSpectrum2011MC() {
 
 bool DimuonSpectrum2011MC::eta21pt1510 (const reco::Muon& m1, const reco::Muon& m2){
 
-  if ((fabs(m1.eta()) < 2.1 && fabs(m2.eta()) < 2.1)
-      && (m1.pt() > 10. && m2.pt() > 10.)
-      && (m1.pt() > 15. || m2.pt() > 15.)){
+  if (fabs(m1.eta()) < 2.1 && fabs(m2.eta()) < 2.1
+      && m1.pt() > 15. && m2.pt() > 10.){
     return true;
   } // baseline acceptance in 10.1103/PhysRevD.100.015021
   return false;
@@ -291,6 +290,7 @@ using namespace std;
     reco::Muon muon1 = *it;
     it++;
     reco::Muon muon2 = *it;
+    it++;
     if (muon2.pt() > muon1.pt()){
       reco::Muon m = muon2;
       muon2 = muon1;
@@ -327,7 +327,6 @@ using namespace std;
           double pt = sqrt( pow(muon1.px()+muon2.px(), 2.0) + pow(muon1.py()+muon2.py(), 2.0) );
           if (pt<s && isolation15(muon1) && isolation15(muon2)){
             h6->Fill(s);
-            // WHAT: Store the invariant mass of two muons with unlike sign charges
           }
 
           if (search(muon1,point) && search(muon2,point) && s >= 11. && s <= 83. ) { 
