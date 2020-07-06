@@ -276,60 +276,8 @@ using namespace std;
 
   math::XYZPoint point(primvtx[0].position());
 
-  // INFO: GenParticle
-  Handle<reco::GenParticleCollection> genParticles;
-  iEvent.getByLabel("genParticles", genParticles);
-
   // Fill histogram of the number of Muon-Tracks in the current Event for monitoring purposes
   h10->Fill(muons->size());
-
-
-  for(reco::GenParticleCollection::const_iterator itp = genParticles->begin();
-      // itp != genParticles->end() && itp->status() == 3 ; itp++) {
-      itp != genParticles->end(); itp++) {
-
-    if(abs(itp->pdgId()) == 13 && itp->mother()->pdgId() == 23){
-      // reco::GenParticle* mufsr1= daughter_fsr(*itp);
-
-      reco::GenParticleCollection::const_iterator ip = itp;
-      ip++;
-      for(; ip != genParticles->end() && ip->status() == 3 ; ip++){
-        if(abs(ip->pdgId()) == 13 && ip->mother()->pdgId() == 23){
-          // reco::GenParticle* mufsr2= daughter_fsr(*ip);
-
-          double mass=invmass(*itp,*ip);
-          if (mass > 60 && mass < 120) h8->Fill(0);
-
-          // double fsrmass=invmass(*mufsr1,*mufsr2);
-          // if (fsrmass > 60 && fsrmass <120 
-          //     && mufsr1->pt()>20 && fabs(mufsr1->eta())<2.1 
-          //     && mufsr2->pt()>20 && fabs(mufsr2->eta())<2.1){
-          //     h8->Fill(1);
-          //   }
-
-        }
-      }
-    }
-  } 
-        // const reco::Candidate * d = p.daughter(j);
-        // if(d->status() == 3 && abs(d->pdgId()) == 13 
-          //  && d->pt() < 20 && fabs(d->eta()) < 2.1){
-          // m1 = d;
-    //if (!mom->empty()){
-// double pt = p.pt(), eta = p.eta(), phi = p.phi(), mass = p.mass();
-    // double vx = p.vx(), vy = p.vy(), vz = p.vz();
-    // int charge = p.charge();
-    // int n = p.numberOfDaughters();
-    //cout<<mom<<endl;
-        // int mid = mom->pdgId();
-      // cout<<"   mid: "<< mid <<endl;
-    //mom++;
-    //int m2id = mom->pdgId();
-    //cout<<m2id<<endl;
-      // }
-    // }
-  
-
 
   if (muons->size() >= 2) {
 
@@ -377,6 +325,58 @@ using namespace std;
       } // end of if(istight)
     } // end of if(eta21pt15pt10)
   } //end of if (size() >=2 )
+
+  //------------------------------evaluate Acceptance-----------------------------------//
+
+  // INFO: GenParticle
+  Handle<reco::GenParticleCollection> genParticles;
+  iEvent.getByLabel("genParticles", genParticles);
+
+  for(reco::GenParticleCollection::const_iterator itp = genParticles->begin();
+      // itp != genParticles->end() && itp->status() == 3 ; itp++) {
+      itp != genParticles->end(); itp++) {
+
+    if(abs(itp->pdgId()) == 13 && itp->mother()->pdgId() == 23){
+      // reco::GenParticle* mufsr1= daughter_fsr(*itp);
+
+      reco::GenParticleCollection::const_iterator ip = itp;
+      ip++;
+      for(; ip != genParticles->end() && ip->status() == 3 ; ip++){
+        if(abs(ip->pdgId()) == 13 && ip->mother()->pdgId() == 23){
+          // reco::GenParticle* mufsr2= daughter_fsr(*ip);
+
+          double mass=invmass(*itp,*ip);
+          if (mass > 60 && mass < 120) h8->Fill(0); //the denominator of the acceptance
+
+          // double fsrmass=invmass(*mufsr1,*mufsr2);
+          // if (fsrmass > 60 && fsrmass <120 
+          //     && mufsr1->pt()>20 && fabs(mufsr1->eta())<2.1 
+          //     && mufsr2->pt()>20 && fabs(mufsr2->eta())<2.1){
+          //     h8->Fill(1);
+          //   }
+
+        }
+      }
+    }
+  } 
+        // const reco::Candidate * d = p.daughter(j);
+        // if(d->status() == 3 && abs(d->pdgId()) == 13 
+          //  && d->pt() < 20 && fabs(d->eta()) < 2.1){
+          // m1 = d;
+    //if (!mom->empty()){
+// double pt = p.pt(), eta = p.eta(), phi = p.phi(), mass = p.mass();
+    // double vx = p.vx(), vy = p.vy(), vz = p.vz();
+    // int charge = p.charge();
+    // int n = p.numberOfDaughters();
+    //cout<<mom<<endl;
+        // int mid = mom->pdgId();
+      // cout<<"   mid: "<< mid <<endl;
+    //mom++;
+    //int m2id = mom->pdgId();
+    //cout<<m2id<<endl;
+      // }
+    // }
+
 } //DimuonSpectrum2011MC: analyze ends
 
 
