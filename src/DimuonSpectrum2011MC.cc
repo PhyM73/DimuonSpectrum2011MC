@@ -143,7 +143,7 @@ h10->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 150 GeV for tight muons after impose Isolaiton requires 
 // Perform the comparison between the CMS2011a data set and Monte Carlo Samples
-h6 = fs->make<TH1D>("GM_mass_tight_iso", "GTM mass Iso", 140, 10., 150.);
+h6 = fs->make<TH1D>("GM_mass_tight_iso", "GTM mass Iso", 280, 10., 150.);
 h6->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h6->GetYaxis()->SetTitle("Number of Events");
 
