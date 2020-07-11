@@ -339,7 +339,7 @@ using namespace std;
 
   for(reco::GenParticleCollection::const_iterator itp = genParticles->begin();
       itp != genParticles->end(); itp++){
-        cout<<itp->pdgId()<<" "<<itp->status()<<" "<<itp->mother()<<" "<<itp->numberOfDaughters()<<endl;
+        cout<<itp->pdgId()<<" "<<itp->status()<<endl;
       }
 
       // reco::GenParticle* mufsr1= daughter_fsr(*itp);
