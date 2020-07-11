@@ -143,7 +143,7 @@ h10->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 150 GeV for tight muons after impose Isolaiton requires 
 // Perform the comparison between the CMS2011a data set and Monte Carlo Samples
-h6 = fs->make<TH1D>("GM_mass_tight_iso", "GTM mass Iso", 280, 10., 150.);
+h6 = fs->make<TH1D>("GM_mass_tight_iso", "GTM mass Iso", 150, 0., 150.);
 h6->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h6->GetYaxis()->SetTitle("Number of Events");
 
@@ -348,17 +348,17 @@ using namespace std;
 
         } // end of unlike charge if
 
-        if (s >= 60. && s <= 120.) { 
-          if (muon1.charge() == -(muon2.charge()) ) h7->Fill(5); else h7->Fill(9);
+        // if (s >= 60. && s <= 120.) { 
+        //   if (muon1.charge() == -(muon2.charge()) ) h7->Fill(5); else h7->Fill(9);
           
-          if (muon1.pt()>20. && muon2.pt()>20.) { 
-            if (muon1.charge() == -(muon2.charge()) ) h7->Fill(6); else h7->Fill(10);
+        //   if (muon1.pt()>20. && muon2.pt()>20.) { 
+        //     if (muon1.charge() == -(muon2.charge()) ) h7->Fill(6); else h7->Fill(10);
 
-            if (isolation15(muon1) && isolation15(muon2)) { 
-              if (muon1.charge() == -(muon2.charge()) ) h7->Fill(7); else h7->Fill(11);
-            }  
-          }
-        }
+        //     if (isolation15(muon1) && isolation15(muon2)) { 
+        //       if (muon1.charge() == -(muon2.charge()) ) h7->Fill(7); else h7->Fill(11);
+        //     }  
+        //   }
+        // }
 
       } // end of if(istight)
     } // end of if(eta21pt15pt10)
