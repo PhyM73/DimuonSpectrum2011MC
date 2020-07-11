@@ -122,7 +122,7 @@ std::unique_ptr<triggerExpression::Evaluator> triggerSelector;
 DimuonSpectrum2011MC::DimuonSpectrum2011MC(const edm::ParameterSet& iConfig):
     triggerCache(triggerExpression::Data(edm::InputTag("TriggerResults","","HLT"), 
                  edm::InputTag(""), 1, false, false, false)) ,
-    triggerSelector(triggerExpression::parse("HLT_Mu13_Mu8*")) {
+    triggerSelector(triggerExpression::parse("HLT_DoubleMu7_v*")) {
 
 // ***************************************************************************
 // This is the main analysis routine
@@ -175,7 +175,7 @@ DimuonSpectrum2011MC::~DimuonSpectrum2011MC() {
 bool DimuonSpectrum2011MC::eta21pt1510 (const reco::Muon& m1, const reco::Muon& m2){
 
   if (fabs(m1.eta()) < 2.1 && fabs(m2.eta()) < 2.1
-      && m1.pt() > 15. && m2.pt() > 10.){
+      && m1.pt() > 10. && m2.pt() > 10.){
     return true;
   } // baseline acceptance in 10.1103/PhysRevD.100.015021
   return false;
