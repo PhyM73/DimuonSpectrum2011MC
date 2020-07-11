@@ -143,7 +143,7 @@ h10->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 150 GeV for tight muons after impose Isolaiton requires 
 // Perform the comparison between the CMS2011a data set and Monte Carlo Samples
-h6 = fs->make<TH1D>("GM_mass_tight_iso", "GTM mass Iso", 70, 10., 150.);
+h6 = fs->make<TH1D>("GM_mass_tight_iso", "GTM mass Iso", 140, 10., 150.);
 h6->GetXaxis()->SetTitle("Invariant Mass for Nmuon>=2 (in GeV/c^2)");
 h6->GetYaxis()->SetTitle("Number of Events");
 
@@ -324,26 +324,27 @@ using namespace std;
 
         if (muon1.charge() == -(muon2.charge()) ){ h7->Fill(3);
 
-          double pt = sqrt( pow(muon1.px()+muon2.px(), 2.0) + pow(muon1.py()+muon2.py(), 2.0) );
-          if (pt<s && isolation15(muon1) && isolation15(muon2)){
+          // double pt = sqrt( pow(muon1.px()+muon2.px(), 2.0) + pow(muon1.py()+muon2.py(), 2.0) );
+          // if (pt<s && isolation15(muon1) && isolation15(muon2)){
+          if (isolation15(muon1) && isolation15(muon2)){
             h6->Fill(s);
           }
 
-          if (search(muon1,point) && search(muon2,point) && s >= 11. && s <= 83. ) { 
-            h7->Fill(13);
-            if (isolation15(muon1) && isolation15(muon2)){ 
-              // isolated sample
-              h66[0]->Fill(s);
-              if (pt>25.) h66[1]->Fill(s);
-              if (pt>60.) h66[2]->Fill(s);
-            }
-            if (fabs(muon1.innerTrack()->dxy(point)) < 0.01 && fabs(muon2.innerTrack()->dxy(point)) < 0.01){
-              // prompt sample
-              h66[3]->Fill(s);
-              if (pt>25.) h66[4]->Fill(s);
-              if (pt>60.) h66[5]->Fill(s);
-            }
-          }
+          // if (search(muon1,point) && search(muon2,point) && s >= 11. && s <= 83. ) { 
+          //   h7->Fill(13);
+          //   if (isolation15(muon1) && isolation15(muon2)){ 
+          //     // isolated sample
+          //     h66[0]->Fill(s);
+          //     if (pt>25.) h66[1]->Fill(s);
+          //     if (pt>60.) h66[2]->Fill(s);
+          //   }
+          //   if (fabs(muon1.innerTrack()->dxy(point)) < 0.01 && fabs(muon2.innerTrack()->dxy(point)) < 0.01){
+          //     // prompt sample
+          //     h66[3]->Fill(s);
+          //     if (pt>25.) h66[4]->Fill(s);
+          //     if (pt>60.) h66[5]->Fill(s);
+          //   }
+          // }
 
         } // end of unlike charge if
 
