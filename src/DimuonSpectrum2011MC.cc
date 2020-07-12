@@ -95,6 +95,9 @@ private:
 
 TH1D *h10;
 
+TH1D *h11;
+TH1D *h12;
+
 TH1D *h6;
 TH1D *h66[6];
 
@@ -140,6 +143,15 @@ h10 = fs->make<TH1D>("Mmultiplicity", "Mmultiplicity", 8, 0, 8);
 h10->GetXaxis()->SetTitle("Number of Muons");
 h10->GetYaxis()->SetTitle("Number of Events");
 
+// leading muon Transverse_momentum
+h11 = fs->make<TH1D>("LMPt", "Leading Muon TransverseMomentum", 560, 0., 140.);
+h11->GetXaxis()->SetTitle("Transverse Momentum (in GeV/c)");
+h11->GetYaxis()->SetTitle("Number of Events");
+
+// subleading muon Transverse_momentum
+h12 = fs->make<TH1D>("SLMPt", "SubLeading Muon TransverseMomentum", 560, 0., 140.);
+h12->GetXaxis()->SetTitle("Transverse Momentum (in GeV/c)");
+h12->GetYaxis()->SetTitle("Number of Events");
 
 // dimuon mass spectrum up to 150 GeV for tight muons after impose Isolaiton requires 
 // Perform the comparison between the CMS2011a data set and Monte Carlo Samples
@@ -305,6 +317,8 @@ using namespace std;
         muon2 = *it;
       }
     }  
+
+    h11->Fill(muon1.pt()); h12->Fill(muon2.pt());
 
     //-------------------------Calculate invariant mass----------------------//
     double s1, s2, s;
