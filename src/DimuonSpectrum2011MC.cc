@@ -187,7 +187,8 @@ bool DimuonSpectrum2011MC::istight (const reco::Muon& muon, math::XYZPoint point
   // Starting from 50X release this set of selection is into an omni-comprehensive selector 
   // in DataFormats/MuonReco/interface/MuonSelectors.h
   // See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Tight_Muon_selection
-  if (muon.isGlobalMuon()){
+  // if (muon.isGlobalMuon()){
+  if (muon.isGlobalMuon() && muon.isTrackerMuon()){
     if ( muon.globalTrack()->normalizedChi2() < 10. 
       // && muon.globalTrack()->hitPattern().numberOfValidMuonHits() > 0 
       // && muon.numberOfMatchedStations() > 1 
