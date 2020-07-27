@@ -12,15 +12,15 @@
  */
 //
 // Original Author:
-//         Created:  Mon  May 4, 15:24:13 CEST 2015
+//         Created:   May 4, 15:24:13 CEST 2015
 //         Finalized: February 24, 2016  by   A. Geiser
 //                    with contributions from I. Dutta,
 //                                            H. Hirvonsalo
 //                                            B. Sheeran
 
 // Author:
-//         Created:  Mon  Apr 6, 2020
-//         Finalized: Jun 12, 2020  by   F.Q. Meng (still in development)
+//         Created:   Apr 6,  2020
+//         Finalized: Jul 12, 2020  by   F.Q. Meng (still in development)
 // $Id$
 // ..
 //
@@ -174,8 +174,7 @@ DimuonSpectrum2011MC::~DimuonSpectrum2011MC() {
 
 bool DimuonSpectrum2011MC::eta21pt1510 (const reco::Muon& m1, const reco::Muon& m2){
 
-  if (fabs(m1.eta()) < 2.1 && fabs(m2.eta()) < 2.1
-      && m1.pt() > 15. && m2.pt() > 10.){
+  if (fabs(m1.eta()) < 2.1 && fabs(m2.eta()) < 2.1 && m1.pt() > 15. && m2.pt() > 10.){
     return true;
   } // baseline acceptance in 10.1103/PhysRevD.100.015021
   return false;
@@ -187,14 +186,13 @@ bool DimuonSpectrum2011MC::istight (const reco::Muon& muon, math::XYZPoint point
   // Starting from 50X release this set of selection is into an omni-comprehensive selector 
   // in DataFormats/MuonReco/interface/MuonSelectors.h
   // See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Tight_Muon_selection
-  // if (muon.isGlobalMuon()){
-  if (muon.isGlobalMuon() && muon.isTrackerMuon()){
+  if (muon.isGlobalMuon()){
     if ( muon.globalTrack()->normalizedChi2() < 10. 
-      // && muon.globalTrack()->hitPattern().numberOfValidMuonHits() > 0 
-      // && muon.numberOfMatchedStations() > 1 
+      && muon.globalTrack()->hitPattern().numberOfValidMuonHits() > 0 
+      && muon.numberOfMatchedStations() > 1 
       && fabs(muon.innerTrack()->dxy(point)) < 0.2 
       && fabs(muon.innerTrack()->dz(point)) < 1.0 
-      // && muon.innerTrack()->hitPattern().numberOfValidPixelHits() > 0
+      && muon.innerTrack()->hitPattern().numberOfValidPixelHits() > 0
       && muon.innerTrack()->hitPattern().numberOfValidTrackerHits() > 10 ){
         return true;
     }
