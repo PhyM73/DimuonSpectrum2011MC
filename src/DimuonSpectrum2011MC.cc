@@ -89,8 +89,8 @@ private:
         bool istight(const reco::Muon&, const math::XYZPoint);
         bool isolation15(const reco::Muon&);
         double invmass(const reco::Candidate&, const reco::Candidate&);
-        reco::Candidate daughter_fsr(const reco::GenParticle& );
-        reco::Candidate daughter_fsr(const reco::Candidate& );
+        // reco::Candidate daughter_fsr(reco::GenParticle );
+        // reco::Candidate daughter_fsr(reco::Candidate );
 // ----------member data ---------------------------
 
 // declare Root histograms
@@ -203,23 +203,23 @@ double DimuonSpectrum2011MC::invmass (const reco::Candidate& p1, const reco::Can
   return s;
 }
 
-reco::Candidate DimuonSpectrum2011MC::daughter_fsr(const reco::GenParticle& p ){
-  if (p.numberOfDaughters() == 0) return p;
-  for(size_t i = 0; i < p.numberOfDaughters();++i){
-    if (p.daughter(i)->pdgId() == p.pdgId()){
-      return daughter_fsr(p.daughter(i));
-    }
-  }
-}
+// reco::Candidate DimuonSpectrum2011MC::daughter_fsr(reco::GenParticle p ){
+//   if (p.numberOfDaughters() == 0) return p;
+//   for(size_t i = 0; i < p.numberOfDaughters();++i){
+//     if (p.daughter(i)->pdgId() == p.pdgId()){
+//       return daughter_fsr(*p.daughter(i));
+//     }
+//   }
+// }
 
-reco::Candidate DimuonSpectrum2011MC::daughter_fsr(const reco::Candidate& p ){
-  if (p.numberOfDaughters() == 0) return p;
-  for(size_t i = 0; i < p.numberOfDaughters();++i){
-    if (p.daughter(i)->pdgId() == p.pdgId()){
-      return daughter_fsr(p.daughter(i));
-    }
-  }
-}
+// const reco::Candidate& DimuonSpectrum2011MC::daughter_fsr(const reco::Candidate& p ){
+//   if (p.numberOfDaughters() == 0) return p;
+//   for(size_t i = 0; i < p.numberOfDaughters();++i){
+//     if (p.daughter(i)->pdgId() == p.pdgId()){
+//       return daughter_fsr(*p.daughter(i));
+//     }
+//   }
+// }
 
 
 // ------------ method called for each event  ------------//
@@ -346,8 +346,22 @@ using namespace std;
     if (mass > 60. && mass < 120.) h8->Fill(0); //the denominator of the acceptance
   }
 
-  reco::Candidate muonafterFSR1 = daughter_fsr(muonbeforeFSR1);
-  reco::Candidate muonafterFSR2 = daughter_fsr(muonbeforeFSR2);
+  // reco::Candidate muonafterFSR1 = daughter_fsr(muonbeforeFSR1);
+  // reco::Candidate muonafterFSR2 = daughter_fsr(muonbeforeFSR2);
+  reco::Candidate muonafterFSR1;
+  for(size_t i = 0; i < muonbeforeFSR1.numberOfDaughters();++i){
+    if (muonbeforeFSR1.daughter(i)->pdgId() == muonbeforeFSR1.pdgId()){
+      muonafterFSR1 = *(muonbeforeFSR1.daughter(i));
+    }
+  }
+
+  while (muonafterFSR1.numberOfDaughters() != 0) {
+    for(size_t i = 0; i < muonafterFSR1.numberOfDaughters();++i){
+      if (muonafterFSR1.daughter(i)->pdgId() == muonafterFSR1.pdgId()){
+        muonafterFSR1 = *(muonafterFSR1.daughter(i));
+      }
+    }
+  }
 
   if (muonafterFSR1.status() == 1 && muonafterFSR2.status() == 1
       && muonafterFSR1.pt() > 20 && muonafterFSR2.pt() > 20
