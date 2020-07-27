@@ -12,14 +12,14 @@
  */
 //
 // Original Author:
-//         Created:  Mon May  4 15:24:13 CEST 2015
+//         Created:   May  4 15:24:13 CEST 2015
 //         Finalized: February 24, 2016  by   A. Geiser
 //                    with contributions from I. Dutta,
 //                                            H. Hirvonsalo
 //                                            B. Sheeran
 //
 // Author:
-//         Created:  Mon  Apr 6, 2020
+//         Created:   Apr 6,  2020
 //         Finalized: Jun 12, 2020  by   F.Q. Meng (still in development)
 // $Id$
 // ..
@@ -158,8 +158,7 @@ DimuonSpectrum2011MC::~DimuonSpectrum2011MC() {
 
 bool DimuonSpectrum2011MC::eta21pt1510 (const reco::Muon& m1, const reco::Muon& m2){
 
-  if ((fabs(m1.eta()) < 2.1 && fabs(m2.eta()) < 2.1)
-      && m1.pt() > 15. && m2.pt() > 10.){
+  if ((fabs(m1.eta()) < 2.1 && fabs(m2.eta()) < 2.1) && m1.pt() > 15. && m2.pt() > 10.){
     return true;
   } // baseline acceptance in 10.1103/PhysRevD.100.015021
   return false;
