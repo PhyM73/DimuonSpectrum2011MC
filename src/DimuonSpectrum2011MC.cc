@@ -89,7 +89,8 @@ private:
         bool istight(const reco::Muon&, const math::XYZPoint);
         bool isolation15(const reco::Muon&);
         double invmass(const reco::Candidate&, const reco::Candidate&);
-        // reco::GenParticle* daughter_fsr(reco::GenParticle& );
+        reco::Candidate daughter_fsr(const reco::GenParticle& );
+        reco::Candidate daughter_fsr(const reco::Candidate& );
 // ----------member data ---------------------------
 
 // declare Root histograms
@@ -202,14 +203,23 @@ double DimuonSpectrum2011MC::invmass (const reco::Candidate& p1, const reco::Can
   return s;
 }
 
-// reco::GenParticle* DimuonSpectrum2011MC::daughter_fsr(reco::GenParticle& p ){
-//   if (p.numberOfDaughters() == 0) return &p;
-//   for(size_t i = 0; i < p.numberOfDaughters();++i){
-//     if (p.daughter(i)->pdgId() == p.pdgId()){
-//       return daughter_fsr(p.daughter(i));
-//     }
-//   }
-// }
+reco::Candidate DimuonSpectrum2011MC::daughter_fsr(const reco::GenParticle& p ){
+  if (p.numberOfDaughters() == 0) return p;
+  for(size_t i = 0; i < p.numberOfDaughters();++i){
+    if (p.daughter(i)->pdgId() == p.pdgId()){
+      return daughter_fsr(p.daughter(i));
+    }
+  }
+}
+
+reco::Candidate DimuonSpectrum2011MC::daughter_fsr(const reco::Candidate& p ){
+  if (p.numberOfDaughters() == 0) return p;
+  for(size_t i = 0; i < p.numberOfDaughters();++i){
+    if (p.daughter(i)->pdgId() == p.pdgId()){
+      return daughter_fsr(p.daughter(i));
+    }
+  }
+}
 
 
 // ------------ method called for each event  ------------//
@@ -315,7 +325,7 @@ using namespace std;
   Handle<reco::GenParticleCollection> genParticles;
   iEvent.getByLabel("genParticles", genParticles);
 
-  reco::GenParticle muonbeforeFSR[2];
+  reco::GenParticle muonbeforeFSR1, muonbeforeFSR2;
   int count = 0;
 
   for(reco::GenParticleCollection::const_iterator itp = genParticles->begin();
@@ -323,23 +333,34 @@ using namespace std;
 
     if(abs(itp->pdgId()) == 13 && itp->mother()->pdgId() == 23){
       if (count == 0) {
-        muonbeforeFSR[0] = *itp;
+        muonbeforeFSR1 = *itp;
         count++;
-      else { muonbeforeFSR[1] = itp;
+      else { muonbeforeFSR2 = *itp;
         count++;
       }    
     }
   }    
 
   if (count == 2) {
-    double mass = invmass(muonbeforeFSR[0], muonbeforeFSR[1]);
+    double mass = invmass(muonbeforeFSR1, muonbeforeFSR2);
     if (mass > 60. && mass < 120.) h8->Fill(0); //the denominator of the acceptance
   }
 
-  for(reco::GenParticleCollection::const_iterator itp = genParticles->begin();
-      itp != genParticles->end(); itp++){
-        cout<<itp->pdgId()<<" "<<itp->status()<<endl;
-      }
+  reco::Candidate muonafterFSR1 = daughter_fsr(muonbeforeFSR1);
+  reco::Candidate muonafterFSR2 = daughter_fsr(muonbeforeFSR2);
+
+  if (muonafterFSR1.status() == 1 && muonafterFSR2.status() == 1
+      && muonafterFSR1.pt() > 20 && muonafterFSR2.pt() > 20
+      && fabs(muonafterFSR1.eta()) < 2.1 && fabs(muonafterFSR2.eta()) < 2.1 ){
+    double mass = invmass(muonafterFSR1, muonafterFSR2);
+    if (mass > 60. && mass < 120.) h8->Fill(1); //the nominator of the acceptance
+
+  }
+  // for(reco::GenParticleCollection::const_iterator itp = genParticles->begin();
+  //     itp != genParticles->end(); itp++){
+  //       cout<<itp->pdgId()<<" "<<itp->status()<<endl;
+  //     }
+
 
       // reco::GenParticle* mufsr1= daughter_fsr(*itp);
       // reco::GenParticleCollection::const_iterator ip = itp;
