@@ -335,6 +335,7 @@ using namespace std;
       if (count == 0) {
         muonbeforeFSR1 = *itp;
         count++;
+      }
       else { muonbeforeFSR2 = *itp;
         count++;
       }    
@@ -348,10 +349,9 @@ using namespace std;
 
   // reco::Candidate muonafterFSR1 = daughter_fsr(muonbeforeFSR1);
   // reco::Candidate muonafterFSR2 = daughter_fsr(muonbeforeFSR2);
-  reco::Candidate muonafterFSR1;
   for(size_t i = 0; i < muonbeforeFSR1.numberOfDaughters();++i){
     if (muonbeforeFSR1.daughter(i)->pdgId() == muonbeforeFSR1.pdgId()){
-      muonafterFSR1 = *(muonbeforeFSR1.daughter(i));
+      reco::Candidate muonafterFSR1 = *(muonbeforeFSR1.daughter(i));
     }
   }
 
