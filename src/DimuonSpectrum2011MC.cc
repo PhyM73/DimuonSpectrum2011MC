@@ -89,7 +89,7 @@ private:
         bool istight(const reco::Muon&, const math::XYZPoint);
         bool isolation15(const reco::Muon&);
         double invmass(const reco::Candidate&, const reco::Candidate&);
-        const reco::Candidate* daughter_fsr(const reco::Candidate* );
+        const reco::Candidate* daughter_afsr(const reco::Candidate* );
 // ----------member data ---------------------------
 
 // declare Root histograms
@@ -202,7 +202,7 @@ double DimuonSpectrum2011MC::invmass (const reco::Candidate& p1, const reco::Can
 }
 
 
-const reco::Candidate* DimuonSpectrum2011MC::daughter_fsr(const reco::Candidate* p ){
+const reco::Candidate* DimuonSpectrum2011MC::daughter_afsr(const reco::Candidate* p ){
   for(size_t i = 0; i < p->numberOfDaughters();++i){
     if (p->daughter(i)->pdgId() == p->pdgId()){
       return daughter_fsr(p->daughter(i));
@@ -326,14 +326,14 @@ using namespace std;
       if (count == 0) {
         muonbeforeFSR1 = *itp;
         for(size_t i = 0; i < itp->numberOfDaughters();i++){
-          if (itp->daughter(i)->pdgId()==itp->pdgId()) muonafterFSR1 = itp->daughter(i);
+          if (itp->daughter(i)->pdgId()==itp->pdgId()) muonafterFSR1 = daughter_afsr(itp->daughter(i));
         }
         count++;
       }
       else { 
         muonbeforeFSR2 = *itp;
         for(size_t i = 0; i < itp->numberOfDaughters();i++){
-          if (itp->daughter(i)->pdgId()==itp->pdgId()) muonafterFSR2 = itp->daughter(i);
+          if (itp->daughter(i)->pdgId()==itp->pdgId()) muonafterFSR2 = daughter_afsr(itp->daughter(i));
         }
         count++;
       }    
@@ -343,9 +343,6 @@ using namespace std;
   if (count == 2) {
     double mass = invmass(muonbeforeFSR1, muonbeforeFSR2);
     if (mass > 60. && mass < 120.) h8->Fill(0); //the denominator of the acceptance
-    muonafterFSR1 = daughter_fsr(muonafterFSR1);
-    muonafterFSR2 = daughter_fsr(muonafterFSR2);
-    
     if (muonafterFSR1->pt() > 20 && muonafterFSR2->pt() > 20
         && fabs(muonafterFSR1->eta()) < 2.1 && fabs(muonafterFSR2->eta()) < 2.1 ){
       double m = invmass(*muonafterFSR1, *muonafterFSR2);
@@ -354,27 +351,6 @@ using namespace std;
     
   }
 
-  // for(size_t i = 0; i < muonbeforeFSR1.numberOfDaughters();++i){
-  //   if (muonbeforeFSR1.daughter(i)->pdgId() == muonbeforeFSR1.pdgId()){
-  //     reco::GenParticle muonafterFSR1 = *(muonbeforeFSR1.daughter(i));
-  //   }
-  // }
-
-  // reco::Candidate muonafterFSR1 = daughter_fsr(muonbeforeFSR1);
-  // reco::Candidate muonafterFSR2 = daughter_fsr(muonbeforeFSR2);
-  // for(size_t i = 0; i < muonbeforeFSR1.numberOfDaughters();++i){
-  //   if (muonbeforeFSR1.daughter(i)->pdgId() == muonbeforeFSR1.pdgId()){
-  //     reco::Candidate* muonafterFSR1 = muonbeforeFSR1.daughter(i);
-  //   }
-  // }
-
-  // while (muonafterFSR1->numberOfDaughters() != 0) {
-  //   for(size_t i = 0; i < muonafterFSR1->numberOfDaughters();++i){
-  //     if (muonafterFSR1->daughter(i)->pdgId() == muonafterFSR1->pdgId()){
-  //       muonafterFSR1 = muonafterFSR1->daughter(i);
-  //     }
-  //   }
-  // }
 
   // for(reco::GenParticleCollection::const_iterator itp = genParticles->begin();
   //     itp != genParticles->end(); itp++){
