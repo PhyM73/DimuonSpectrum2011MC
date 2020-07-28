@@ -351,49 +351,6 @@ using namespace std;
     
   }
 
-
-  // for(reco::GenParticleCollection::const_iterator itp = genParticles->begin();
-  //     itp != genParticles->end(); itp++){
-  //       cout<<itp->pdgId()<<" "<<itp->status()<<endl;
-  //     }
-
-
-      // reco::GenParticle* mufsr1= daughter_fsr(*itp);
-      // reco::GenParticleCollection::const_iterator ip = itp;
-      // ip++;
-      // for(; ip != genParticles->end() && ip->status() == 3 ; ip++){
-        // if(abs(ip->pdgId()) == 13 && ip->mother()->pdgId() == 23){
-          // reco::GenParticle* mufsr2= daughter_fsr(*ip);
-
-
-          // double fsrmass=invmass(*mufsr1,*mufsr2);
-          // if (fsrmass > 60 && fsrmass <120 
-          //     && mufsr1->pt()>20 && fabs(mufsr1->eta())<2.1 
-          //     && mufsr2->pt()>20 && fabs(mufsr2->eta())<2.1){
-          //     h8->Fill(1);
-          //   }
-
-        // }
-      // }
-   
-        // const reco::Candidate * d = p.daughter(j);
-        // if(d->status() == 3 && abs(d->pdgId()) == 13 
-          //  && d->pt() < 20 && fabs(d->eta()) < 2.1){
-          // m1 = d;
-    //if (!mom->empty()){
-// double pt = p.pt(), eta = p.eta(), phi = p.phi(), mass = p.mass();
-    // double vx = p.vx(), vy = p.vy(), vz = p.vz();
-    // int charge = p.charge();
-    // int n = p.numberOfDaughters();
-    //cout<<mom<<endl;
-        // int mid = mom->pdgId();
-      // cout<<"   mid: "<< mid <<endl;
-    //mom++;
-    //int m2id = mom->pdgId();
-    //cout<<m2id<<endl;
-      // }
-    // }
-
 } //DimuonSpectrum2011MC: analyze ends
 
 
