@@ -213,12 +213,12 @@ double DimuonSpectrum2011MC::invmass (const reco::Candidate& p1, const reco::Can
 // }
 
 const reco::Candidate* DimuonSpectrum2011MC::daughter_fsr(const reco::Candidate* p ){
-  if (p->numberOfDaughters() == 0) return p;
-  const reco::Candidate* d;
   for(size_t i = 0; i < p->numberOfDaughters();++i){
-    if (p->daughter(i)->pdgId() == p->pdgId()) d = p->daughter(i);
+    if (p->daughter(i)->pdgId() == p->pdgId()){
+      return daughter_fsr(p->daughter(i));
+    }
   }
-  return daughter_fsr(d);
+  return p;
 }
 
 
