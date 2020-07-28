@@ -335,14 +335,15 @@ using namespace std;
     if(abs(itp->pdgId()) == 13 && itp->mother()->pdgId() == 23){
       if (count == 0) {
         muonbeforeFSR1 = *itp;
-
-        // for(size_t i = 0; i < itp->numberOfDaughters();i++){
-        //   if (itp->daughter(i)->pdgId()==itp->pdgId())
-        // }
+        for(size_t i = 0; i < itp->numberOfDaughters();i++){
+          if (itp->daughter(i)->pdgId()==itp->pdgId()) muonafterFSR1=itp->daughter(i);
+        }
+        muonafterFSR1 = daughter_afsr(muonafterFSR1);
         count++;
       }
       else { 
         muonbeforeFSR2 = *itp;
+        muonafterFSR2 = daughter_afsr(itp);
         // for(size_t i = 0; i < itp->numberOfDaughters();i++){
         //   if (itp->daughter(i)->pdgId()==itp->pdgId()) muonafterFSR2 = daughter_afsr(itp->daughter(i));
         // }
@@ -354,8 +355,6 @@ using namespace std;
   if (count == 2) {
     double mass = invmass(muonbeforeFSR1, muonbeforeFSR2);
     if (mass > 60. && mass < 120.) h8->Fill(0); //the denominator of the acceptance
-    muonafterFSR1 = daughter_afsr(itp);
-    muonafterFSR2 = daughter_afsr(itp);
     if (muonafterFSR1->pt() > 20 && muonafterFSR2->pt() > 20
         && fabs(muonafterFSR1->eta()) < 2.1 && fabs(muonafterFSR2->eta()) < 2.1 ){
       double m = invmass(*muonafterFSR1, *muonafterFSR2);
