@@ -89,7 +89,6 @@ private:
         bool istight(const reco::Muon&, const math::XYZPoint);
         bool isolation15(const reco::Muon&);
         double invmass(const reco::Candidate&, const reco::Candidate&);
-        // reco::Candidate daughter_fsr(reco::GenParticle );
         const reco::Candidate* daughter_fsr(const reco::Candidate* );
 // ----------member data ---------------------------
 
@@ -195,7 +194,6 @@ bool DimuonSpectrum2011MC::isolation15 (const reco::Muon& muon){
 }
 
 
-// double DimuonSpectrum2011MC::invmass (const reco::GenParticle& p1, const reco::GenParticle& p2){
 double DimuonSpectrum2011MC::invmass (const reco::Candidate& p1, const reco::Candidate& p2){
   double  s1 = sqrt(((p1.p())*(p1.p()) + sqmums) * ((p2.p())*(p2.p()) + sqmums));
   double  s2 = p1.px()*p2.px() + p1.py()*p2.py() + p1.pz()*p2.pz();
@@ -203,14 +201,6 @@ double DimuonSpectrum2011MC::invmass (const reco::Candidate& p1, const reco::Can
   return s;
 }
 
-// reco::Candidate DimuonSpectrum2011MC::daughter_fsr(reco::GenParticle p ){
-//   if (p.numberOfDaughters() == 0) return p;
-//   for(size_t i = 0; i < p.numberOfDaughters();++i){
-//     if (p.daughter(i)->pdgId() == p.pdgId()){
-//       return daughter_fsr(*p.daughter(i));
-//     }
-//   }
-// }
 
 const reco::Candidate* DimuonSpectrum2011MC::daughter_fsr(const reco::Candidate* p ){
   for(size_t i = 0; i < p->numberOfDaughters();++i){
@@ -355,9 +345,13 @@ using namespace std;
     if (mass > 60. && mass < 120.) h8->Fill(0); //the denominator of the acceptance
     muonafterFSR1 = daughter_fsr(muonafterFSR1);
     muonafterFSR2 = daughter_fsr(muonafterFSR2);
-    cout<<muonafterFSR1->pdgId()<<" "<<muonafterFSR1->status()<<endl;
-    cout<<muonafterFSR2->pdgId()<<" "<<muonafterFSR2->status()<<endl;
-
+    
+    if (muonafterFSR1->pt() > 20 && muonafterFSR2->pt() > 20
+        && fabs(muonafterFSR1->eta()) < 2.1 && fabs(muonafterFSR2->eta()) < 2.1 ){
+      double m = invmass(*muonafterFSR1, *muonafterFSR2);
+      if (m > 60. && m < 120.) h8->Fill(1); //the nominator of the acceptance
+    }
+    
   }
 
   // for(size_t i = 0; i < muonbeforeFSR1.numberOfDaughters();++i){
@@ -382,13 +376,6 @@ using namespace std;
   //   }
   // }
 
-  // if (muonafterFSR1.status() == 1 && muonafterFSR2.status() == 1
-  //     && muonafterFSR1.pt() > 20 && muonafterFSR2.pt() > 20
-  //     && fabs(muonafterFSR1.eta()) < 2.1 && fabs(muonafterFSR2.eta()) < 2.1 ){
-  //   double mass = invmass(muonafterFSR1, muonafterFSR2);
-  //   if (mass > 60. && mass < 120.) h8->Fill(1); //the nominator of the acceptance
-
-  // }
   // for(reco::GenParticleCollection::const_iterator itp = genParticles->begin();
   //     itp != genParticles->end(); itp++){
   //       cout<<itp->pdgId()<<" "<<itp->status()<<endl;
