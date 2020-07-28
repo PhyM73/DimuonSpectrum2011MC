@@ -90,6 +90,7 @@ private:
         bool isolation15(const reco::Muon&);
         double invmass(const reco::Candidate&, const reco::Candidate&);
         const reco::Candidate* daughter_afsr(const reco::Candidate* );
+        const reco::Candidate* daughter_afsr(reco::GenParticleCollection::const_iterator );
 // ----------member data ---------------------------
 
 // declare Root histograms
@@ -203,6 +204,15 @@ double DimuonSpectrum2011MC::invmass (const reco::Candidate& p1, const reco::Can
 
 
 const reco::Candidate* DimuonSpectrum2011MC::daughter_afsr(const reco::Candidate* p ){
+  for(size_t i = 0; i < p->numberOfDaughters();++i){
+    if (p->daughter(i)->pdgId() == p->pdgId()){
+      return daughter_afsr(p->daughter(i));
+    }
+  }
+  return p;
+}
+
+const reco::Candidate* DimuonSpectrum2011MC::daughter_afsr(reco::GenParticleCollection::const_iterator p ){
   for(size_t i = 0; i < p->numberOfDaughters();++i){
     if (p->daughter(i)->pdgId() == p->pdgId()){
       return daughter_afsr(p->daughter(i));
@@ -325,16 +335,19 @@ using namespace std;
     if(abs(itp->pdgId()) == 13 && itp->mother()->pdgId() == 23){
       if (count == 0) {
         muonbeforeFSR1 = *itp;
-        for(size_t i = 0; i < itp->numberOfDaughters();i++){
-          if (itp->daughter(i)->pdgId()==itp->pdgId()) muonafterFSR1 = daughter_afsr(itp->daughter(i));
-        }
+        muonafterFSR1 = daughter_afsr(itp->daughter(i));
+
+        // for(size_t i = 0; i < itp->numberOfDaughters();i++){
+        //   if (itp->daughter(i)->pdgId()==itp->pdgId())
+        // }
         count++;
       }
       else { 
         muonbeforeFSR2 = *itp;
-        for(size_t i = 0; i < itp->numberOfDaughters();i++){
-          if (itp->daughter(i)->pdgId()==itp->pdgId()) muonafterFSR2 = daughter_afsr(itp->daughter(i));
-        }
+        muonafterFSR2 = daughter_afsr(itp->daughter(i));
+        // for(size_t i = 0; i < itp->numberOfDaughters();i++){
+        //   if (itp->daughter(i)->pdgId()==itp->pdgId()) muonafterFSR2 = daughter_afsr(itp->daughter(i));
+        // }
         count++;
       }    
     }
