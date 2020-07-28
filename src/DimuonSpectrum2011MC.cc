@@ -336,18 +336,11 @@ using namespace std;
       if (count == 0) {
         muonbeforeFSR1 = *itp;
         muonafterFSR1 = daughter_afsr(itp);
-        // for(size_t i = 0; i < itp->numberOfDaughters();i++){
-          // if (itp->daughter(i)->pdgId()==itp->pdgId()) muonafterFSR1=itp->daughter(i);
-        // }
-        // muonafterFSR1 = daughter_afsr(muonafterFSR1);
         count++;
       }
       else { 
         muonbeforeFSR2 = *itp;
         muonafterFSR2 = daughter_afsr(itp);
-        // for(size_t i = 0; i < itp->numberOfDaughters();i++){
-        //   if (itp->daughter(i)->pdgId()==itp->pdgId()) muonafterFSR2 = daughter_afsr(itp->daughter(i));
-        // }
         count++;
       }    
     }
@@ -361,11 +354,10 @@ using namespace std;
     muonafterFSR2 = daughter_afsr(muonafterFSR2);
     double m = invmass(*muonafterFSR1, *muonafterFSR2);
     if (muonafterFSR1->pt() > 20 && muonafterFSR2->pt() > 20
-        && fabs(muonafterFSR1->eta()) < 2.1 && fabs(muonafterFSR2->eta()) < 2.1 
-        && m > 60. && m < 120.){
-      h8->Fill(1); //the nominator of the acceptance
-    }
-    
+        && fabs(muonafterFSR1->eta()) < 2.1 
+        && fabs(muonafterFSR2->eta()) < 2.1 
+        && m > 60. && m < 120.){ h8->Fill(1); }//the nominator of the acceptance
+        
   }
 
 } //DimuonSpectrum2011MC: analyze ends
