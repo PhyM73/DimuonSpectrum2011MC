@@ -218,7 +218,7 @@ const reco::Candidate* DimuonSpectrum2011MC::daughter_afsr(reco::GenParticleColl
       return daughter_afsr(p->daughter(i));
     }
   }
-  return p;
+  return p->daughter(0);
 }
 
 
@@ -335,7 +335,7 @@ using namespace std;
     if(abs(itp->pdgId()) == 13 && itp->mother()->pdgId() == 23){
       if (count == 0) {
         muonbeforeFSR1 = *itp;
-        muonafterFSR1 = daughter_afsr(itp->daughter(i));
+        muonafterFSR1 = daughter_afsr(itp);
 
         // for(size_t i = 0; i < itp->numberOfDaughters();i++){
         //   if (itp->daughter(i)->pdgId()==itp->pdgId())
@@ -344,7 +344,7 @@ using namespace std;
       }
       else { 
         muonbeforeFSR2 = *itp;
-        muonafterFSR2 = daughter_afsr(itp->daughter(i));
+        muonafterFSR2 = daughter_afsr(itp);
         // for(size_t i = 0; i < itp->numberOfDaughters();i++){
         //   if (itp->daughter(i)->pdgId()==itp->pdgId()) muonafterFSR2 = daughter_afsr(itp->daughter(i));
         // }
