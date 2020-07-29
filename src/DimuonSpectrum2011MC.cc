@@ -353,7 +353,7 @@ using namespace std;
     muonafterFSR1 = daughter_afsr(muonafterFSR1);
     muonafterFSR2 = daughter_afsr(muonafterFSR2);
     double m = invmass(*muonafterFSR1, *muonafterFSR2);
-    if (muonafterFSR1->pt() > 20 && muonafterFSR2->pt() > 20
+    if (muonafterFSR1->pt() > 20. && muonafterFSR2->pt() > 20.
         && fabs(muonafterFSR1->eta()) < 2.1 
         && fabs(muonafterFSR2->eta()) < 2.1 
         && m > 60. && m < 120.){ h8->Fill(1); }//the nominator of the acceptance
