@@ -332,7 +332,8 @@ using namespace std;
   for(reco::GenParticleCollection::const_iterator itp = genParticles->begin();
       itp != genParticles->end() && itp->status() == 3 ; itp++) {
 
-    if(abs(itp->pdgId()) == 13 && itp->mother()->pdgId() == 23){
+    // if(abs(itp->pdgId()) == 13 && itp->mother()->pdgId() == 23){
+    if(abs(itp->pdgId()) == 13){
       if (count == 0) {
         muonbeforeFSR1 = *itp;
         muonafterFSR1 = daughter_afsr(itp);
