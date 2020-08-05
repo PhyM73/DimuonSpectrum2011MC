@@ -204,7 +204,7 @@ DimuonSpectrum2011MC::~DimuonSpectrum2011MC() {
 bool DimuonSpectrum2011MC::eta21pt1510 (const reco::Muon& m1, const reco::Muon& m2){
 
   if (fabs(m1.eta()) < 1.9 && fabs(m2.eta()) < 1.9){
-      // && m1.pt() > 6. && m2.pt() > 6.){
+      && m1.pt() > 4. && m2.pt() > 4.){
     return true;
   } // baseline acceptance in 10.1103/PhysRevD.100.015021
   return false;
@@ -347,7 +347,7 @@ using namespace std;
 
     // If these Muon-Tracks satisfy the quality-cut-criteria, their invariant mass is collected
     // and the cut flow is recorded for the analysis of the XsecZmumu.
-    // if (eta21pt1510(muon1,muon2)) { 
+    if (eta21pt1510(muon1,muon2)) { 
       h7->Fill(1);
 
       if (istight(muon1,point) && istight(muon2,point)) { 
@@ -386,7 +386,7 @@ using namespace std;
 
         } // end of unlike charge if
       } // end of if(istight)
-    // } // end of if(eta21pt15pt10)
+    } // end of if(eta21pt15pt10)
   } // end of trigger_result
 } //DimuonSpectrum2011MC: analyze ends
 
