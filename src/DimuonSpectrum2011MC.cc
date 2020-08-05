@@ -203,7 +203,7 @@ DimuonSpectrum2011MC::~DimuonSpectrum2011MC() {
 
 bool DimuonSpectrum2011MC::eta21pt1510 (const reco::Muon& m1, const reco::Muon& m2){
 
-  if (fabs(m1.eta()) < 1.9 && fabs(m2.eta()) < 1.9){
+  if (fabs(m1.eta()) < 1.9 && fabs(m2.eta()) < 1.9
       && m1.pt() > 4. && m2.pt() > 4.){
     return true;
   } // baseline acceptance in 10.1103/PhysRevD.100.015021
