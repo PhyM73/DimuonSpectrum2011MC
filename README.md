@@ -2,7 +2,7 @@
 
 - zh_CN  [简体中文](https://github.com/PhyM73/DimuonSpectrum2011MC/blob/datamaster/README.zh_CN.md)
 
-This is a simple analysis example to compute the spectrum of two muon final state with CMS Open Data. The goal is to reproduce the results histogram in this paper, [Searching in CMS Open Data for Dimuon Resonances with Substantial Transverse Momentum](https://arxiv.org/abs/1902.04222). 
+This is a simple analysis example to compute the spectrum of two muon final state with CMS Open Data. The goal is to reproduce the results histogram in this paper, [Searching in CMS Open Data for Dimuon Resonances with Substantial Transverse Momentum](https://arxiv.org/abs/1902.04222). This repository also made reference to another GitHub project, [DimounSpectrum2011](https://github.com/cms-opendata-analyses/DimuonSpectrum2011)
 
 
 
